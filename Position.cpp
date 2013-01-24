@@ -19,3 +19,8 @@ void Position::translate(Translation t)
 	y += t.y;
 	z += t.z;
 }
+
+std::ostream & operator<<(std::ostream &os, const Position& p)
+{
+	return os << "(" << p.x << "," << p.y << "," << p.z << ")";
+}

@@ -2,6 +2,8 @@
 #define SIM_POSITION_H
 
 //#include "Translation.h"
+#include <ostream>
+
 class Translation;
 
 class Position {
@@ -12,6 +14,9 @@ public:
 	Position();
 
 	void translate(Translation t);
+
+private:
+        friend std::ostream & operator<<(std::ostream &os, const Position& p);
 };
 
 #endif /* SIM_POSITION_H */
