@@ -1,10 +1,7 @@
-#ifndef SIM_POSITION_H
-#define SIM_POSITION_H
+#ifndef SIM_VECTOR_H
+#define SIM_VECTOR_H
 
-//#include "Translation.h"
 #include <ostream>
-
-class Translation;
 
 class Vector {
 public:	
@@ -13,10 +10,10 @@ public:
 	Vector(float x, float y, float z);
 	Vector();
 
-	void translate(Translation t);
+	void translate(Vector* t);
 
 private:
         friend std::ostream & operator<<(std::ostream &os, const Vector& p);
 };
 
-#endif /* SIM_POSITION_H */
+#endif /* SIM_VECTOR_H */

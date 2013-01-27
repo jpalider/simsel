@@ -11,35 +11,29 @@ Molecule::Molecule(Vector position, float radius, CairoColor color)
 	c = color;
 }
 
-void Molecule::print_position()
+const Vector* Molecule::position() const
 {
-	cout << "Pos(" << p.x << "," << p.y << "," << p.z << ")\n";
+	return &p;
 }
 
-Vector Molecule::position()
+const map<long, Vector>* Molecule::histogram() const
 {
-	return p;
-}
-
-float Molecule::radius()
-{
-	return r;
+	return &h;
 }
 
 
-map<long, Vector> Molecule::histogram()
+void Molecule::move(long time, Vector t)
 {
-	return h;
-}
-
-
-void Molecule::move(long time, Translation t)
-{
-	p.translate(t);
+	p.translate(&t);
 	h.insert( std::pair<long,Vector>(time, p) );
 }
 
 CairoColor* Molecule::color()
 {
 	return &c;
+}
+
+std::ostream & operator<<(std::ostream &os, const Molecule& m)
+{
+	return os << "(" << m.position()->x << "," << m.position()->y << "," << m.position()->z << ")";
 }

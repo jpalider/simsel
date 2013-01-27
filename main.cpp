@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * - releasing molecule not a point but a sphere
+ * - add sender/recevier cell
+ * 
+ *
+ *
+ */
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -9,6 +18,7 @@
 #include "Molecule.h"
 #include "Vector.h"
 #include "BrownianMotion.h"
+#include "Simulation.h"
 
 using namespace std;
 
@@ -49,9 +59,9 @@ time_handler(GtkWidget *widget)
 static void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, long t)
 {
 //	Vector p = m->get_histogram().at(t);
-	map<long, Vector>h = m->histogram();
-	map<long, Vector>::iterator pit = h.find(t);
-	if (pit == h.end())
+	const map<long, Vector>* h = m->histogram();
+	map<long, Vector>::const_iterator pit = h->find(t);
+	if (pit == h->end())
 		return;
 	
 	cairo_set_source_rgb(cr,m->color()->red(), m->color()->green(), m->color()->blue());
@@ -88,10 +98,10 @@ static void do_drawing(cairo_t *cr, GtkWidget* widget)
 		cairo_set_line_width(cr, 1);  
 		cairo_set_source_rgb(cr, 0 , 0.69, 0);
 
-		std::map<long, Vector> h = it->histogram();
-		std::map<long, Vector>::iterator phit = h.begin();
-		std::map<long, Vector>::iterator hit = ++h.begin();
-		for ( ; hit != h.end(); hit++, phit++)
+		const std::map<long, Vector>* h = it->histogram();
+		std::map<long, Vector>::const_iterator phit = h->begin();
+		std::map<long, Vector>::const_iterator hit = ++h->begin();
+		for ( ; hit != h->end(); hit++, phit++)
 		{
 			cairo_move_to(cr, phit->second.x , phit->second.y);
 			cairo_line_to(cr, hit->second.x , hit->second.y);
@@ -108,32 +118,9 @@ static void do_drawing(cairo_t *cr, GtkWidget* widget)
 }
 
 
-void simulate()
+static gpointer thread_func( gpointer data )
 {
-	cout << "Starting simulation" << endl;
-	BrownianMotion bm;
-	Vector p(0, 0, 0);
-	for (int i = 0; i < NUMBER_OF_MOLECULES; i++)
-	{
-		molecules.push_back(Molecule(p, 1, CairoColor(0.69, 0.19, 0)));
-	}
-	
-
-	long sim_time = 0;
-	for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
-	{
-		sim_time += 5;
-		for (vector<Molecule>::iterator it = molecules.begin(); it != molecules.end(); ++it) {
-			it->move(sim_time, bm.get_move());				
-		}
-	}
-	cout << "Simulation finished." << endl;
-}
-
-static gpointer
-thread_func( gpointer data )
-{
-	simulate();
+	Simulation::simulate(NUMBER_OF_MOLECULES, NUMBER_OF_ITERATIONS, &molecules);
 	return NULL;
 }
 
