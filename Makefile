@@ -14,7 +14,7 @@ CXXFLAGS = -O2 `pkg-config --cflags gtk+-3.0`
 
 LDFLAGS = -lsqlite3 `pkg-config --libs gtk+-3.0`
 
-OBJ = main.o Molecule.o Position.o BrownianMotion.o Translation.o
+OBJ = main.o Molecule.o Vector.o BrownianMotion.o Translation.o Math.o CairoColor.o
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

@@ -3,37 +3,43 @@
 
 using namespace std;
 
-Molecule::Molecule(Position p, float r)
+Molecule::Molecule(Vector position, float radius, CairoColor color)
 {
-	pos = p;
-	radius = r;
-	histogram.insert( std::pair<long,Position>(0, pos) );
+	p = position;
+	r = radius;
+	h.insert( std::pair<long,Vector>(0, p) );
+	c = color;
 }
 
 void Molecule::print_position()
 {
-	cout << "Pos(" << pos.x << "," << pos.y << "," << pos.z << ")\n";
+	cout << "Pos(" << p.x << "," << p.y << "," << p.z << ")\n";
 }
 
-Position Molecule::get_position()
+Vector Molecule::position()
 {
-	return pos;
+	return p;
 }
 
-float Molecule::get_radius()
+float Molecule::radius()
 {
-	return radius;
+	return r;
 }
 
 
-map<long, Position> Molecule::get_histogram()
+map<long, Vector> Molecule::histogram()
 {
-	return histogram;
+	return h;
 }
 
 
 void Molecule::move(long time, Translation t)
 {
-	pos.translate(t);
-	histogram.insert( std::pair<long,Position>(time, pos) );
+	p.translate(t);
+	h.insert( std::pair<long,Vector>(time, p) );
+}
+
+CairoColor* Molecule::color()
+{
+	return &c;
 }

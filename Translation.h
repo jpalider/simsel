@@ -1,9 +1,9 @@
 #ifndef SIM_TRANSLATION_H
 #define SIM_TRANSLATION_H
 
-#include "Position.h"
+#include "Vector.h"
 
-class Translation : public Position
+class Translation : public Vector
 {
 public:
 	Translation(float x, float y, float z);

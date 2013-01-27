@@ -6,17 +6,17 @@
 
 class Translation;
 
-class Position {
+class Vector {
 public:	
 	float x, y, z;	
 
-	Position(float x, float y, float z);
-	Position();
+	Vector(float x, float y, float z);
+	Vector();
 
 	void translate(Translation t);
 
 private:
-        friend std::ostream & operator<<(std::ostream &os, const Position& p);
+        friend std::ostream & operator<<(std::ostream &os, const Vector& p);
 };
 
 #endif /* SIM_POSITION_H */

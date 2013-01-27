@@ -2,21 +2,24 @@
 #define SIM_MOLECULE_H
 #include <map>
 
-#include "Position.h"
+#include "Vector.h"
 #include "Translation.h"
+#include "CairoColor.h"
 
 class Molecule {
 private:
-	Position pos;
-	float radius;
-	std::map<long, Position> histogram;
+	Vector p;
+	float r;
+	std::map<long, Vector> h;
+	CairoColor c;
 public:
-	Molecule(Position p, float r);
-	float get_radius();
-	Position get_position();
-	std::map<long, Position> get_histogram();
+	Molecule(Vector position, float radius, CairoColor color);
+	float radius();
+	Vector position();
+	std::map<long, Vector> histogram();
 	void move(long time, Translation t);
-	void print_position();	
+	void print_position();
+	CairoColor* color();
 };
 
 #endif /* SIM_MOLECULE_H */

@@ -7,7 +7,7 @@
 #include <gtk/gtk.h>
 
 #include "Molecule.h"
-#include "Position.h"
+#include "Vector.h"
 #include "BrownianMotion.h"
 
 using namespace std;
@@ -46,24 +46,19 @@ time_handler(GtkWidget *widget)
 	}
 }
 
-// static void do_drawing_molecule(cairo_t *cr, Molecule* m, Position* origin)
-// {
-// 	cairo_identity_matrix(cr);
-// 	cairo_translate(cr, origin->x + m->get_position().x, origin->y + m->get_position().y);
-// 	cairo_arc(cr, 0, 0, 1, 0, 2 * M_PI);
-// 	cairo_fill(cr);
-// }
-
-static void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Position* origin, long t)
+static void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, long t)
 {
-//	Position p = m->get_histogram().at(t);
-	map<long, Position>h = m->get_histogram();
-	map<long, Position>::iterator pit = h.find(t);
+//	Vector p = m->get_histogram().at(t);
+	map<long, Vector>h = m->histogram();
+	map<long, Vector>::iterator pit = h.find(t);
 	if (pit == h.end())
 		return;
+	
+	cairo_set_source_rgb(cr,m->color()->red(), m->color()->green(), m->color()->blue());
+
 	cairo_identity_matrix(cr);
 	cairo_translate(cr, origin->x + pit->second.x, origin->y + pit->second.y);
-	cairo_arc(cr, 0, 0, 1, 0, 2 * M_PI);
+	cairo_arc(cr, 0, 0, 3, 0, 2 * M_PI);
 	cairo_fill(cr);
 }
 
@@ -78,124 +73,49 @@ static void do_drawing(cairo_t *cr, GtkWidget* widget)
 	gtk_window_get_size(GTK_WINDOW(win), &width, &height);
   
 	
-	Position origin(width/2, height/2, 0);
+	Vector origin(width/2, height/2, 0);
 
-	cairo_set_line_width(cr, 3);  
+	cairo_set_line_width(cr, 3); 
 	cairo_set_source_rgb(cr, 0 ,0, 0.69);
 	cairo_translate(cr, origin.x, origin.y);
 	cairo_arc(cr, 0, 0, 3, 0, 2 * M_PI);
 	cairo_fill(cr);
 
 	for (vector<Molecule>::iterator it = molecules.begin(); it != molecules.end(); it++) {
+		cairo_identity_matrix(cr);
+		cairo_translate(cr, origin.x, origin.y);
 
 		cairo_set_line_width(cr, 1);  
 		cairo_set_source_rgb(cr, 0 , 0.69, 0);
 
-		std::map<long, Position> h = it->get_histogram();
-		std::map<long, Position>::iterator phit = h.begin();
-		std::map<long, Position>::iterator hit = ++h.begin();
+		std::map<long, Vector> h = it->histogram();
+		std::map<long, Vector>::iterator phit = h.begin();
+		std::map<long, Vector>::iterator hit = ++h.begin();
 		for ( ; hit != h.end(); hit++, phit++)
 		{
 			cairo_move_to(cr, phit->second.x , phit->second.y);
 			cairo_line_to(cr, hit->second.x , hit->second.y);
 			cairo_stroke(cr);
-		}
-		cairo_set_line_width(cr, 2);
-		cairo_set_source_rgb(cr, 0.69, 0.19, 0);
+		}		
+	}
+
+	for (vector<Molecule>::iterator it = molecules.begin(); it != molecules.end(); it++) {
+		// cairo_set_line_width(cr, 3);
 		do_drawing_molecule_at(cr, &(*it), &origin, tmp_time);
 	}
 	
 	tmp_time +=5;
 }
 
-static float squared_distance_between_points(Position p1, Position p2)
-{
-	return (p2.x-p1.x)*(p2.x-p1.x) + (p2.y-p1.y)*(p2.y-p1.y) + (p2.z-p1.z)*(p2.z-p1.z);
-}
-
-static float cos_at_ab(float a2, float b2, float c2, float ab)
-{
-	return (a2 + b2 - c2) / (2 * ab);
-}
-
-// Works for 0-180
-static bool acute_angle(float cos)
-{
-	return cos > 0;
-}
-
-Position cross_product(Position a, Position b, Position c)
-{
-	// here Sosition should be replaced by Vector
-	Position v(a.x - c.x, a.y - c.y, a.z - c.z);
-	Position w(b.x - c.x, b.y - c.y, b.z - c.z);
-		
-	return Position(v.y*w.z - w.y*v.z, w.x*v.z - v.x*w.z, v.x*w.y - w.x*v.y);
-}
-
-// http://kb.komires.net/article.php?id=2
-// http://pl.wikipedia.org/wiki/Iloczyn_wektorowy
-// http://www.matematyka.pl/47774.htm
-static float triangle_area(Position a, Position b, Position c)
-{
-	Position axb = cross_product(a, b, c);
-	//cout << a << b << c << axb;
-	float area = 0.5 * sqrt( squared_distance_between_points(Position(0,0,0), axb) );
-	return area;		
-}
-
-// http://stackoverflow.com/questions/2062286/testing-whether-a-line-segment-intersects-a-sphere
-// -> http://www.matematyka.pl/250033.htm
-static bool segment_line_sphere_intersect(Position p1, Position p2, Position s, float r)
-{
-
-	float sq_p1_to_s = squared_distance_between_points(p1, s);
-	float sq_p2_to_s = squared_distance_between_points(p2, s);
-	float sq_p1_to_p2 = squared_distance_between_points(p1, p2);
-	float p1_to_p2 = sqrt( sq_p1_to_p2 );
-	float p1_to_s = sqrt( sq_p1_to_s );
-	float p2_to_s = sqrt( sq_p2_to_s );
-
-
-	float cos_p1 = cos_at_ab(sq_p1_to_s, sq_p1_to_p2, sq_p2_to_s, p1_to_p2 * p1_to_s );
-	float cos_p2 = cos_at_ab(sq_p2_to_s, sq_p1_to_p2, sq_p1_to_s, p1_to_p2 * p2_to_s );
-
-	cout << cos_p1 << " " << acos(cos_p1) * 360 / 2 / M_PI << " " << acute_angle(cos_p1) << endl;
-	cout << cos_p2 << " " << acos(cos_p2) * 360 / 2 / M_PI << " " << acute_angle(cos_p2) << endl;
-
-	// maybe move this before 
-	if ( acute_angle(cos_p1) )
-	{
-		if (sq_p1_to_s < r*r)
-			return true;
-	}
-
-	if ( acute_angle(cos_p2) )
-	{
-		if (sq_p2_to_s < r*r)
-			return true;
-	}
-	
-	if ( acute_angle(cos_p1) && acute_angle(cos_p2) )
-	{
-		// procedure for intersection
-		if ( 2 * triangle_area(p1, p2, s) / p1_to_p2 < r)
-			return true;
-	}
-	
-	return false;
-	
-	
-}
 
 void simulate()
 {
 	cout << "Starting simulation" << endl;
 	BrownianMotion bm;
-	Position p(0, 0, 0);
+	Vector p(0, 0, 0);
 	for (int i = 0; i < NUMBER_OF_MOLECULES; i++)
 	{
-		molecules.push_back(Molecule(p, 1));
+		molecules.push_back(Molecule(p, 1, CairoColor(0.69, 0.19, 0)));
 	}
 	
 
