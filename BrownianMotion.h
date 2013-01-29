@@ -9,6 +9,7 @@ private:
 public:
 	BrownianMotion();
 	Vector get_move();
+	Vector get_move(float scaler);
 };
 
 #endif /* SIM_BROWNIAN_MOTION_H */

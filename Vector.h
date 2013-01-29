@@ -12,6 +12,8 @@ public:
 
 	void translate(Vector* t);
 
+	Vector& operator+=(const Vector& v);
+
 private:
         friend std::ostream & operator<<(std::ostream &os, const Vector& p);
 };

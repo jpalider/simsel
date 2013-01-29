@@ -5,6 +5,9 @@
 
 #include "Vector.h"
 #include "CairoColor.h"
+#include "Molecule.h"
+
+class Molecule;
 
 class Cell
 {
@@ -12,12 +15,15 @@ private:
 	Vector p;
 	float r;
 	CairoColor c;
+	long id;
 public:
-	Cell(Vector position, float radius, CairoColor color);
+	Cell(long identifier, Vector position, float radius, CairoColor color);
+
 	float radius();
 	const Vector* position() const;
-	void move(long time, Vector t);
 	CairoColor* color();
+
+	void collide(Molecule *m);
 
 private:
         friend std::ostream & operator<<(std::ostream &os, const Cell& c);

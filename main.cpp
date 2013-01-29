@@ -1,10 +1,12 @@
 /**
  * TODO:
  * - releasing molecule not a point but a sphere
- * - add sender/recevier cell
- * 
- *
- *
+ * + add sender/recevier cell
+ * - serialising (protocol buffer?)
+ * - configuration
+ * - logging
+ * - test / verification
+ * - simulation and gui shall be separated entities
  */
 
 #include <iostream>
@@ -19,6 +21,7 @@
 #include "Vector.h"
 #include "BrownianMotion.h"
 #include "Simulation.h"
+#include "Cell.h"
 
 using namespace std;
 
@@ -26,11 +29,12 @@ int NUMBER_OF_MOLECULES = 10;
 int NUMBER_OF_ITERATIONS = 50;
 
 vector<Molecule> molecules;
+vector<Cell> transmit_cells;
+vector<Cell> receive_cells;
 
+void do_drawing(cairo_t *, GtkWidget* widget);
 
-static void do_drawing(cairo_t *, GtkWidget* widget);
-
-static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, 
+gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, 
     gpointer user_data)
 {      
   cr = gdk_cairo_create(gtk_widget_get_window(widget));
@@ -40,7 +44,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr,
   return FALSE;
 }
 
-static gboolean
+gboolean
 time_handler(GtkWidget *widget)
 {
 	static int counter = 0;	
@@ -56,9 +60,19 @@ time_handler(GtkWidget *widget)
 	}
 }
 
-static void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, long t)
+void do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
 {
-//	Vector p = m->get_histogram().at(t);
+	cairo_set_source_rgb(cr,c->color()->red(), c->color()->green(), c->color()->blue());
+
+	cairo_identity_matrix(cr);
+	cairo_translate(cr, origin->x + c->position()->x, origin->y + c->position()->y);
+	cairo_arc(cr, 0, 0, c->radius(), 0, 2 * M_PI);
+	cairo_fill(cr);
+
+}
+
+void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, long t)
+{
 	const map<long, Vector>* h = m->histogram();
 	map<long, Vector>::const_iterator pit = h->find(t);
 	if (pit == h->end())
@@ -72,7 +86,7 @@ static void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, lon
 	cairo_fill(cr);
 }
 
-static void do_drawing(cairo_t *cr, GtkWidget* widget)
+void do_drawing(cairo_t *cr, GtkWidget* widget)
 {
 	cout << "do_drawing" << endl;
 	static int tmp_time = 0;
@@ -88,9 +102,13 @@ static void do_drawing(cairo_t *cr, GtkWidget* widget)
 	cairo_set_line_width(cr, 3); 
 	cairo_set_source_rgb(cr, 0 ,0, 0.69);
 	cairo_translate(cr, origin.x, origin.y);
-	cairo_arc(cr, 0, 0, 3, 0, 2 * M_PI);
+	cairo_arc(cr, 0, 0, 2, 0, 2 * M_PI);
 	cairo_fill(cr);
 
+	for (vector<Cell>::iterator it = receive_cells.begin(); it != receive_cells.end(); it++) {
+		do_drawing_cell(cr, &(*it), &origin);
+	}
+	
 	for (vector<Molecule>::iterator it = molecules.begin(); it != molecules.end(); it++) {
 		cairo_identity_matrix(cr);
 		cairo_translate(cr, origin.x, origin.y);
@@ -110,31 +128,19 @@ static void do_drawing(cairo_t *cr, GtkWidget* widget)
 	}
 
 	for (vector<Molecule>::iterator it = molecules.begin(); it != molecules.end(); it++) {
-		// cairo_set_line_width(cr, 3);
 		do_drawing_molecule_at(cr, &(*it), &origin, tmp_time);
 	}
-	
+
 	tmp_time +=5;
 }
 
 
 static gpointer thread_func( gpointer data )
 {
-	Simulation::simulate(NUMBER_OF_MOLECULES, NUMBER_OF_ITERATIONS, &molecules);
+	Simulation::simulate(NUMBER_OF_MOLECULES, NUMBER_OF_ITERATIONS, &molecules, &receive_cells);
 	return NULL;
 }
 
-static float diffusion_coefficient(float temperature_K, float viscosity_eta, float diameter)
-{
-	static float k_b = 1.38E-10;
-	
-	return k_b * temperature_K / ( 3 * M_PI * diameter * viscosity_eta);
-}
-
-static float squared_displacement(int dimensions, float diffusion_coefficient, float tau )
-{
-	return 2 * dimensions * diffusion_coefficient * tau;
-}
 
 int main(int argc, char **argv) {
 	cout << "Welcome to the Sim" << endl;
@@ -158,7 +164,7 @@ int main(int argc, char **argv) {
 	
 	GtkWidget *window;
 	GtkWidget *darea;
-	GThread   *thread;
+	GThread *thread;
 	GError *error = NULL;
 	
 	gtk_init(&argc, &argv);

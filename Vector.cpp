@@ -23,3 +23,17 @@ std::ostream & operator<<(std::ostream &os, const Vector& v)
 {
 	return os << "(" << v.x << "," << v.y << "," << v.z << ")";
 }
+
+Vector& Vector::operator+=(const Vector& v)
+{
+	this->x += v.x;
+	this->y += v.y;
+	this->z += v.z;
+	return *this;
+}
+
+inline Vector operator+(Vector lhs, const Vector& rhs)
+{
+	  lhs += rhs;
+	  return lhs;
+}
