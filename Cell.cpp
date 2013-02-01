@@ -5,36 +5,32 @@
 #include "Vector.h"
 #include "Molecule.h"
 
-Cell::Cell(long identifier, Vector position, float radius, CairoColor color)
+Cell::Cell(long identifier, Vector position, float radius)
 {
-	id = identifier;
-	p = position;
-	c = color;
-	r = radius;
+	cid = identifier;
+	cposition = position;
+	cradius = radius;
+	cmolecules = new std::vector<Molecule*>();
 }
 
 float Cell::radius()
 {
-	return r;
+	return cradius;
 }
 
 const Vector* Cell::position() const
 {
-	return &p;
-}
-
-CairoColor* Cell::color()
-{
-	return &c;
+	return &cposition;
 }
 
 void Cell::collide(Molecule *m)
 {
 	std::cout << "Collided with molecule " << *m << std::endl;
+	cmolecules->push_back(m);
 }
 
 
 std::ostream & operator<<(std::ostream &os, const Cell& c)
 {
-	return os << "(" << c.position()->x << "," << c.position()->y << "," << c.position()->z << ")";
+	return os << "Cell_" << c.cid << " (" << c.position()->x << "," << c.position()->y << "," << c.position()->z << ")";
 }

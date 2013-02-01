@@ -12,18 +12,17 @@ class Cell;
 
 class Molecule {
 private:
-	Vector p;
-	Vector pp;
-	float r;
-	std::map<long, Vector> h;
-	CairoColor c;
-	long id;
+	Vector mposition;
+	Vector mpposition;
+	float mradius;
+	std::map<long, Vector> mhistogram;
+	long mid;
+	Cell* mcell;
 public:
-	Molecule(long identifier, Vector position, CairoColor color);
+	Molecule(long identifier, Vector position);
 
 	const Vector* position() const;
 	const std::map<long, Vector>* histogram() const;
-	CairoColor* color();
 
 	void move(long time, Vector t);
 	void check_collision(Cell *c);

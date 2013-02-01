@@ -9,16 +9,27 @@
 
 using namespace std;
 
-void Simulation::simulate(int nom, int noi, vector<Molecule>* molecules, vector<Cell>* recv_cells)
+Simulation::Simulation()
+{
+	sstarted = false;
+	sfinished = false;
+	stime = 0;
+}
+
+void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>* recv_cells)
 {
 	cout << "Starting simulation" << endl;
+	sstarted = true;
 	BrownianMotion bm;
 	Vector p(0, 0, 0);
+
+	// add molecules to the envirnment
 	for (int i = 0; i < nom; i++)
 	{
-		molecules->push_back(Molecule(-1, p, CairoColor(0.79f, 0.39f, 0.19f)));
+		molecules->push_back(Molecule(-1, p));
 	}
 
+	// preparation of recevie cells
 	for (int i = 1; i < 4; i++)
 	{
 		Vector cp(0,0,0);
@@ -26,22 +37,45 @@ void Simulation::simulate(int nom, int noi, vector<Molecule>* molecules, vector<
 		{			
 			cp += bm.get_move();
 		}
-		recv_cells->push_back(Cell(i, cp, 14, CairoColor(0.19, 0.69, 0)));
+		recv_cells->push_back(Cell(i, cp, 14));
 		cout << "cell pos: " << cp << " ";
 	}
 	cout << endl;
 
-	long sim_time = 0;
+
+	// perform simulation iterations
 	for (int i = 0; i < noi; i++)
 	{
-		sim_time += 5;
+		stime += 1;
+		// for all molecules perform their action
 		for (vector<Molecule>::iterator mit = molecules->begin(); mit != molecules->end(); ++mit) {
-			mit->move(sim_time, bm.get_move(300));
+			mit->move(stime, bm.get_move(300));
 			for (vector<Cell>::iterator cit = recv_cells->begin(); cit != recv_cells->end(); ++cit) {
 				mit->check_collision(&(*cit));
 			}
 		}
 	}
+	sfinished = true;
 	cout << "Simulation finished." << endl;
 	
+}
+
+bool Simulation::running()
+{
+	return sstarted && !sfinished;
+}
+
+bool Simulation::started()
+{
+	return sstarted;
+}
+
+bool Simulation::finished()
+{
+	return sfinished;
+}
+
+long Simulation::time()
+{
+	return stime;
 }

@@ -9,8 +9,16 @@
 
 class Simulation
 {
+	bool sstarted;
+	bool sfinished;
+	long stime;
 public:
-	static void simulate(int nom, int noi, std::vector<Molecule>* molecules, std::vector<Cell>* recv_cells);
+	Simulation();
+	void run(int nom, int noi, std::vector<Molecule>* molecules, std::vector<Cell>* recv_cells);
+	bool running();
+	bool started();
+	bool finished();
+	long time();
 };
 
 #endif /* SIM_SIMULATION_H */
