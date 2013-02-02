@@ -109,7 +109,7 @@ namespace trivial_logger
 #define STR(s) #s
 
 #define MAX(x,y) ( (x) < (y) ? (y) : (x) )
-
+	
 	namespace detail
 	{
 		/// Function paste rhs C string to the lhs C string.
@@ -220,21 +220,23 @@ namespace trivial_logger
 			return ( x < y ? y : x );
 		}
 
-		char_type const tlogfilename[] get_xstr()
+		typedef char char_type;
+		
+		const char_type* get_xstr()
 		{
 			return XSTR(FTLOG);
 		}
+
 		// extension C string
-		char_type const ext[] get_ext()
+		const char_type* get_ext()
 		{
 			return ".log";
 		}
 
-		char_type const helper_name[] get_logger_file_name()
+		const char_type* get_logger_file_name()
 		{
 			return "_logger.log";
 		}
-
 
 	} // namespace detail
 
@@ -242,11 +244,11 @@ namespace trivial_logger
 
 	// convert definition of the TLOGFILE
 	// to the C string
-	char_type const tlogfilename[] = detail::get_xstr();
+	const char_type *tlogfilename = detail::get_xstr();
 	// extension C string
-	char_type const ext[] = detail::get_ext();
+	const char_type *ext = detail::get_ext();
 
-	char_type const helper_name[] = detail::get_logger_file_name();
+	const char_type  *helper_name = detail::get_logger_file_name();
 
 	// container for final file name
 	char_type filename[(MAX(sizeof(tlogfilename),sizeof(helper_name))+sizeof(ext))/sizeof(char_type)];
@@ -269,7 +271,7 @@ namespace trivial_logger
 	{ 
 		detail::tri_logger_impl::outstream_helper_ptr_.reset( new ::std::ofstream ( filename ));
 		// set pointer output stream
-		detail::tri_logger_impl::outstream_ = outstream_helper_ptr_.get();
+		detail::tri_logger_impl::outstream_ = detail::tri_logger_impl::outstream_helper_ptr_.get();
 	}
 
 	// here is a place for user defined output stream and flag
