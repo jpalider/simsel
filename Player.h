@@ -1,19 +1,33 @@
 #ifndef SIM_PLAYER_H
 #define SIM_PLAYER_H
 
+#include <cairo.h>
+#include <libconfig.h++>
+#include <gtk/gtk.h>
+
 #include "CairoColor.h"
 #include "Molecule.h"
 #include "Cell.h"
 #include "Simulation.h"
+#include "Vector.h"
 
 class Player
 {
 private:
 	CairoColor pmcolor;
-	CairoColor pccolor;
+	CairoColor pmccolor;
+	CairoColor pmtcolor;
+	CairoColor prcolor;
+	CairoColor ptcolor;
+
+	int pmradius;
+	int ptradius;
+	int prradius;
+
 	Simulation* psimulation;
 	long ptime;
 	float pfps;
+	libconfig::Config cfg;
 
 public:
 	Player(Simulation* simulation);
