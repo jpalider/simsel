@@ -1,11 +1,15 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
+#include <string>
+#include <libconfig.h++>
 
 #include "Simulation.h"
 #include "BrownianMotion.h"
 #include "Vector.h"
 #include "Molecule.h"
 #include "CairoColor.h"
+#include "tri_logger/tri_logger.hpp"
 
 using namespace std;
 
@@ -18,7 +22,11 @@ Simulation::Simulation()
 
 void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>* recv_cells)
 {
-	cout << "Starting simulation" << endl;
+	TRI_LOG_STR("Starting simulation");
+
+	libconfig::Config cfg;
+	cfg.readFile("cfg/Simulation.cfg");
+	string description = cfg.lookup("description");
 	sstarted = true;
 	BrownianMotion bm;
 	Vector p(0, 0, 0);
@@ -30,17 +38,24 @@ void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>
 	}
 
 	// preparation of recevie cells
-	for (int i = 1; i < 4; i++)
+	int cells_no = cfg.lookup("simulation.cells").getLength();
+	TRI_LOG(cells_no);
+
+	for (int i = 0; i < cells_no; i++)
 	{
-		Vector cp(0,0,0);
-		for (int m = 0; m < 17; m++)
-		{			
-			cp += bm.get_move();
-		}
+		stringstream ss;
+		ss << i;
+		string prefix = string("simulation.cells.[") + ss.str() + string("].pos.");
+		string param_x = prefix + string("x");
+		string param_y = prefix + string("y");
+		string param_z = prefix + string("z");
+		float x = cfg.lookup(param_x);
+		float y = cfg.lookup(param_y);
+		float z = cfg.lookup(param_z);
+		Vector cp(x, y, z);
 		recv_cells->push_back(Cell(i, cp, 14));
-		cout << "cell pos: " << cp << " ";
+		TRI_LOG_STR("cell pos" << cp);
 	}
-	cout << endl;
 
 
 	// perform simulation iterations
@@ -56,7 +71,7 @@ void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>
 		}
 	}
 	sfinished = true;
-	cout << "Simulation finished." << endl;
+	TRI_LOG_STR("Finished simulation");
 	
 }
 
