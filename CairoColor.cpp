@@ -7,12 +7,12 @@ CairoColor::CairoColor()
 	cblue = 0.f;
 }
 
-CairoColor::CairoColor(float r, float g, float b)
-{
-	cred = r;
-	cgreen = g;
-	cblue = b;
-}
+// CairoColor::CairoColor(float r, float g, float b)
+// {
+// 	cred = r;
+// 	cgreen = g;
+// 	cblue = b;
+// }
 
 CairoColor::CairoColor(int r, int g, int b)
 {

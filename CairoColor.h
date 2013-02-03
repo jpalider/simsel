@@ -9,7 +9,7 @@ private:
 	float cblue;
 public:
 	CairoColor();
-	CairoColor(float r, float g, float b);
+	/* CairoColor(float r, float g, float b); */
 	CairoColor(int r, int g, int b);
 	float red();
 	float green();
