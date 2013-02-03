@@ -33,15 +33,15 @@ void Molecule::move(long time, Vector t)
 	mhistogram.insert( std::pair<long,Vector>(time, mposition) );
 }
 
-void Molecule::check_collision(Cell *c)
+bool Molecule::check_collision(Cell *c)
 {
 	if ( segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius()) )
 	{
 		c->collide(this);
 		this->mcell = c;
 	}
+	return mcell != NULL;
 }
-
 
 std::ostream & operator<<(std::ostream &os, const Molecule& m)
 {

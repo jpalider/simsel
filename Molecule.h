@@ -18,6 +18,7 @@ private:
 	std::map<long, Vector> mhistogram;
 	long mid;
 	Cell* mcell;
+
 public:
 	Molecule(long identifier, Vector position);
 
@@ -25,8 +26,8 @@ public:
 	const std::map<long, Vector>* histogram() const;
 
 	void move(long time, Vector t);
-	void check_collision(Cell *c);
-		
+	bool check_collision(Cell *c);
+
 private:
 	friend std::ostream & operator<<(std::ostream &os, const Molecule& m);
 
