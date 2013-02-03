@@ -45,5 +45,5 @@ void Molecule::check_collision(Cell *c)
 
 std::ostream & operator<<(std::ostream &os, const Molecule& m)
 {
-	return os << "Molecule_" << m.mid << " (" << m.position()->x << "," << m.position()->y << "," << m.position()->z << ")";
+	return os << "Molecule:" << m.mid << " (" << m.position()->x << "," << m.position()->y << "," << m.position()->z << ")";
 }

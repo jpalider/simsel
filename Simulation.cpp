@@ -34,7 +34,7 @@ void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>
 	// add molecules to the envirnment
 	for (int i = 0; i < nom; i++)
 	{
-		molecules->push_back(Molecule(-1, p));
+		molecules->push_back(Molecule(i, p));
 	}
 
 	// preparation of recevie cells
@@ -45,15 +45,17 @@ void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>
 	{
 		stringstream ss;
 		ss << i;
-		string prefix = string("simulation.cells.[") + ss.str() + string("].pos.");
-		string param_x = prefix + string("x");
-		string param_y = prefix + string("y");
-		string param_z = prefix + string("z");
+		string prefix = string("simulation.cells.[") + ss.str() + string("].");
+		string param_x = prefix + string("pos.x");
+		string param_y = prefix + string("pos.y");
+		string param_z = prefix + string("pos.z");
 		float x = cfg.lookup(param_x);
 		float y = cfg.lookup(param_y);
 		float z = cfg.lookup(param_z);
 		Vector cp(x, y, z);
-		recv_cells->push_back(Cell(i, cp, 14));
+		int id = cfg.lookup(prefix + string("id"));
+		float radius = cfg.lookup(prefix + string("radius"));
+		recv_cells->push_back(Cell(id, cp, 14));
 		TRI_LOG_STR("cell pos" << cp);
 	}
 
