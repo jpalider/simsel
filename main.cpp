@@ -22,15 +22,10 @@
 #include "BrownianMotion.h"
 #include "Simulation.h"
 #include "Cell.h"
+#include "tri_logger/tri_logger.hpp"
+
 
 using namespace std;
-
-int NUMBER_OF_MOLECULES = 10;
-int NUMBER_OF_ITERATIONS = 50;
-
-vector<Molecule> molecules;
-vector<Cell> transmit_cells;
-vector<Cell> receive_cells;
 
 static CairoColor mcolor(0.79f, 0.39f, 0.19f);
 static CairoColor ccolor(0.19, 0.69, 0);
@@ -61,7 +56,7 @@ time_handler(GtkWidget *widget)
 		return true;
 	}
 
-	if (vistime > s->time())
+	if (vistime + 1 > s->time())
 	{
 		if (s->finished())
 		{
@@ -71,7 +66,6 @@ time_handler(GtkWidget *widget)
 	}
 
 	vistime++;
-	//time++;
 	gtk_widget_queue_draw(widget);
 	return true;
 }
@@ -157,12 +151,12 @@ void do_drawing(cairo_t *cr, GtkWidget* widget)
 	cairo_fill(cr);
 
 	// draw static cells
-	for (vector<Cell>::iterator it = receive_cells.begin(); it != receive_cells.end(); it++) {
+	for (vector<Cell>::iterator it = s->receivers()->begin(); it != s->receivers()->end(); it++) {
 		do_drawing_cell(cr, &(*it), &origin);
 	}
 
 	// draw molecules
-	for (vector<Molecule>::iterator it = molecules.begin(); it != molecules.end(); it++) {
+	for (vector<Molecule>::iterator it = s->molecules()->begin(); it != s->molecules()->end(); it++) {
 		do_drawing_molecule_with_tail_at(cr, &(*it), &origin, vistime);
 	}
 }
@@ -170,23 +164,17 @@ void do_drawing(cairo_t *cr, GtkWidget* widget)
 
 static gpointer thread_func( gpointer data )
 {
-	s->run(NUMBER_OF_MOLECULES, NUMBER_OF_ITERATIONS, &molecules, &receive_cells);
+	s->run();
 	return NULL;
 }
 
-
 int main(int argc, char **argv) {
-	cout << "Welcome to the Sim" << endl;
+	TRI_LOG("Welcome to the Sim");
 
-	if (argc > 1)
-	{
-		NUMBER_OF_MOLECULES = atoi(argv[1]);
-	}
-	
-	if (argc > 2)
-	{
-		NUMBER_OF_ITERATIONS = atoi(argv[2]);;
-	}
+	// if (argc > 1)
+	// {
+	// 	NUMBER_OF_MOLECULES = atoi(argv[1]);
+	// }
 
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );
@@ -218,7 +206,6 @@ int main(int argc, char **argv) {
 
 	g_timeout_add(10*300, (GSourceFunc) time_handler, (gpointer) window);
 
-
 	s = new Simulation();
 	thread = g_thread_create( thread_func, NULL, FALSE, &error );
 	if( ! thread )
@@ -226,15 +213,12 @@ int main(int argc, char **argv) {
 		g_print( "Error: %s\n", error->message );
 		return( -1 );
 	}
-
-	
 	
 	gtk_widget_show_all(window);
 
 	gtk_main();
 
 	gdk_threads_leave();
-
 
 	return 0;
 }

@@ -5,7 +5,6 @@
 #include <libconfig.h++>
 
 #include "Simulation.h"
-#include "BrownianMotion.h"
 #include "Vector.h"
 #include "Molecule.h"
 #include "CairoColor.h"
@@ -18,29 +17,26 @@ Simulation::Simulation()
 	sstarted = false;
 	sfinished = false;
 	stime = 0;
-}
 
-void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>* recv_cells)
-{
-	TRI_LOG_STR("Starting simulation");
+	smolecules = new std::vector<Molecule>();
+	sreceivers = new std::vector<Cell>();
+	stransmitters = new std::vector<Cell>();
 
-	libconfig::Config cfg;
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
-	sstarted = true;
-	BrownianMotion bm;
-	Vector p(0, 0, 0);
+	TRI_LOG_STR("Simulation:\n" << description << "\n");
 
-	// add molecules to the envirnment
+	TRI_LOG_STR("Sim: add molecules to the environment");
+	int nom = cfg.lookup("simulation.molecules.number");
+	Vector p(0, 0, 0);
 	for (int i = 0; i < nom; i++)
 	{
-		molecules->push_back(Molecule(i, p));
+		smolecules->push_back(Molecule(i, p));
 	}
 
-	// preparation of recevie cells
+	TRI_LOG_STR("Sim: load receivers configuration");
+	
 	int cells_no = cfg.lookup("simulation.cells").getLength();
-	TRI_LOG(cells_no);
-
 	for (int i = 0; i < cells_no; i++)
 	{
 		stringstream ss;
@@ -55,19 +51,28 @@ void Simulation::run(int nom, int noi, vector<Molecule>* molecules, vector<Cell>
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
 		float radius = cfg.lookup(prefix + string("radius"));
-		recv_cells->push_back(Cell(id, cp, 14));
+		sreceivers->push_back(Cell(id, cp, radius));
 		TRI_LOG_STR("cell pos" << cp);
 	}
 
+	duration = cfg.lookup("simulation.duration");
+}
 
-	// perform simulation iterations
-	for (int i = 0; i < noi; i++)
+void Simulation::run()
+{
+	sstarted = true;
+
+
+	TRI_LOG_STR("Starting simulation");
+	// for (int i = 0; i < duration; i++) 
+	while (stime < duration)
 	{
 		stime += 1;
+		
 		// for all molecules perform their action
-		for (vector<Molecule>::iterator mit = molecules->begin(); mit != molecules->end(); ++mit) {
+		for (vector<Molecule>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit) {
 			mit->move(stime, bm.get_move(300));
-			for (vector<Cell>::iterator cit = recv_cells->begin(); cit != recv_cells->end(); ++cit) {
+			for (vector<Cell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
 				mit->check_collision(&(*cit));
 			}
 		}
@@ -95,4 +100,19 @@ bool Simulation::finished()
 long Simulation::time()
 {
 	return stime;
+}
+
+vector<Molecule>* Simulation::molecules()
+{
+	return smolecules;
+}
+
+vector<Cell>* Simulation::receivers()
+{
+	return sreceivers;
+}
+
+vector<Cell>* Simulation::transmitters()
+{
+	return stransmitters;
 }
