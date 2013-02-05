@@ -1,12 +1,8 @@
 /**
  * TODO:
- * - releasing molecule not a point but a sphere
- * + add sender/recevier cell
+ * ? releasing molecule not a point but a sphere
  * - serialising (protocol buffer?)
- * - configuration
- * - logging
  * - test / verification
- * - simulation and gui shall be separated entities
  */
 
 #include <iostream>
