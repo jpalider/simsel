@@ -49,7 +49,7 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr,
 gboolean
 time_handler(GtkWidget *widget)
 {
-	cout << vistime << " " << s->time() << endl;
+	//cout << vistime << " " << s->time() << endl;
 	if (!s->started())
 	{
 		return true;
@@ -77,7 +77,8 @@ static gpointer thread_func( gpointer data )
 	return NULL;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	TRI_LOG("Welcome to the Sim");
 
 	// if (argc > 1)
@@ -91,12 +92,12 @@ int main(int argc, char **argv) {
 	gdk_threads_init();
 
 	gdk_threads_enter();
-	
+
 	GtkWidget *window;
 	GtkWidget *darea;
 	GThread *thread;
 	GError *error = NULL;
-	
+
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -113,10 +114,10 @@ int main(int argc, char **argv) {
 	gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
 	gtk_window_set_title(GTK_WINDOW(window), "Sim");
 
-	g_timeout_add(10*300, (GSourceFunc) time_handler, (gpointer) window);
-
 	s = new Simulation();
 	p = new Player(s);
+
+	g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
 
 	thread = g_thread_create( thread_func, NULL, FALSE, &error );
 	if( ! thread )
@@ -124,7 +125,7 @@ int main(int argc, char **argv) {
 		g_print( "Error: %s\n", error->message );
 		return( -1 );
 	}
-	
+
 	gtk_widget_show_all(window);
 
 	gtk_main();
