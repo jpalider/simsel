@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 #include <libconfig.h++>
+#include <ctime>
+#include <cstdlib>
+
 
 #include "Simulation.h"
 #include "Vector.h"
@@ -27,6 +30,10 @@ Simulation::Simulation()
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
 	TRI_LOG_STR("Simulation:\n" << description);
+
+	int repetitive = cfg.lookup("simulation.repetitive");
+	long seed = repetitive ? 1 : std::time(NULL);
+	srand(seed);
 
 	TRI_LOG_STR("Sim: add molecules to the environment");
 	int nom = cfg.lookup("simulation.molecules.number");
