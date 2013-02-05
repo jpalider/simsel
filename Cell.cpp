@@ -10,7 +10,6 @@ Cell::Cell(long identifier, Vector position, float radius)
 	cid = identifier;
 	cposition = position;
 	cradius = radius;
-	cmolecules = new std::vector<Molecule*>();
 }
 
 float Cell::radius()
@@ -21,12 +20,6 @@ float Cell::radius()
 const Vector* Cell::position() const
 {
 	return &cposition;
-}
-
-void Cell::collide(Molecule *m)
-{
-	std::cout << "Collided with molecule " << *m << std::endl;
-	cmolecules->push_back(m);
 }
 
 

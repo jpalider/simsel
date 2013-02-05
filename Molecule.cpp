@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Molecule.h"
-#include "Cell.h"
+#include "RCell.h"
 #include "Math.h"
 
 using namespace std;
@@ -33,7 +33,7 @@ void Molecule::move(long time, Vector t)
 	mhistogram.insert( std::pair<long,Vector>(time, mposition) );
 }
 
-bool Molecule::check_collision(Cell *c)
+bool Molecule::check_collision(RCell *c)
 {
 	if ( segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius()) )
 	{

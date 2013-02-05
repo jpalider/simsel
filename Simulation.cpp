@@ -8,6 +8,8 @@
 #include "Vector.h"
 #include "Molecule.h"
 #include "CairoColor.h"
+#include "RCell.h"
+#include "TCell.h"
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
@@ -19,12 +21,12 @@ Simulation::Simulation()
 	stime = 0;
 
 	smolecules = new std::vector<Molecule>();
-	sreceivers = new std::vector<Cell>();
-	stransmitters = new std::vector<Cell>();
+	sreceivers = new std::vector<RCell>();
+	stransmitters = new std::vector<TCell>();
 
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
-	TRI_LOG_STR("Simulation:\n" << description << "\n");
+	TRI_LOG_STR("Simulation:\n" << description);
 
 	TRI_LOG_STR("Sim: add molecules to the environment");
 	int nom = cfg.lookup("simulation.molecules.number");
@@ -34,14 +36,14 @@ Simulation::Simulation()
 		smolecules->push_back(Molecule(i, p));
 	}
 
+	int cells_no = 0;
 	TRI_LOG_STR("Sim: load receivers configuration");
-	
-	int cells_no = cfg.lookup("simulation.cells").getLength();
+	cells_no = cfg.lookup("simulation.rcells").getLength();
 	for (int i = 0; i < cells_no; i++)
 	{
 		stringstream ss;
 		ss << i;
-		string prefix = string("simulation.cells.[") + ss.str() + string("].");
+		string prefix = string("simulation.rcells.[") + ss.str() + string("].");
 		string param_x = prefix + string("pos.x");
 		string param_y = prefix + string("pos.y");
 		string param_z = prefix + string("pos.z");
@@ -51,10 +53,31 @@ Simulation::Simulation()
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
 		float radius = cfg.lookup(prefix + string("radius"));
-		sreceivers->push_back(Cell(id, cp, radius));
-		TRI_LOG_STR("cell pos" << cp);
+		sreceivers->push_back(RCell(id, cp, radius));
+		TRI_LOG_STR("rcell pos" << cp);
 	}
 
+	TRI_LOG_STR("Sim: load transmitters configuration");
+	cells_no = cfg.lookup("simulation.tcells").getLength();
+	for (int i = 0; i < cells_no; i++)
+	{
+		stringstream ss;
+		ss << i;
+		string prefix = string("simulation.tcells.[") + ss.str() + string("].");
+		string param_x = prefix + string("pos.x");
+		string param_y = prefix + string("pos.y");
+		string param_z = prefix + string("pos.z");
+		float x = cfg.lookup(param_x);
+		float y = cfg.lookup(param_y);
+		float z = cfg.lookup(param_z);
+		Vector cp(x, y, z);
+		int id = cfg.lookup(prefix + string("id"));
+		float radius = cfg.lookup(prefix + string("radius"));
+		stransmitters->push_back(TCell(id, cp, radius));
+		TRI_LOG_STR("tcell pos" << cp);
+	}
+
+	TRI_LOG_STR("Sim: load duration");
 	duration = cfg.lookup("simulation.duration");
 }
 
@@ -72,7 +95,7 @@ void Simulation::run()
 		// for all molecules perform their action
 		for (vector<Molecule>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit) {
 			mit->move(stime, bm.get_move(300));
-			for (vector<Cell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
+			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
 				mit->check_collision(&(*cit));
 			}
 		}
@@ -107,12 +130,12 @@ vector<Molecule>* Simulation::molecules()
 	return smolecules;
 }
 
-vector<Cell>* Simulation::receivers()
+vector<RCell>* Simulation::receivers()
 {
 	return sreceivers;
 }
 
-vector<Cell>* Simulation::transmitters()
+vector<TCell>* Simulation::transmitters()
 {
 	return stransmitters;
 }

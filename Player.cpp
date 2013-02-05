@@ -129,7 +129,7 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	cairo_fill(cr);
 
 	// draw static cells
-	for (vector<Cell>::iterator it = psimulation->receivers()->begin(); it != psimulation->receivers()->end(); it++)
+	for (vector<RCell>::iterator it = psimulation->receivers()->begin(); it != psimulation->receivers()->end(); it++)
 	{
 		do_drawing_cell(cr, &(*it), &origin);
 	}

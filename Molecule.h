@@ -5,10 +5,9 @@
 #include <iostream>
 
 #include "Vector.h"
-#include "CairoColor.h"
-#include "Cell.h"
+#include "RCell.h"
 
-class Cell;
+class RCell;
 
 class Molecule {
 private:
@@ -17,7 +16,7 @@ private:
 	float mradius;
 	std::map<long, Vector> mhistogram;
 	long mid;
-	Cell* mcell;
+	RCell* mcell;
 
 public:
 	Molecule(long identifier, Vector position);
@@ -26,7 +25,7 @@ public:
 	const std::map<long, Vector>* histogram() const;
 
 	void move(long time, Vector t);
-	bool check_collision(Cell *c);
+	bool check_collision(RCell *c);
 
 private:
 	friend std::ostream & operator<<(std::ostream &os, const Molecule& m);

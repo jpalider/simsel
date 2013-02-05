@@ -6,7 +6,8 @@
 #include <libconfig.h++>
 
 #include "Molecule.h"
-#include "Cell.h"
+#include "RCell.h"
+#include "TCell.h"
 #include "BrownianMotion.h"
 
 class Simulation
@@ -18,11 +19,10 @@ private:
 	long duration;
 	
 	std::vector<Molecule>* smolecules;
-	std::vector<Cell>* sreceivers;
-	std::vector<Cell>* stransmitters;
+	std::vector<RCell>* sreceivers;
+	std::vector<TCell>* stransmitters;
 
 	BrownianMotion bm;
-//	Vector p(0, 0, 0);
 
 	libconfig::Config cfg;
 
@@ -35,8 +35,8 @@ public:
 	long time();
 
 	std::vector<Molecule>* molecules();
-	std::vector<Cell>* receivers();	
-	std::vector<Cell>* transmitters();
+	std::vector<RCell>* receivers();
+	std::vector<TCell>* transmitters();
 };
 
 #endif /* SIM_SIMULATION_H */
