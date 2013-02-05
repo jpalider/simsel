@@ -19,4 +19,8 @@ float diffusion_coefficient(float temperature_K, float viscosity_eta, float diam
 
 float squared_displacement(int dimensions, float diffusion_coefficient, float tau);
 
+float phi(float x);
+
+float normal(float mean, float dev);
+
 #endif /* SIM_MATH_H */

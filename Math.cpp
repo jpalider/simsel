@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <cstdlib>
 
 #include "Math.h"
 #include "Vector.h"
@@ -113,4 +114,36 @@ float diffusion_coefficient(float temperature_K, float viscosity_eta, float diam
 float squared_displacement(int dimensions, float diffusion_coefficient, float tau)
 {
 	return 2 * dimensions * diffusion_coefficient * tau;
+}
+
+//http://www.johndcook.com/cpp_phi.html
+float phi(float x)
+{
+    // constants
+    float a1 =  0.254829592;
+    float a2 = -0.284496736;
+    float a3 =  1.421413741;
+    float a4 = -1.453152027;
+    float a5 =  1.061405429;
+    float p  =  0.3275911;
+
+    // Save the sign of x
+    int sign = 1;
+    if (x < 0)
+        sign = -1;
+    x = fabs(x)/sqrt(2.0);
+
+    // A&S formula 7.1.26
+    float t = 1.0/(1.0 + p*x);
+    float y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
+
+    return 0.5*(1.0 + sign*y);
+}
+
+// approximation
+//http://www.protonfish.com/random.shtml
+float normal(float mean, float dev)
+{
+	float x = (((float)rand()/RAND_MAX) * 2 - 1) + (((float)rand()/RAND_MAX) * 2 - 1) + (((float)rand()/RAND_MAX) * 2 - 1);
+	return dev * x + mean;
 }
