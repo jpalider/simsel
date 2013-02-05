@@ -24,6 +24,8 @@ private:
 	int ptradius;
 	int prradius;
 
+	bool ptail;
+
 	Simulation* psimulation;
 	long ptime;
 	float pfps;
@@ -32,8 +34,8 @@ private:
 public:
 	Player(Simulation* simulation);
 	void do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin);
-	void do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, long t);
-	void do_drawing_molecule_with_tail_at(cairo_t *cr, Molecule* m, Vector* origin, long t);
+	void do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long t);
+	void do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* origin, long t);
 	void do_drawing(cairo_t *cr, GtkWidget* widget);
 	int interval_ms();
 };

@@ -39,7 +39,7 @@ Player::Player(Simulation* simulation)
 	ptradius = cfg.lookup("player.transmitters.radius");
 	prradius = cfg.lookup("player.receivers.radius");;
 
-	TRI_LOG_STR("Player:");
+	ptail = cfg.lookup("player.molecules.tail");
 }
 
 int Player::interval_ms()
@@ -57,7 +57,7 @@ void Player::do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
 	cairo_fill(cr);
 }
 
-void Player::do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, long t)
+void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long t)
 {
 	const map<long, Vector>* h = m->histogram();
 	map<long, Vector>::const_iterator pit = h->lower_bound(t);
@@ -72,7 +72,7 @@ void Player::do_drawing_molecule_at(cairo_t *cr, Molecule* m, Vector* origin, lo
 	cairo_fill(cr);
 }
 
-void Player::do_drawing_molecule_with_tail_at(cairo_t *cr, Molecule* m, Vector* origin, long t)
+void Player::do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* origin, long t)
 {
 	const map<long, Vector>* h = m->histogram();
 	map<long, Vector>::const_iterator pit = h->lower_bound(t);
@@ -82,6 +82,7 @@ void Player::do_drawing_molecule_with_tail_at(cairo_t *cr, Molecule* m, Vector* 
 		return;
 	}
 
+	// draw molecule
 	cairo_set_source_rgb(cr, pmcolor.red(), pmcolor.green(), pmcolor.blue());
 
 	cairo_identity_matrix(cr);
@@ -89,6 +90,7 @@ void Player::do_drawing_molecule_with_tail_at(cairo_t *cr, Molecule* m, Vector* 
 	cairo_arc(cr, 0, 0, 3, 0, 2 * M_PI);
 	cairo_fill(cr);
 
+	// draw tail
 	cairo_identity_matrix(cr);
 	cairo_translate(cr, origin->x, origin->y);
 
@@ -111,7 +113,7 @@ void Player::do_drawing_molecule_with_tail_at(cairo_t *cr, Molecule* m, Vector* 
 
 void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 {
-	TRI_LOG_STR("do_drawing");
+	//TRI_LOG_STR("do_drawing");
 
 	ptime += 1;
 	
@@ -135,8 +137,18 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	}
 
 	// draw molecules
-	for (vector<Molecule>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+	if (ptail)
 	{
-		do_drawing_molecule_with_tail_at(cr, &(*it), &origin, ptime);
+		for (vector<Molecule>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+		{
+			do_drawing_molecule_with_tail(cr, &(*it), &origin, ptime);
+		}
+	}
+	else
+	{
+		for (vector<Molecule>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+		{
+			do_drawing_molecule(cr, &(*it), &origin, ptime);
+		}
 	}
 }

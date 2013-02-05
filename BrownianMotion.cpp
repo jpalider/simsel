@@ -3,6 +3,7 @@
 #include "BrownianMotion.h"
 #include "Vector.h"
 #include "Math.h"
+#include "tri_logger/tri_logger.hpp"
 
 BrownianMotion::BrownianMotion()
 {

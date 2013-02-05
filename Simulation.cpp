@@ -31,7 +31,7 @@ Simulation::Simulation()
 	string description = cfg.lookup("description");
 	TRI_LOG_STR("Simulation:\n" << description);
 
-	int repetitive = cfg.lookup("simulation.repetitive");
+	bool repetitive = cfg.lookup("simulation.repetitive");
 	long seed = repetitive ? 1 : std::time(NULL);
 	srand(seed);
 
@@ -101,7 +101,7 @@ void Simulation::run()
 		
 		// for all molecules perform their action
 		for (vector<Molecule>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit) {
-			mit->move(stime, bm.get_move(300));
+			mit->move(stime, bm.get_move(10));
 			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
 				mit->check_collision(&(*cit));
 			}
