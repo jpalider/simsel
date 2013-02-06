@@ -92,11 +92,17 @@ void Simulation::run()
 {
 	sstarted = true;
 
-
 	TRI_LOG_STR("Starting simulation");
-	// for (int i = 0; i < duration; i++) 
+	int progress = -1;
 	while (stime < duration)
 	{
+		int p = (((float)stime)/duration)*100.0f;
+		if (progress != p)
+		{
+			progress = p;
+			TRI_LOG_STR("Progress: " << progress);
+		}
+
 		stime += 1;
 		
 		// for all molecules perform their action
