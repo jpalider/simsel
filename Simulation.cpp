@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <list>
 #include <string>
 #include <libconfig.h++>
 #include <ctime>
@@ -23,7 +24,7 @@ Simulation::Simulation()
 	sfinished = false;
 	stime = 0;
 
-	smolecules = new std::vector<Molecule>();
+	smolecules = new std::list<Molecule*>();
 	sreceivers = new std::vector<RCell>();
 	stransmitters = new std::vector<TCell>();
 
@@ -40,7 +41,7 @@ Simulation::Simulation()
 	Vector p(0, 0, 0);
 	for (int i = 0; i < nom; i++)
 	{
-		smolecules->push_back(Molecule(i, p));
+		smolecules->push_back(new Molecule(i, p));
 	}
 
 	int cells_no = 0;
@@ -106,16 +107,26 @@ void Simulation::run()
 		stime += 1;
 		
 		// for all molecules perform their action
-		for (vector<Molecule>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit) {
-			mit->move(stime, bm.get_move(10));
+		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit) {
+			(*mit)->move(stime, bm.get_move(10));
 			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
-				mit->check_collision(&(*cit));
+				if ((*mit)->check_collision(&(*cit)))
+				{
+					mit = smolecules->erase(mit);
+					break;
+				}
 			}
 		}
 	}
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
-	
+
+	// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
+	// 	std::vector<Molecule*>* ms = cit->molecules();
+	// 	for (vector<Molecule*>::iterator mit = ms->begin(); mit != ms->end(); ++mit) {
+	// 		TRI_LOG_STR( (*cit) << " " << *(*mit));
+	// 	}
+	// }
 }
 
 bool Simulation::running()
@@ -138,7 +149,7 @@ long Simulation::time()
 	return stime;
 }
 
-vector<Molecule>* Simulation::molecules()
+list<Molecule*>* Simulation::molecules()
 {
 	return smolecules;
 }

@@ -15,6 +15,7 @@ private:
 public:
 	RCell(long identifier, Vector position, float radius);
 	void collide(Molecule *m);
+	std::vector<Molecule*>* molecules();
 };
 
 #endif /* SIM_RCELL_H */

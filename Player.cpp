@@ -1,8 +1,8 @@
 #include <cmath>
 #include <map>
 #include <vector>
+#include <list>
 #include <libconfig.h++>
-
 #include <cairo.h>
 #include <gtk/gtk.h>
 
@@ -139,16 +139,16 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	// draw molecules
 	if (ptail)
 	{
-		for (vector<Molecule>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+		for (list<Molecule*>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
 		{
-			do_drawing_molecule_with_tail(cr, &(*it), &origin, ptime);
+			do_drawing_molecule_with_tail(cr, (*it), &origin, ptime);
 		}
 	}
 	else
 	{
-		for (vector<Molecule>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+		for (list<Molecule*>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
 		{
-			do_drawing_molecule(cr, &(*it), &origin, ptime);
+			do_drawing_molecule(cr, (*it), &origin, ptime);
 		}
 	}
 }

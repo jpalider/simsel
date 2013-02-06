@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <vector>
+#include <list>
 #include <libconfig.h++>
 
 #include "Molecule.h"
@@ -18,7 +19,7 @@ private:
 	long stime;
 	long duration;
 	
-	std::vector<Molecule>* smolecules;
+	std::list<Molecule*>* smolecules;
 	std::vector<RCell>* sreceivers;
 	std::vector<TCell>* stransmitters;
 
@@ -34,7 +35,7 @@ public:
 	bool finished();
 	long time();
 
-	std::vector<Molecule>* molecules();
+	std::list<Molecule*>* molecules();
 	std::vector<RCell>* receivers();
 	std::vector<TCell>* transmitters();
 };

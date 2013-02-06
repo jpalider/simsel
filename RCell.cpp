@@ -1,3 +1,4 @@
+#include <vector>
 #include "RCell.h"
 #include "Molecule.h"
 #include "tri_logger/tri_logger.hpp"
@@ -13,6 +14,11 @@ void RCell::collide(Molecule *m)
 {
 	TRI_LOG_STR("Collided with molecule " << *m);
 	rmolecules->push_back(m);
+}
+
+std::vector<Molecule*>* RCell::molecules()
+{
+	return rmolecules;
 }
 
 
