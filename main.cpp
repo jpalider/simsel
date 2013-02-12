@@ -85,6 +85,12 @@ int main(int argc, char **argv)
 	s = new Simulation();
 	p = new Player(s);
 
+	if (!p->show())
+	{
+		s->run();
+		return 0;
+	}
+
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );
 
