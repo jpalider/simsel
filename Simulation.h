@@ -18,7 +18,7 @@ private:
 	bool sfinished;
 	long stime;
 	long duration;
-	
+
 	std::list<Molecule*>* smolecules;
 	std::vector<RCell>* sreceivers;
 	std::vector<TCell>* stransmitters;
