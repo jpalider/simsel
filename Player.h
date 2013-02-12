@@ -14,6 +14,9 @@
 class Player
 {
 private:
+
+	bool pshow;
+
 	CairoColor pmcolor;
 	CairoColor pmccolor;
 	CairoColor pmtcolor;
@@ -38,6 +41,8 @@ public:
 	void do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* origin, long t);
 	void do_drawing(cairo_t *cr, GtkWidget* widget);
 	int interval_ms();
+
+	bool show();
 };
 
 #endif /* SIM_PLAYER_H */

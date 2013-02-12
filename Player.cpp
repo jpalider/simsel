@@ -19,6 +19,8 @@ Player::Player(Simulation* simulation)
 	cfg.readFile("cfg/Player.cfg");
 
 	pfps = cfg.lookup("player.view.fps");
+	pshow = cfg.lookup("player.view.show");
+
 	pmcolor = CairoColor(cfg.lookup("player.molecules.color.red"),
 			     cfg.lookup("player.molecules.color.green"),
 			     cfg.lookup("player.molecules.color.blue"));
@@ -40,6 +42,7 @@ Player::Player(Simulation* simulation)
 	prradius = cfg.lookup("player.receivers.radius");;
 
 	ptail = cfg.lookup("player.molecules.tail");
+
 }
 
 int Player::interval_ms()
@@ -151,4 +154,9 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 			do_drawing_molecule(cr, (*it), &origin, ptime);
 		}
 	}
+}
+
+bool Player::show()
+{
+	return pshow;
 }

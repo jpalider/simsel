@@ -82,6 +82,9 @@ int main(int argc, char **argv)
 	// 	NUMBER_OF_MOLECULES = atoi(argv[1]);
 	// }
 
+	s = new Simulation();
+	p = new Player(s);
+
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );
 
@@ -110,10 +113,10 @@ int main(int argc, char **argv)
 	gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
 	gtk_window_set_title(GTK_WINDOW(window), "Sim");
 
-	s = new Simulation();
-	p = new Player(s);
-
-	g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
+	if (p->show())
+	{
+		g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
+	}
 
 	thread = g_thread_create( thread_func, NULL, FALSE, &error );
 	if( ! thread )
