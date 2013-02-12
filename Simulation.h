@@ -23,7 +23,7 @@ private:
 	std::vector<RCell>* sreceivers;
 	std::vector<TCell>* stransmitters;
 
-	BrownianMotion bm;
+	BrownianMotion* bm;
 
 	libconfig::Config cfg;
 

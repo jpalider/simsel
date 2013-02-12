@@ -33,16 +33,23 @@ Simulation::Simulation()
 	TRI_LOG_STR("Simulation:\n" << description);
 
 	bool repetitive = cfg.lookup("simulation.repetitive");
-	long seed = repetitive ? 1 : std::time(NULL);
+	long seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
 	srand(seed);
+	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false"));
 
-	TRI_LOG_STR("Sim: add molecules to the environment");
+
+	int dimensions = cfg.lookup("simulation.dimensions");
+	bm = new BrownianMotion(dimensions);
+	TRI_LOG_STR("Brownian motion diemnsions set to: " << dimensions);
+
 	int nom = cfg.lookup("simulation.molecules.number");
 	Vector p(0, 0, 0);
 	for (int i = 0; i < nom; i++)
 	{
 		smolecules->push_back(new Molecule(i, p));
 	}
+	TRI_LOG_STR("Number of molecules added to the environment: " << nom);
+
 
 	int cells_no = 0;
 	TRI_LOG_STR("Sim: load receivers configuration");
@@ -101,15 +108,17 @@ void Simulation::run()
 		if (progress != p)
 		{
 			progress = p;
-			TRI_LOG_STR("Progress: " << progress);
+			TRI_LOG_STR("Progress: " << progress << " %");
 		}
 
 		stime += 1;
 		
 		// for all molecules perform their action
-		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit) {
-			(*mit)->move(stime, bm.get_move(10));
-			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
+		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
+		{
+			(*mit)->move(stime, bm->get_move(10));
+			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
+			{
 				if ((*mit)->check_collision(&(*cit)))
 				{
 					mit = smolecules->erase(mit);
@@ -118,6 +127,7 @@ void Simulation::run()
 			}
 		}
 	}
+
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
 
@@ -127,6 +137,14 @@ void Simulation::run()
 	// 		TRI_LOG_STR( (*cit) << " " << *(*mit));
 	// 	}
 	// }
+
+	TRI_LOG_STR("Simulation results:");
+	for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
+	{
+		TRI_LOG_STR("\tRCell(" << cit->id()<< "): " << cit->molecules()->size() << " collided");
+
+	}
+
 }
 
 bool Simulation::running()
