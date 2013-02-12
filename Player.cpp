@@ -1,3 +1,4 @@
+#include <sstream>
 #include <cmath>
 #include <map>
 #include <vector>
@@ -50,6 +51,8 @@ int Player::interval_ms()
 	return (int)(1000/pfps);
 }
 
+CairoColor player_string_color(222,222,222);
+
 void Player::do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
 {
 	cairo_set_source_rgb(cr, prcolor.red(), prcolor.green(), prcolor.blue());
@@ -58,6 +61,23 @@ void Player::do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
 	cairo_translate(cr, origin->x + c->position()->x, origin->y + c->position()->y);
 	cairo_arc(cr, 0, 0, prradius, 0, 2 * M_PI);
 	cairo_fill(cr);
+
+	cairo_set_source_rgb(cr, player_string_color.red(), player_string_color.green(), player_string_color.blue());
+	cairo_identity_matrix(cr);
+
+	stringstream ss;
+	ss <<  "[" << c->id() << "]: " << ((RCell*)c)->molecules()->size();
+	string s = ss.str();
+
+	cairo_text_extents_t extents;
+	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_set_font_size (cr, 9.0);
+	cairo_text_extents (cr, s.c_str(), &extents);
+	int x = origin->x + c->position()->x - (extents.width/2 + extents.x_bearing);
+	int y = origin->y + c->position()->y - (extents.height/2 + extents.y_bearing);
+	cairo_move_to (cr, x, y);
+	cairo_show_text (cr, s.c_str());
+
 }
 
 void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long t)
