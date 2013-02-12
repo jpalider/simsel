@@ -12,14 +12,14 @@ BrownianMotion::BrownianMotion(int dimensions)
 
 Vector BrownianMotion::get_move()
 {	
-	static const float SCALER = 1.0f;
+	static const double SCALER = 1.0;
 	return get_move(SCALER);
 }
 
-Vector BrownianMotion::get_move(float scale)
+Vector BrownianMotion::get_move(double scale)
 {
-	float dx = normal(0.f, 1.f);
-	float dy = normal(0.f, 1.f);
-	float dz = bmdimensions == 2 ? 0.f : normal(0.f, 1.f);
+	double dx = normal(0., 1.);
+	double dy = normal(0., 1.);
+	double dz = bmdimensions == 2 ? 0.0 : normal(0., 1.);
 	return Vector(dx*scale, dy*scale, dz*scale);
 }

@@ -3,13 +3,13 @@
 
 #include "Vector.h"
 
-Vector::Vector(float x, float y, float z) : x(x), y(y), z(z)
+Vector::Vector(double x, double y, double z) : x(x), y(y), z(z)
 {
 }
 
 Vector::Vector()
 {
-	x = y = z = std::numeric_limits<float>::infinity();
+	x = y = z = std::numeric_limits<double>::infinity();
 }
 
 void Vector::translate(Vector* t)

@@ -2,7 +2,7 @@
 #include "Molecule.h"
 #include "tri_logger/tri_logger.hpp"
 
-TCell::TCell(long identifier, Vector position, float radius) :
+TCell::TCell(long identifier, Vector position, double radius) :
 	Cell(identifier, position, radius)
 {
 }

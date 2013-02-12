@@ -13,7 +13,7 @@ class Molecule {
 private:
 	Vector mposition;
 	Vector mpposition;
-	float mradius;
+	double mradius;
 	std::map<long, Vector> mhistogram;
 	long mid;
 	RCell* mcell;

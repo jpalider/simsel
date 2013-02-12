@@ -107,7 +107,7 @@ void Simulation::run()
 	while (stime < duration)
 	{
 		int p = (((float)stime)/duration)*100.0f;
-		if (progress != p)
+		if ( p - progress >= 5)
 		{
 			progress = p;
 			TRI_LOG_STR("Progress: " << progress << " %");
@@ -132,7 +132,7 @@ void Simulation::run()
 
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
-
+	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
 	// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
 	// 	std::vector<Molecule*>* ms = cit->molecules();
 	// 	for (vector<Molecule*>::iterator mit = ms->begin(); mit != ms->end(); ++mit) {

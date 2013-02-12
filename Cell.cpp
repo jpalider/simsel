@@ -5,14 +5,14 @@
 #include "Vector.h"
 #include "Molecule.h"
 
-Cell::Cell(long identifier, Vector position, float radius)
+Cell::Cell(long identifier, Vector position, double radius)
 {
 	cid = identifier;
 	cposition = position;
 	cradius = radius;
 }
 
-float Cell::radius()
+double Cell::radius()
 {
 	return cradius;
 }

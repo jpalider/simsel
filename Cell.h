@@ -11,13 +11,13 @@ class Cell
 {
 protected:
 	Vector cposition;
-	float cradius;
+	double cradius;
 	long cid;
 
 public:
-	Cell(long identifier, Vector position, float radius);
+	Cell(long identifier, Vector position, double radius);
 
-	float radius();
+	double radius();
 	const Vector* position() const;
 	long id() const;
 

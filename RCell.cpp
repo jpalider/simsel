@@ -3,7 +3,7 @@
 #include "Molecule.h"
 #include "tri_logger/tri_logger.hpp"
 
-RCell::RCell(long identifier, Vector position, float radius) :
+RCell::RCell(long identifier, Vector position, double radius) :
 	Cell(identifier, position, radius)
 {
 	rmolecules = new std::vector<Molecule*>();

@@ -5,9 +5,9 @@
 
 class Vector {
 public:	
-	float x, y, z;	
+	double x, y, z;
 
-	Vector(float x, float y, float z);
+	Vector(double x, double y, double z);
 	Vector();
 
 	void translate(Vector* t);

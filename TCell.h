@@ -8,7 +8,7 @@ class Molecule;
 class TCell : public Cell
 {
 public:
-	TCell(long identifier, Vector position, float radius);
+	TCell(long identifier, Vector position, double radius);
 	bool collide(Molecule *m);
 };
 

@@ -9,7 +9,7 @@ private:
 public:
 	BrownianMotion(int dimensions = 3);
 	Vector get_move();
-	Vector get_move(float scaler);
+	Vector get_move(double scaler);
 };
 
 #endif /* SIM_BROWNIAN_MOTION_H */
