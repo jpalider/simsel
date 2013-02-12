@@ -42,6 +42,8 @@ Simulation::Simulation()
 	bm = new BrownianMotion(dimensions);
 	TRI_LOG_STR("Brownian motion diemnsions set to: " << dimensions);
 
+	int time_step = cfg.lookup("simulation.time_step_ns");
+
 	int nom = cfg.lookup("simulation.molecules.number");
 	Vector p(0, 0, 0);
 	for (int i = 0; i < nom; i++)
