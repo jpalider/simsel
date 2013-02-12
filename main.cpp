@@ -91,6 +91,8 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
+	s->run();
+
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );
 
@@ -119,23 +121,20 @@ int main(int argc, char **argv)
 	gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
 	gtk_window_set_title(GTK_WINDOW(window), "Sim");
 
-	if (p->show())
-	{
-		g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
-	}
+	g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
 
-	thread = g_thread_create( thread_func, NULL, FALSE, &error );
-	if( ! thread )
-	{
-		g_print( "Error: %s\n", error->message );
-		return( -1 );
-	}
+	// thread = g_thread_create( thread_func, NULL, FALSE, &error );
+	// if( ! thread )
+	// {
+	// 	g_print( "Error: %s\n", error->message );
+	// 	return( -1 );
+	// }
 
 	gtk_widget_show_all(window);
 
 	gtk_main();
 
-	gdk_threads_leave();
+	// gdk_threads_leave();
 
 	return 0;
 }

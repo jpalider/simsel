@@ -33,9 +33,9 @@ Simulation::Simulation()
 	TRI_LOG_STR("Simulation:\n" << description);
 
 	bool repetitive = cfg.lookup("simulation.repetitive");
-	long seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
+	seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
 	srand(seed);
-	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false"));
+	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false") << " with seed: " << seed);
 
 
 	int dimensions = cfg.lookup("simulation.dimensions");
