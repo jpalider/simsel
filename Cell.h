@@ -2,7 +2,10 @@
 #define SIM_CELL_H
 
 #include <iostream>
+
 #include "Vector.h"
+
+class Molecule;
 
 class Cell
 {
@@ -16,6 +19,10 @@ public:
 
 	float radius();
 	const Vector* position() const;
+	long id() const;
+
+	virtual bool collide(Molecule *m) = 0;
+
 
 private:
         friend std::ostream & operator<<(std::ostream &os, const Cell& c);

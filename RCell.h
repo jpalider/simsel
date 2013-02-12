@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Cell.h"
-#include "Molecule.h"
+#include "Vector.h"
 
 class Molecule;
 
@@ -14,8 +14,9 @@ private:
 	std::vector<Molecule*>* rmolecules;
 public:
 	RCell(long identifier, Vector position, float radius);
-	void collide(Molecule *m);
 	std::vector<Molecule*>* molecules();
+
+	bool collide(Molecule *m);
 };
 
 #endif /* SIM_RCELL_H */

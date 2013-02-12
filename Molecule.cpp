@@ -35,12 +35,13 @@ void Molecule::move(long time, Vector t)
 
 bool Molecule::check_collision(RCell *c)
 {
+	bool received = false;
 	if ( segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius()) )
 	{
-		c->collide(this);
+		received = c->collide(this);
 		this->mcell = c;
 	}
-	return mcell != NULL;
+	return received;
 }
 
 std::ostream & operator<<(std::ostream &os, const Molecule& m)

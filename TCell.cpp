@@ -7,3 +7,7 @@ TCell::TCell(long identifier, Vector position, float radius) :
 {
 }
 
+bool TCell::collide(Molecule *m)
+{
+	return false;
+}

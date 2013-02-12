@@ -10,10 +10,11 @@ RCell::RCell(long identifier, Vector position, float radius) :
 
 }
 
-void RCell::collide(Molecule *m)
+bool RCell::collide(Molecule *m)
 {
 	TRI_LOG_STR("Collided with molecule " << *m);
 	rmolecules->push_back(m);
+	return true;
 }
 
 std::vector<Molecule*>* RCell::molecules()

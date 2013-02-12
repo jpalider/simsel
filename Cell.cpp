@@ -27,3 +27,8 @@ std::ostream & operator<<(std::ostream &os, const Cell& c)
 {
 	return os << "Cell_" << c.cid << " (" << c.position()->x << "," << c.position()->y << "," << c.position()->z << ")";
 }
+
+long Cell::id() const
+{
+	return cid;
+}
