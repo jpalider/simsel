@@ -5,9 +5,9 @@
 
 class BrownianMotion {
 private:
-
+	int bmdimensions;
 public:
-	BrownianMotion();
+	BrownianMotion(int dimensions = 3);
 	Vector get_move();
 	Vector get_move(float scaler);
 };
