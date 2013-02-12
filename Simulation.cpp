@@ -7,7 +7,6 @@
 #include <ctime>
 #include <cstdlib>
 
-
 #include "Simulation.h"
 #include "Vector.h"
 #include "Molecule.h"

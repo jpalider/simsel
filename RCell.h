@@ -12,6 +12,7 @@ class RCell : public Cell
 {
 private:
 	std::vector<Molecule*>* rmolecules;
+
 public:
 	RCell(long identifier, Vector position, double radius);
 	std::vector<Molecule*>* molecules();

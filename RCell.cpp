@@ -7,7 +7,6 @@ RCell::RCell(long identifier, Vector position, double radius) :
 	Cell(identifier, position, radius)
 {
 	rmolecules = new std::vector<Molecule*>();
-
 }
 
 bool RCell::collide(Molecule *m)
