@@ -174,6 +174,16 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 			do_drawing_molecule(cr, (*it), &origin, ptime);
 		}
 	}
+
+	//UNDER DEV: show only those molecules and tails that collide with rcells
+	// for (vector<RCell>::iterator rit = psimulation->receivers()->begin(); rit != psimulation->receivers()->end(); rit++)
+	// {
+	// 	for (vector<Molecule*>::iterator it = rit->molecules()->begin(); it != rit->molecules()->end(); it++)
+	// 	{
+	// 		do_drawing_molecule_with_tail(cr, (*it), &origin, ptime);
+	// 	}
+	// }
+
 }
 
 bool Player::show()
