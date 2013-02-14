@@ -8,13 +8,13 @@
 
 void test_normal_distribution()
 {
-	srand ( time(NULL) );
+//	srand ( time(NULL) );
 
 	const int nrolls=10000;  // number of experiments
 	const int nstars=100;    // maximum number of stars to distribute
 
 	int pr[10]={};
-	srand ( time(NULL) );
+//	srand ( time(NULL) );
 
 
 	for (int i=0; i<nrolls; ++i) {
@@ -29,5 +29,16 @@ void test_normal_distribution()
 		TRI_LOG_STR(std::string(pr[i]*nstars/nrolls,'*'));
 	}
 
+	return;
+}
+
+void test_diffusion_coefficient()
+{
+	double temperature_K = 293.;
+	double viscosity_eta = 1e-3;
+	double diameter = 1e-6;
+
+	double D = diffusion_coefficient(temperature_K, viscosity_eta, diameter);
+	TRI_LOG_STR("diffusion_coefficient = " << D);
 	return;
 }
