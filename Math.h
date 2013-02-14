@@ -19,6 +19,8 @@ double diffusion_coefficient(double temperature_K, double viscosity_eta, double 
 
 double squared_displacement(int dimensions, double diffusion_coefficient, double tau);
 
+double displacement_factor(int dimensions, double diffusion_coefficient, double tau);
+
 double phi(double x);
 
 double normal(double mean, double dev);

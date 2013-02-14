@@ -6,6 +6,7 @@
 #include <libconfig.h++>
 #include <ctime>
 #include <cstdlib>
+#include <cmath>
 
 #include "Simulation.h"
 #include "Vector.h"
@@ -13,6 +14,7 @@
 #include "CairoColor.h"
 #include "RCell.h"
 #include "TCell.h"
+#include "Math.h"
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
@@ -36,12 +38,14 @@ Simulation::Simulation()
 	srand(seed);
 	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false") << " with seed: " << seed);
 
-
 	int dimensions = cfg.lookup("simulation.dimensions");
-	bm = new BrownianMotion(dimensions);
 	TRI_LOG_STR("Brownian motion diemnsions set to: " << dimensions);
 
 	int time_step = cfg.lookup("simulation.time_step_ns");
+	double tau = time_step * 1e-9;
+	TRI_LOG_STR("Brownian motion time step set to: " << tau);
+
+	bm = new BrownianMotion(dimensions, tau);
 
 	int nom = cfg.lookup("simulation.molecules.number");
 	Vector p(0, 0, 0);
@@ -106,7 +110,7 @@ void Simulation::run()
 	while (stime < duration)
 	{
 		int p = (((float)stime)/duration)*100.0f;
-		if ( p - progress >= 5)
+		if ( p - progress >= 15)
 		{
 			progress = p;
 			TRI_LOG_STR("Progress: " << progress << " %");
@@ -117,7 +121,7 @@ void Simulation::run()
 		// for all molecules perform their action
 		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 		{
-			(*mit)->move(stime, bm->get_move(10));
+			(*mit)->move(stime, bm->get_move());
 			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
 			{
 				if ((*mit)->check_collision(&(*cit)))
@@ -126,6 +130,7 @@ void Simulation::run()
 					break;
 				}
 			}
+			TRI_LOG_STR( *(*mit) );
 		}
 	}
 

@@ -116,6 +116,12 @@ double squared_displacement(int dimensions, double diffusion_coefficient, double
 	return 2 * dimensions * diffusion_coefficient * tau;
 }
 
+double displacement_factor(int dimensions, double diffusion_coefficient, double tau)
+{
+	return sqrt(squared_displacement(dimensions, diffusion_coefficient, tau));
+}
+
+
 //http://www.johndcook.com/cpp_phi.html
 double phi(double x)
 {

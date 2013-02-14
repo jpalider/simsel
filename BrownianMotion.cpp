@@ -5,19 +5,20 @@
 #include "Math.h"
 #include "tri_logger/tri_logger.hpp"
 
-BrownianMotion::BrownianMotion(int dimensions)
+BrownianMotion::BrownianMotion(int dimensions, double tau)
 {
 	bmdimensions = dimensions;
+	bmtau = tau;
 
-	temperature_K = 293.; // 20 deg Celsius
-	viscosity_eta = 1e-3; // water
-	diameter = 1e-6; // 1 um
-	bdiffusion_coefficient = diffusion_coefficient(temperature_K, viscosity_eta, diameter);
+	bmtemperature_K = 293.; // 20 deg Celsius
+	bmviscosity_eta = 1e-3; // water
+	bmdiameter = 1e-6; // 1 um
+	bmdiffusion_coefficient = diffusion_coefficient(bmtemperature_K, bmviscosity_eta, bmdiameter);
 }
 
 Vector BrownianMotion::get_move()
 {	
-	static const double SCALER = 1.0;
+	static const double SCALER = displacement_factor(bmdimensions, bmdiffusion_coefficient, bmtau);
 	return get_move(SCALER);
 }
 
