@@ -7,7 +7,7 @@ CXX = ccache g++ -Wno-deprecated -Wl,--export-dynamic
 CXXFLAGS = -O2 `pkg-config --cflags gtk+-3.0 libconfig++` -DTLOG
 #-DFTLOG=test
 
-LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++`
+LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++` -lm
 
 OBJ = main.o Molecule.o Vector.o BrownianMotion.o Math.o CairoColor.o \
 	Simulation.o Cell.o tri_logger/tri_logger.o Player.o \
