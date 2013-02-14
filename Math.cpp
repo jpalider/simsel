@@ -106,7 +106,7 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter)
 {
-	static double k_b = 1.38E-10;
+	static double k_b = 1.38E-23;
 	
 	return k_b * temperature_K / ( 3 * M_PI * diameter * viscosity_eta);
 }
