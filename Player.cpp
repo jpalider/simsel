@@ -88,9 +88,12 @@ void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long 
 		return;
 
 	cairo_set_source_rgb(cr,pmcolor.red(), pmcolor.green(), pmcolor.blue());
-
 	cairo_identity_matrix(cr);
-	cairo_translate(cr, origin->x + pit->second.x, origin->y + pit->second.y);
+
+	double scale = 1e10;
+	int x = scale * pit->second.x;
+	int y = scale * pit->second.y;
+	cairo_translate(cr, origin->x + x, origin->y + y);
 	cairo_arc(cr, 0, 0, pmradius, 0, 2 * M_PI);
 	cairo_fill(cr);
 }
