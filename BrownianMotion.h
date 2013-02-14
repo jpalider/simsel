@@ -6,6 +6,11 @@
 class BrownianMotion {
 private:
 	int bmdimensions;
+	double bdiffusion_coefficient;
+	double temperature_K;
+	double viscosity_eta;
+	double diameter;
+
 public:
 	BrownianMotion(int dimensions = 3);
 	Vector get_move();

@@ -8,6 +8,11 @@
 BrownianMotion::BrownianMotion(int dimensions)
 {
 	bmdimensions = dimensions;
+
+	temperature_K = 293.; // 20 deg Celsius
+	viscosity_eta = 1e-3; // water
+	diameter = 1e-6; // 1 um
+	bdiffusion_coefficient = diffusion_coefficient(temperature_K, viscosity_eta, diameter);
 }
 
 Vector BrownianMotion::get_move()
