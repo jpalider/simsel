@@ -12,6 +12,18 @@ Cell::Cell(long identifier, Vector position, double radius)
 	cradius = radius;
 }
 
+Cell::Cell(const Cell& other)
+{
+	cid = other.cid;
+	cposition = other.cposition;
+	cradius = other.cradius;
+}
+
+
+Cell::~Cell()
+{
+}
+
 double Cell::radius()
 {
 	return cradius;

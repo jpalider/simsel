@@ -29,6 +29,7 @@ private:
 
 public:
 	Simulation();
+	~Simulation();
 	void run();
 	bool running();
 	bool started();

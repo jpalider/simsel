@@ -7,6 +7,11 @@ TCell::TCell(long identifier, Vector position, double radius) :
 {
 }
 
+TCell::TCell(const TCell& other) : Cell(other)
+{
+
+}
+
 bool TCell::collide(Molecule *m)
 {
 	return false;

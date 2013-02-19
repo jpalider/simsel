@@ -110,6 +110,19 @@ Simulation::Simulation()
 	duration = cfg.lookup("simulation.duration");
 }
 
+Simulation::~Simulation()
+{
+	for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
+	{
+		delete (*mit);
+	}
+
+	delete bm;
+	delete stransmitters;
+	delete sreceivers;
+	delete smolecules;
+}
+
 void Simulation::run()
 {
 	sstarted = true;

@@ -16,13 +16,14 @@ protected:
 
 public:
 	Cell(long identifier, Vector position, double radius);
+	Cell(const Cell &other);
 
+	virtual ~Cell();
 	double radius();
 	const Vector* position() const;
 	long id() const;
 
 	virtual bool collide(Molecule *m) = 0;
-
 
 private:
         friend std::ostream & operator<<(std::ostream &os, const Cell& c);
