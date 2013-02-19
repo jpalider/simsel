@@ -47,10 +47,10 @@ RCell& RCell::operator=(RCell other)
 void swap(RCell& first, RCell& second) // nothrow
 {
 	TRI_LOG_STR("dbg RCell::swap .");
-	// std::swap(first.cposition, second.cposition);
-	// std::swap(first.cradius, second.cradius);
-	// std::swap(first.cid, second.cid);
-	static_cast<Cell&>(first), static_cast<Cell&>(second);
+	std::swap(first.cposition, second.cposition);
+	std::swap(first.cradius, second.cradius);
+	std::swap(first.cid, second.cid);
+	std::swap(static_cast<Cell&>(first), static_cast<Cell&>(second));
 	TRI_LOG_STR("dbg RCell::swap ..");
 	std::swap(first.rmolecules, second.rmolecules);
 	TRI_LOG_STR("dbg RCell::swap ...");
