@@ -3,6 +3,8 @@
  * ? releasing molecule not a point but a sphere
  * - serialising (protocol buffer?)
  * - test / verification
+ * - overlapping cells
+ * - intermolecule collision
  */
 
 #include <iostream>
@@ -20,6 +22,7 @@
 #include "Cell.h"
 #include "tri_logger/tri_logger.hpp"
 
+#include "Test.h"
 
 using namespace std;
 
@@ -77,10 +80,15 @@ int main(int argc, char **argv)
 {
 	TRI_LOG("Welcome to the Sim");
 
-	// if (argc > 1)
-	// {
-	// 	NUMBER_OF_MOLECULES = atoi(argv[1]);
-	// }
+	if (argc > 1)
+	{
+		if (string(argv[1]).find("test") != std::string::npos)
+		{
+			test_diffusion_coefficient();
+			return 0;
+		}
+		//NUMBER_OF_MOLECULES = atoi(argv[1]);
+	}
 
 	s = new Simulation();
 	p = new Player(s);
