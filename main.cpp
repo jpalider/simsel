@@ -85,6 +85,7 @@ int main(int argc, char **argv)
 		if (string(argv[1]).find("test") != std::string::npos)
 		{
 			test_diffusion_coefficient();
+			test_memory_usage();
 			return 0;
 		}
 		//NUMBER_OF_MOLECULES = atoi(argv[1]);

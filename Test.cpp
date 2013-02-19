@@ -6,6 +6,7 @@
 
 #include "Test.h"
 #include "Math.h"
+#include "Simulation.h"
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
@@ -50,7 +51,7 @@ void test_diffusion_coefficient()
 		TRI_LOG_STR("diffusion_coefficient = " << D);
 	}
 
-	// TP_Chapter 2
+	// TP_Chapter 2 : nitrogen
 	// expected result: 1.15e-9
 	{
 		double temperature_K = 293.;
@@ -61,12 +62,12 @@ void test_diffusion_coefficient()
 		TRI_LOG_STR("diffusion_coefficient = " << D);
 	}
 
-	// TP_Chapter 2
+	// TP_Chapter 2 : hydrogen
 	// expected result: 3.4e-9
 	{
 		double temperature_K = 293.;
 		double viscosity_eta = 1e-3;
-		double diameter = 0.75e-10; // nitrogen
+		double diameter = 1.06e-10; // nitrogen
 
 		double D = diffusion_coefficient(temperature_K, viscosity_eta, diameter);
 		TRI_LOG_STR("diffusion_coefficient = " << D);
@@ -75,7 +76,8 @@ void test_diffusion_coefficient()
 	return;
 }
 
-void test_memory_usage()
+
+void test_memory_usage_print()
 {
 	//http: stackoverflow.com/questions/669438/how-to-get-memory-usage-at-run-time-in-c
 	int tSize = 0, resident = 0, share = 0;
@@ -91,4 +93,38 @@ void test_memory_usage()
 	cout << "Shared Memory - " << shared_mem << " kB\n";
 
 	cout << "Private Memory - " << rss - shared_mem << "kB\n";
+}
+
+// https://bbs.archlinux.org/viewtopic.php?id=79378
+static std::streambuf * cout_sbuf = NULL;
+
+#define enable_cout() \
+do { \
+	std::cout.rdbuf(cout_sbuf); \
+} while(0);
+
+#define disable_cout() \
+do { \
+	cout_sbuf = std::cout.rdbuf(); \
+	std::ofstream fout("/dev/null"); \
+	std::cout.rdbuf(fout.rdbuf()); \
+} while(0);
+
+void test_memory_usage()
+{
+	disable_cout();
+	Simulation s;
+	s.run();
+	enable_cout();
+
+	test_memory_usage_print();
+	disable_cout();
+	for (int i = 0; i < 100; i++)
+	{
+		Simulation s;
+		s.run();
+	}
+	enable_cout();
+
+	test_memory_usage_print();
 }
