@@ -51,14 +51,19 @@ int Player::interval_ms()
 	return (int)(1000/pfps);
 }
 
+static double player_scale = 1e10;
+
 CairoColor player_string_color(222,222,222);
 
 void Player::do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
 {
 	cairo_set_source_rgb(cr, prcolor.red(), prcolor.green(), prcolor.blue());
 
+	int cx = player_scale * c->position()->x;
+	int cy = player_scale * c->position()->y;
+
 	cairo_identity_matrix(cr);
-	cairo_translate(cr, origin->x + c->position()->x, origin->y + c->position()->y);
+	cairo_translate(cr, origin->x + cx , origin->y + cy);
 	cairo_arc(cr, 0, 0, prradius, 0, 2 * M_PI);
 	cairo_fill(cr);
 
@@ -73,11 +78,11 @@ void Player::do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 9.0);
 	cairo_text_extents (cr, s.c_str(), &extents);
-	int x = origin->x + c->position()->x - (extents.width/2 + extents.x_bearing);
-	int y = origin->y + c->position()->y - (extents.height/2 + extents.y_bearing);
-	cairo_move_to (cr, x, y);
-	cairo_show_text (cr, s.c_str());
 
+	int tx = origin->x + cx - (extents.width/2 + extents.x_bearing);
+	int ty = origin->y + cy - (extents.height/2 + extents.y_bearing);
+	cairo_move_to (cr, tx, ty);
+	cairo_show_text (cr, s.c_str());
 }
 
 void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long t)
@@ -90,10 +95,9 @@ void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long 
 	cairo_set_source_rgb(cr,pmcolor.red(), pmcolor.green(), pmcolor.blue());
 	cairo_identity_matrix(cr);
 
-	double scale = 1e10;
-	int x = scale * pit->second.x;
-	int y = scale * pit->second.y;
-	cairo_translate(cr, origin->x + x, origin->y + y);
+	int mx = player_scale * pit->second.x;
+	int my = player_scale * pit->second.y;
+	cairo_translate(cr, origin->x + mx, origin->y + my);
 	cairo_arc(cr, 0, 0, pmradius, 0, 2 * M_PI);
 	cairo_fill(cr);
 }
@@ -110,9 +114,12 @@ void Player::do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* ori
 
 	// draw molecule
 	cairo_set_source_rgb(cr, pmcolor.red(), pmcolor.green(), pmcolor.blue());
-
 	cairo_identity_matrix(cr);
-	cairo_translate(cr, origin->x + pit->second.x, origin->y + pit->second.y);
+
+	int mx = player_scale * pit->second.x;
+	int my = player_scale * pit->second.y;
+
+	cairo_translate(cr, origin->x + mx, origin->y + my);
 	cairo_arc(cr, 0, 0, 3, 0, 2 * M_PI);
 	cairo_fill(cr);
 
@@ -128,8 +135,13 @@ void Player::do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* ori
 
 	for ( ; hit != h->end(); hit++, phit++)
 	{
-		cairo_move_to(cr, phit->second.x , phit->second.y);
-		cairo_line_to(cr, hit->second.x , hit->second.y);
+		int ptx = player_scale * phit->second.x;
+		int pty = player_scale * phit->second.y;
+		int tx = player_scale * hit->second.x;
+		int ty = player_scale * hit->second.y;
+
+		cairo_move_to(cr, ptx, pty);
+		cairo_line_to(cr, tx, ty);
 		cairo_stroke(cr);
 		if (hit == pit)
 			break;

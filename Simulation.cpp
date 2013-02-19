@@ -19,6 +19,8 @@
 
 using namespace std;
 
+static double sim_scale = 1e-9;
+
 Simulation::Simulation()
 {
 	sstarted = false;
@@ -67,12 +69,16 @@ Simulation::Simulation()
 		string param_x = prefix + string("pos.x");
 		string param_y = prefix + string("pos.y");
 		string param_z = prefix + string("pos.z");
-		float x = cfg.lookup(param_x);
-		float y = cfg.lookup(param_y);
-		float z = cfg.lookup(param_z);
+		double x = cfg.lookup(param_x);
+		double y = cfg.lookup(param_y);
+		double z = cfg.lookup(param_z);
+		x *= sim_scale;
+		y *= sim_scale;
+		z *= sim_scale;
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
-		float radius = cfg.lookup(prefix + string("radius"));
+		double radius = cfg.lookup(prefix + string("radius"));
+		radius *= sim_scale;
 		sreceivers->push_back(RCell(id, cp, radius));
 		TRI_LOG_STR("rcell pos" << cp);
 	}
@@ -87,12 +93,15 @@ Simulation::Simulation()
 		string param_x = prefix + string("pos.x");
 		string param_y = prefix + string("pos.y");
 		string param_z = prefix + string("pos.z");
-		float x = cfg.lookup(param_x);
-		float y = cfg.lookup(param_y);
-		float z = cfg.lookup(param_z);
+		double x = cfg.lookup(param_x);
+		double y = cfg.lookup(param_y);
+		double z = cfg.lookup(param_z);
+		x *= sim_scale;
+		y *= sim_scale;
+		z *= sim_scale;
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
-		float radius = cfg.lookup(prefix + string("radius"));
+		double radius = cfg.lookup(prefix + string("radius"));
 		stransmitters->push_back(TCell(id, cp, radius));
 		TRI_LOG_STR("tcell pos" << cp);
 	}
@@ -109,7 +118,7 @@ void Simulation::run()
 	int progress = -1;
 	while (stime < duration)
 	{
-		int p = (((float)stime)/duration)*100.0f;
+		int p = (((double)stime)/duration)*100.0f;
 		if ( p - progress >= 15)
 		{
 			progress = p;
@@ -126,11 +135,12 @@ void Simulation::run()
 			{
 				if ((*mit)->check_collision(&(*cit)))
 				{
+					// RCell->accept_molecule();
 					mit = smolecules->erase(mit);
 					break;
 				}
 			}
-			TRI_LOG_STR( *(*mit) );
+			//TRI_LOG_STR( *(*mit) );
 		}
 	}
 
@@ -145,11 +155,10 @@ void Simulation::run()
 	// }
 
 	TRI_LOG_STR("Simulation results:");
-	for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
-	{
-		TRI_LOG_STR("\tRCell(" << cit->id()<< "): " << cit->molecules()->size() << " collided");
-
-	}
+	// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
+	// {
+	// 	TRI_LOG_STR("\tRCell(" << cit->id()<< "): " << cit->molecules()->size() << " collided");
+	// }
 
 }
 
