@@ -108,7 +108,7 @@ double diffusion_coefficient(double temperature_K, double viscosity_eta, double 
 {
 	static double k_b = 1.38E-23;
 	
-	return k_b * temperature_K / ( 3 * M_PI * diameter * viscosity_eta);
+	return k_b * temperature_K / ( 3 * M_PI * viscosity_eta * diameter);
 }
 
 double squared_displacement(int dimensions, double diffusion_coefficient, double tau)
