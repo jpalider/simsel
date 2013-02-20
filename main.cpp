@@ -19,6 +19,7 @@
 #include "BrownianMotion.h"
 #include "Simulation.h"
 #include "Player.h"
+#include "Statistics.h"
 #include "Cell.h"
 #include "tri_logger/tri_logger.hpp"
 
@@ -29,6 +30,7 @@ using namespace std;
 
 Simulation* s;
 Player* p;
+Statistics* stat;
 long vistime = 0;
 
 
@@ -101,6 +103,9 @@ int main(int argc, char **argv)
 	}
 
 	s->run();
+
+	stat = new Statistics(s);
+	stat->run();
 
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );
