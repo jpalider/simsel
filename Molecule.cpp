@@ -30,7 +30,7 @@ void Molecule::move(long time, Vector t)
 {
 	mpposition = mposition;
 	mposition.translate(&t);
-	mhistogram.insert( std::pair<long,Vector>(time, mposition) );
+	// mhistogram.insert( std::pair<long,Vector>(time, mposition) );
 }
 
 bool Molecule::check_collision(RCell *c)
