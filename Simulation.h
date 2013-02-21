@@ -18,6 +18,7 @@ private:
 	bool sfinished;
 	long stime;
 	long duration;
+	long stime_step;
 
 	std::list<Molecule*>* smolecules;
 	std::vector<RCell>* sreceivers;

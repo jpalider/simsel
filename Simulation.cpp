@@ -43,8 +43,8 @@ Simulation::Simulation()
 	int dimensions = cfg.lookup("simulation.dimensions");
 	TRI_LOG_STR("Brownian motion diemnsions set to: " << dimensions);
 
-	int time_step = cfg.lookup("simulation.time_step_ns");
-	double tau = time_step * 1e-9;
+	stime_step = cfg.lookup("simulation.time_step_ns");
+	double tau = stime_step * 1e-9;
 	TRI_LOG_STR("Brownian motion time step set to: " << tau);
 
 	bm = new BrownianMotion(dimensions, tau);
@@ -137,7 +137,7 @@ void Simulation::run()
 			TRI_LOG_STR("Progress: " << progress << " %");
 		}
 
-		stime += 1;
+		stime += stime_step;
 		
 		// for all molecules perform their action
 		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
