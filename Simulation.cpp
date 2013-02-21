@@ -131,7 +131,7 @@ void Simulation::run()
 	while (stime < duration)
 	{
 		int p = (((double)stime)/duration)*100.0f;
-		if ( p - progress >= 15)
+		if ( p - progress >= 1)
 		{
 			progress = p;
 			TRI_LOG_STR("Progress: " << progress << " %");

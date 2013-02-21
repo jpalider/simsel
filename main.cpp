@@ -96,16 +96,16 @@ int main(int argc, char **argv)
 	s = new Simulation();
 	p = new Player(s);
 
+	s->run();
+
+	stat = new Statistics(s);
+	stat->run();
+
 	if (!p->show())
 	{
 		s->run();
 		return 0;
 	}
-
-	s->run();
-
-	stat = new Statistics(s);
-	stat->run();
 
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );

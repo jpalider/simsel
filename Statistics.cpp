@@ -25,9 +25,9 @@ void Statistics::run()
 	double sim_scale = 1e9;
 
 	Vector init(0.,0.,0.);
-	const int MAX_DISTANCE = 30;
+	const int MAX_DISTANCE = 300000;
 
-	for (int timex = 0; timex < 100; timex++)
+	for (int timex = 0; timex < 50000; timex++)
 	{
 		
 		int distance[MAX_DISTANCE] = {};
@@ -51,7 +51,7 @@ void Statistics::run()
 		for (int i = 0; i < MAX_DISTANCE; i++)
 		{
 			cout << "|";
-			int f = distance[i] / 10;
+			int f = distance[i] / 10000;
 			for (int n = 0; n < f; n++)
 			{
 				cout << "*";

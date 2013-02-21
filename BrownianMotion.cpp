@@ -14,6 +14,8 @@ BrownianMotion::BrownianMotion(int dimensions, double tau)
 	bmviscosity_eta = 1e-3; // water
 	bmdiameter = 1e-6; // 1 um
 	bmdiffusion_coefficient = diffusion_coefficient(bmtemperature_K, bmviscosity_eta, bmdiameter);
+	bmdiffusion_coefficient = 1e-9;
+
 }
 
 Vector BrownianMotion::get_move()
