@@ -94,12 +94,12 @@ int main(int argc, char **argv)
 	}
 
 	s = new Simulation();
+	stat = new Statistics(1.e-9);
+	s->add(stat);
 	p = new Player(s);
 
 	s->run();
 
-	stat = new Statistics(s);
-	stat->run();
 
 	if (!p->show())
 	{

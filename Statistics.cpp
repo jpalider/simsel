@@ -12,17 +12,14 @@
 
 using namespace std;
 
-Statistics::Statistics(Simulation* s)
+Statistics::Statistics(double sim_scale)
 {
-	ssimulation = s;	
+	ssim_scale = sim_scale;
 }
 
-void Statistics::run()
+void Statistics::run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells)
 {
 	long time1 = 90;
-	long time2 = 20;
-
-	double sim_scale = 1e9;
 
 	Vector init(0.,0.,0.);
 	const int MAX_DISTANCE = 300000;
@@ -32,14 +29,14 @@ void Statistics::run()
 		
 		int distance[MAX_DISTANCE] = {};
 
-		for (list<Molecule*>::iterator it = ssimulation->molecules()->begin(); it != ssimulation->molecules()->end(); it++)
+		for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
 		{
 			const map<long, Vector>* h = (*it)->histogram();
 			map<long, Vector>::const_iterator pit = h->lower_bound(timex);
 
 			double d = squared_distance_between_points(&init, &(pit->second));
 			d = sqrt(d);
-			d *= sim_scale;
+			d *= ssim_scale;
 //		cout << d << " " << (pit->second).x << endl;
 			if ( (int)d < MAX_DISTANCE)
 			{

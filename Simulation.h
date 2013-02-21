@@ -10,6 +10,7 @@
 #include "RCell.h"
 #include "TCell.h"
 #include "BrownianMotion.h"
+#include "Statistics.h"
 
 class Simulation
 {
@@ -25,6 +26,7 @@ private:
 	std::vector<TCell>* stransmitters;
 
 	BrownianMotion* bm;
+	Statistics* sstat;
 
 	libconfig::Config cfg;
 
@@ -36,6 +38,9 @@ public:
 	bool started();
 	bool finished();
 	long time();
+
+	void add(Statistics* statistics);
+	// void add(Player* player); // one day maybe
 
 	std::list<Molecule*>* molecules();
 	std::vector<RCell>* receivers();

@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "Simulation.h"
+#include "Statistics.h"
 #include "Vector.h"
 #include "Molecule.h"
 #include "CairoColor.h"
@@ -122,6 +123,11 @@ Simulation::~Simulation()
 	delete smolecules;
 }
 
+void Simulation::add(Statistics* statistics)
+{
+	sstat = statistics;
+}
+
 void Simulation::run()
 {
 	sstarted = true;
@@ -153,6 +159,11 @@ void Simulation::run()
 				}
 			}
 			//TRI_LOG_STR( *(*mit) );
+		}
+
+		if (sstat != NULL)
+		{
+			sstat->run(stime, smolecules, sreceivers);
 		}
 	}
 
