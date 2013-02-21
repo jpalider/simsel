@@ -133,7 +133,7 @@ void Player::do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* ori
 	std::map<long, Vector>::const_iterator phit = h->begin();
 	std::map<long, Vector>::const_iterator hit = ++h->begin();
 
-	for ( ; hit != h->end(); hit++, phit++)
+	for ( ; hit != h->end(); ++hit, ++phit)
 	{
 		int ptx = player_scale * phit->second.x;
 		int pty = player_scale * phit->second.y;
@@ -169,7 +169,7 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	cairo_fill(cr);
 
 	// draw static cells
-	for (vector<RCell>::iterator it = psimulation->receivers()->begin(); it != psimulation->receivers()->end(); it++)
+	for (vector<RCell>::iterator it = psimulation->receivers()->begin(); it != psimulation->receivers()->end(); ++it)
 	{
 		do_drawing_cell(cr, &(*it), &origin);
 	}
@@ -177,23 +177,23 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	// draw molecules
 	if (ptail)
 	{
-		for (list<Molecule*>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+		for (list<Molecule*>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); ++it)
 		{
 			do_drawing_molecule_with_tail(cr, (*it), &origin, ptime);
 		}
 	}
 	else
 	{
-		for (list<Molecule*>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); it++)
+		for (list<Molecule*>::iterator it = psimulation->molecules()->begin(); it != psimulation->molecules()->end(); ++it)
 		{
 			do_drawing_molecule(cr, (*it), &origin, ptime);
 		}
 	}
 
 	//UNDER DEV: show only those molecules and tails that collide with rcells
-	// for (vector<RCell>::iterator rit = psimulation->receivers()->begin(); rit != psimulation->receivers()->end(); rit++)
+	// for (vector<RCell>::iterator rit = psimulation->receivers()->begin(); rit != psimulation->receivers()->end(); ++rit)
 	// {
-	// 	for (vector<Molecule*>::iterator it = rit->molecules()->begin(); it != rit->molecules()->end(); it++)
+	// 	for (vector<Molecule*>::iterator it = rit->molecules()->begin(); it != rit->molecules()->end(); ++it)
 	// 	{
 	// 		do_drawing_molecule_with_tail(cr, (*it), &origin, ptime);
 	// 	}
