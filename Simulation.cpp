@@ -57,7 +57,6 @@ Simulation::Simulation()
 	}
 	TRI_LOG_STR("Number of molecules added to the environment: " << nom);
 
-
 	int cells_no = 0;
 	TRI_LOG_STR("Sim: load receivers configuration");
 	cells_no = cfg.lookup("simulation.rcells").getLength();
