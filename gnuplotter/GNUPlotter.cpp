@@ -7,10 +7,9 @@
 
 using namespace std;
 
-GNUPlotter::GNUPlotter(string file_prefix, string plot_option)
+GNUPlotter::GNUPlotter(string file_prefix)
 {
 	gpfile_prefix = file_prefix;
-	gpplot_option = plot_option;
 }
 
 //http://stackoverflow.com/questions/3521209/making-c-code-plot-a-graph-automatically
@@ -33,19 +32,22 @@ void GNUPlotter::plot()
 	}
 }
 
-
+void GNUPlotter::set_ext(string plot_option)
+{
+	gpplot_option = plot_option;
+}
 
 void GNUPlotter::set_step(int step)
 {
 	gpstep = step;
 }
 
-void GNUPlotter::set_start(float start)
+void GNUPlotter::set_start(int start)
 {
 	gpstart = start;
 }
 
-void GNUPlotter::set_end(float end)
+void GNUPlotter::set_end(int end)
 {
 	gpend = end;
 }
