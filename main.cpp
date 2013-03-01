@@ -20,6 +20,7 @@
 #include "Simulation.h"
 #include "Player.h"
 #include "Statistics.h"
+#include "StatisticsDistribution.h"
 #include "Cell.h"
 #include "tri_logger/tri_logger.hpp"
 
@@ -94,7 +95,7 @@ int main(int argc, char **argv)
 	}
 
 	s = new Simulation();
-	stat = new Statistics(1.e-9);
+	stat = new StatisticsDistribution(s);
 	s->add(stat);
 	p = new Player(s);
 
@@ -106,7 +107,6 @@ int main(int argc, char **argv)
 		s->run();
 		return 0;
 	}
-
 	if( ! g_thread_supported() )
 		g_thread_init( NULL );
 

@@ -20,10 +20,10 @@
 
 using namespace std;
 
-static double sim_scale = 1e-9;
-
 Simulation::Simulation()
 {
+	ssim_scale = 1e-9;
+
 	sstarted = false;
 	sfinished = false;
 	stime = 0;
@@ -72,13 +72,13 @@ Simulation::Simulation()
 		double x = cfg.lookup(param_x);
 		double y = cfg.lookup(param_y);
 		double z = cfg.lookup(param_z);
-		x *= sim_scale;
-		y *= sim_scale;
-		z *= sim_scale;
+		x *= ssim_scale;
+		y *= ssim_scale;
+		z *= ssim_scale;
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
 		double radius = cfg.lookup(prefix + string("radius"));
-		radius *= sim_scale;
+		radius *= ssim_scale;
 		sreceivers->push_back(RCell(id, cp, radius));
 		TRI_LOG_STR("rcell pos" << cp);
 	}
@@ -96,9 +96,9 @@ Simulation::Simulation()
 		double x = cfg.lookup(param_x);
 		double y = cfg.lookup(param_y);
 		double z = cfg.lookup(param_z);
-		x *= sim_scale;
-		y *= sim_scale;
-		z *= sim_scale;
+		x *= ssim_scale;
+		y *= ssim_scale;
+		z *= ssim_scale;
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
 		double radius = cfg.lookup(prefix + string("radius"));
@@ -117,15 +117,25 @@ Simulation::~Simulation()
 		delete (*mit);
 	}
 
+	for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
+	{
+		delete (*sit);
+	}
+
 	delete bm;
 	delete stransmitters;
 	delete sreceivers;
 	delete smolecules;
 }
 
+double Simulation::scale()
+{
+	return ssim_scale;
+}
+
 void Simulation::add(Statistics* statistics)
 {
-	sstat = statistics;
+	sstat.push_back(statistics);
 }
 
 void Simulation::run()
@@ -156,12 +166,12 @@ void Simulation::run()
 					break;
 				}
 			}
-			//TRI_LOG_STR( *(*mit) );
 		}
 
-		if (sstat != NULL)
+		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
 		{
-			sstat->run(stime, smolecules, sreceivers);
+			(*sit)->run(stime, smolecules, sreceivers);
+
 		}
 
 		stime += stime_step;
@@ -170,19 +180,6 @@ void Simulation::run()
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
-	// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit) {
-	// 	std::vector<Molecule*>* ms = cit->molecules();
-	// 	for (vector<Molecule*>::iterator mit = ms->begin(); mit != ms->end(); ++mit) {
-	// 		TRI_LOG_STR( (*cit) << " " << *(*mit));
-	// 	}
-	// }
-
-	TRI_LOG_STR("Simulation results:");
-	// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
-	// {
-	// 	TRI_LOG_STR("\tRCell(" << cit->id()<< "): " << cit->molecules()->size() << " collided");
-	// }
-
 }
 
 bool Simulation::running()

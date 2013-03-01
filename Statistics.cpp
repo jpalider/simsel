@@ -1,65 +1,33 @@
 #include <list>
 #include <map>
 #include <cmath>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include "Statistics.h"
+#include "Simulation.h"
 #include "Vector.h"
 #include "Molecule.h"
 #include "Math.h"
 #include "tri_logger/tri_logger.hpp"
 
-//#include "gnuplot-iostream/gnuplot-iostream.h"
-
 using namespace std;
 
-Statistics::Statistics(double sim_scale)
+Statistics::Statistics(Simulation* s)
 {
-	ssim_scale = sim_scale;
+	sscale = s->scale();
 }
 
-void Statistics::run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells)
+string Statistics::current_time_as_string()
 {
-	long time1 = 90;
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer [80];
 
-	Vector init(0.,0.,0.);
-	const int MAX_DISTANCE = 300000;
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	strftime (buffer,80,"%Y-%m-%d-%H-%M",timeinfo);
 
-	for (int timex = 0; timex < 50000; timex++)
-	{
-		
-		int distance[MAX_DISTANCE] = {};
-
-		for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
-		{
-			const map<long, Vector>* h = (*it)->histogram();
-			map<long, Vector>::const_iterator pit = h->lower_bound(timex);
-
-			double d = squared_distance_between_points(&init, &(pit->second));
-			d = sqrt(d);
-			d *= ssim_scale;
-//		cout << d << " " << (pit->second).x << endl;
-			if ( (int)d < MAX_DISTANCE)
-			{
-				distance[(int)d]++;
-			}
-		}
-
-		cout << endl <<  "+---------------------------------------------------->" << endl;
-		for (int i = 0; i < MAX_DISTANCE; i++)
-		{
-			cout << "|";
-			int f = distance[i] / 10000;
-			for (int n = 0; n < f; n++)
-			{
-				cout << "*";
-			}
-			cout << endl;
-		}
-		cout << "v" << endl;
-		char c;
-		cin.get();
-
-	}
-//	return ;
-	
+	return string(buffer);
 }

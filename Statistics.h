@@ -6,15 +6,18 @@
 
 #include "Molecule.h"
 #include "RCell.h"
-#include "tri_logger/tri_logger.hpp"
+
+class Simulation;
 
 class Statistics
 {
-private:
-	double ssim_scale;
+protected:
+	double sscale;
 public:
-	Statistics(double sim_scale);
-	void run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells);
+	Statistics(Simulation* s);
+	virtual void run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells) = 0;
+protected:
+	std::string current_time_as_string();
 };
 
 #endif /* SIM_STATISTICS_H */

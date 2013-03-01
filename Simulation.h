@@ -15,6 +15,8 @@
 class Simulation
 {
 private:
+	double ssim_scale;
+
 	bool sstarted;
 	bool sfinished;
 	long stime;
@@ -26,7 +28,7 @@ private:
 	std::vector<TCell>* stransmitters;
 
 	BrownianMotion* bm;
-	Statistics* sstat;
+	std::vector<Statistics*> sstat;
 
 	libconfig::Config cfg;
 
@@ -38,6 +40,8 @@ public:
 	bool started();
 	bool finished();
 	long time();
+
+	double scale();
 
 	void add(Statistics* statistics);
 	// void add(Player* player); // one day maybe
