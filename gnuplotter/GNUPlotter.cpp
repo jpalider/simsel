@@ -10,6 +10,13 @@ using namespace std;
 GNUPlotter::GNUPlotter(string file_prefix)
 {
 	gpfile_prefix = file_prefix;
+	gpstep = 10*1000;
+	gpstart = 0;
+	gpend = 5*1000*1000;
+	gpxstart = 0;
+	gpxend = 500*1000;
+	gpystart = 0;
+	gpyend = 10*1000;
 }
 
 //http://stackoverflow.com/questions/3521209/making-c-code-plot-a-graph-automatically
