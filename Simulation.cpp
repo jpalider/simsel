@@ -143,8 +143,6 @@ void Simulation::run()
 			TRI_LOG_STR("Progress: " << progress << " %");
 		}
 
-		stime += stime_step;
-		
 		// for all molecules perform their action
 		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 		{
@@ -165,6 +163,8 @@ void Simulation::run()
 		{
 			sstat->run(stime, smolecules, sreceivers);
 		}
+
+		stime += stime_step;
 	}
 
 	sfinished = true;
