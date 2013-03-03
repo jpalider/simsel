@@ -12,9 +12,10 @@ class Simulation;
 class Statistics
 {
 protected:
-	double sscale;
+	double sscale; // [m]
+	long sinterval; // [ns]
 public:
-	Statistics(Simulation* s);
+	Statistics(Simulation* s, long interval);
 	virtual void run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells) = 0;
 protected:
 	std::string current_time_as_string();

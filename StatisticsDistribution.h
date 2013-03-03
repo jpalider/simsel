@@ -8,7 +8,7 @@ class StatisticsDistribution : public Statistics
 private:
 
 public:
-	StatisticsDistribution(Simulation* s);
+	StatisticsDistribution(Simulation* s, long interval);
 	void run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells);
 };
 

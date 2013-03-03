@@ -14,9 +14,10 @@
 
 using namespace std;
 
-Statistics::Statistics(Simulation* s)
+Statistics::Statistics(Simulation* s, long interval)
 {
 	sscale = s->scale();
+	sinterval = interval;
 }
 
 string Statistics::current_time_as_string()

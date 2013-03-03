@@ -31,7 +31,6 @@ using namespace std;
 
 Simulation* s;
 Player* p;
-Statistics* stat;
 long vistime = 0;
 
 
@@ -79,6 +78,8 @@ static gpointer thread_func( gpointer data )
 	return NULL;
 }
 
+static const long INTERVAL_10_000_NS = 10000;
+
 int main(int argc, char **argv)
 {
 	TRI_LOG("Welcome to the Sim");
@@ -95,7 +96,8 @@ int main(int argc, char **argv)
 	}
 
 	s = new Simulation();
-	stat = new StatisticsDistribution(s);
+	Statistics* stat;
+	stat = new StatisticsDistribution(s, INTERVAL_10_000_NS);
 	s->add(stat);
 	p = new Player(s);
 

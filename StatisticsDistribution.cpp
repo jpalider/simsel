@@ -13,7 +13,7 @@
 
 using namespace std;
 
-StatisticsDistribution::StatisticsDistribution(Simulation *s) : Statistics(s)
+StatisticsDistribution::StatisticsDistribution(Simulation *s, long interval) : Statistics(s, interval)
 {
 }
 
@@ -26,7 +26,7 @@ void StatisticsDistribution::run(long time, const std::list<Molecule*>* const mo
 
 	const int MAX_DISTANCE = 5*1000; // um
 
-	if (time % (10*1000) == 0)
+	if (time % sinterval == 0)
 	{
 
 		int molecules_at_distance[MAX_DISTANCE] = {};
