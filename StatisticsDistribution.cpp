@@ -20,11 +20,11 @@ StatisticsDistribution::StatisticsDistribution(Simulation *s, long interval) : S
 void StatisticsDistribution::run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells)
 {
 
-	static string time_prefix = current_time_as_string();
+	static const string time_prefix = current_time_as_string();
 
-	Vector init(0.,0.,0.);
+	static const Vector init(0.,0.,0.);
 
-	const int MAX_DISTANCE = 5*1000; // um
+	static const int MAX_DISTANCE = 5*1000; // um
 
 	if (time % sinterval == 0)
 	{
