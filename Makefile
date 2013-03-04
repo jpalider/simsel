@@ -9,7 +9,8 @@ CXXFLAGS = -O2 `pkg-config --cflags gtk+-3.0 libconfig++` -DTLOG
 
 LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++` -lm
 
-OBJ = main.o Molecule.o Vector.o BrownianMotion.o Math.o CairoColor.o \
+OBJ = main.o Molecule.o Vector.o BrownianMotion.o CairoColor.o \
+	Math.o SimpleRNG.o \
 	Simulation.o Cell.o tri_logger/tri_logger.o Player.o \
 	TCell.o RCell.o \
 	Statistics.o StatisticsDistribution.o StatisticsDensity.o \

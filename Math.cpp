@@ -4,6 +4,7 @@
 
 #include "Math.h"
 #include "Vector.h"
+#include "SimpleRNG.h"
 
 using namespace std;
 
@@ -148,8 +149,14 @@ double phi(double x)
 
 // approximation
 //http://www.protonfish.com/random.shtml
+// double normal(double mean, double dev)
+// {
+// 	double x = (((double)rand()/RAND_MAX) * 2 - 1) + (((double)rand()/RAND_MAX) * 2 - 1) + (((double)rand()/RAND_MAX) * 2 - 1);
+// 	return dev * x + mean;
+// }
+
 double normal(double mean, double dev)
 {
-	double x = (((double)rand()/RAND_MAX) * 2 - 1) + (((double)rand()/RAND_MAX) * 2 - 1) + (((double)rand()/RAND_MAX) * 2 - 1);
-	return dev * x + mean;
+	static SimpleRNG srng;
+	return srng.GetNormal(mean, dev);
 }
