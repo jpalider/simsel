@@ -25,4 +25,6 @@ double phi(double x);
 
 double normal(double mean, double dev);
 
+double sphere_volume(double radius);
+
 #endif /* SIM_MATH_H */

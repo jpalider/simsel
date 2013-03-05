@@ -160,3 +160,8 @@ double normal(double mean, double dev)
 	static SimpleRNG srng;
 	return srng.GetNormal(mean, dev);
 }
+
+double sphere_volume(double radius)
+{
+	return 4. / 3. * M_PI * pow(radius, 3);
+}
