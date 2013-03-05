@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include "Test.h"
 #include "Math.h"
@@ -127,4 +128,33 @@ void test_memory_usage()
 	enable_cout();
 
 	test_memory_usage_print();
+}
+
+double concentration(double r, double t, double d, double q)
+{
+	return q / pow(4*M_PI*d*t, 1.5) * exp(-1*r*r/(4*d*t));
+}
+
+void test_diffusion_equation()
+{
+	ofstream stat_stream;
+	stat_stream.open((string("results/") + string("test_diff_eq") + string(".txt")).c_str(), ios::trunc);
+
+	int samples = 100000;
+	double time_step = 1e-6;
+	double r = 3e-6;
+	double Q = 5e5;
+	double D = 1e-9;
+
+	for (int i = 1; i < samples; ++i)
+	{
+		double t = i*time_step;
+		double c = concentration(r, t, D, Q);
+		c *= pow(1e-6,3);
+		stat_stream << t << " " << c << "\n";
+	}
+
+	stat_stream << endl;
+	stat_stream.close();
+
 }

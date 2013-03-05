@@ -7,4 +7,6 @@ void test_diffusion_coefficient();
 
 void test_memory_usage();
 
+void test_diffusion_equation();
+
 #endif /*SIM_TEST_H*/
