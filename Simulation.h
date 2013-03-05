@@ -40,6 +40,7 @@ public:
 	bool started();
 	bool finished();
 	long time();
+	long interval();
 
 	double scale();
 

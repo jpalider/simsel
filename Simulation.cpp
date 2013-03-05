@@ -202,6 +202,11 @@ long Simulation::time()
 	return stime;
 }
 
+long Simulation::interval()
+{
+	return stime_step;
+}
+
 list<Molecule*>* Simulation::molecules()
 {
 	return smolecules;

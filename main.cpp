@@ -21,6 +21,7 @@
 #include "Player.h"
 #include "Statistics.h"
 #include "StatisticsDistribution.h"
+#include "StatisticsDensity.h"
 #include "Cell.h"
 #include "tri_logger/tri_logger.hpp"
 
@@ -70,19 +71,19 @@ time_handler(GtkWidget *widget)
 	return true;
 }
 
-
-
 static gpointer thread_func( gpointer data )
 {
 	s->run();
 	return NULL;
 }
 
-static const long INTERVAL_10_000_NS = 10000;
+static const long INTERVAL_10_US = 10*1000;
+
+static const long INTERVAL_100_US = 100*1000;
 
 int main(int argc, char **argv)
 {
-	TRI_LOG("Welcome to the Sim");
+	TRI_LOG_STR("Welcome to the Sim");
 
 	if (argc > 1)
 	{
@@ -90,6 +91,7 @@ int main(int argc, char **argv)
 		{
 			test_diffusion_coefficient();
 			test_memory_usage();
+			test_diffusion_equation();
 			return 0;
 		}
 		//NUMBER_OF_MOLECULES = atoi(argv[1]);
@@ -97,7 +99,8 @@ int main(int argc, char **argv)
 
 	s = new Simulation();
 	Statistics* stat;
-	stat = new StatisticsDistribution(s, INTERVAL_10_000_NS);
+	// stat = new StatisticsDistribution(s, INTERVAL_10_US);
+	stat = new StatisticsDensity(s, s->interval());
 	s->add(stat);
 	p = new Player(s);
 
