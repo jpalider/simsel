@@ -157,7 +157,7 @@ double phi(double x)
 
 double normal(double mean, double dev)
 {
-	static SimpleRNG srng;
+	static SimpleRNG srng((unsigned int)rand(), (unsigned int)rand());
 	return srng.GetNormal(mean, dev);
 }
 
