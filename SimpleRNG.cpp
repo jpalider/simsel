@@ -14,6 +14,12 @@ SimpleRNG::SimpleRNG()
     m_v = 362436069;
 }
 
+SimpleRNG::SimpleRNG(unsigned int u, unsigned int v)
+{
+    m_u = u;
+    m_v = v;
+}
+
 void SimpleRNG::SetState(unsigned int u, unsigned int v)
 {
     m_u = u;
