@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cmath>
 
 #include "BrownianMotion.h"
 #include "Vector.h"
@@ -15,7 +16,6 @@ BrownianMotion::BrownianMotion(int dimensions, double tau)
 	bmdiameter = 1e-6; // 1 um
 	bmdiffusion_coefficient = diffusion_coefficient(bmtemperature_K, bmviscosity_eta, bmdiameter);
 	bmdiffusion_coefficient = 1e-9;
-
 }
 
 Vector BrownianMotion::get_move()
@@ -26,8 +26,10 @@ Vector BrownianMotion::get_move()
 
 Vector BrownianMotion::get_move(double scale)
 {
-	double dx = normal(0., 1.);
-	double dy = normal(0., 1.);
-	double dz = bmdimensions == 2 ? 0.0 : normal(0., 1.);
-	return Vector(dx*scale, dy*scale, dz*scale);
+	static double sqrt_of_3 = sqrt(3);
+	scale /= sqrt_of_3;
+	double dx = normal(0., 1.*scale);
+	double dy = normal(0., 1.*scale);
+	double dz = bmdimensions == 2 ? 0.0 : normal(0., 1.*scale);
+	return Vector(dx, dy, dz);
 }
