@@ -89,8 +89,8 @@ int main(int argc, char **argv)
 	{
 		if (string(argv[1]).find("test") != std::string::npos)
 		{
-			test_diffusion_coefficient();
-			test_memory_usage();
+			//test_diffusion_coefficient();
+			//test_memory_usage();
 			test_diffusion_equation();
 			return 0;
 		}
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	p = new Player(s);
 
 	s->run();
-
+	return 0;
 
 	if (!p->show())
 	{
