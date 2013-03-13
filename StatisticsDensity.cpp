@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <strstream>
 #include <string>
 
 #include "StatisticsDensity.h"
@@ -25,42 +26,35 @@ void StatisticsDensity::run(long time, const std::list<Molecule*>* const molecul
 
 	static const string time_prefix = current_time_as_string();
 
-	static const Vector init(0.,0.,0.);
-
-	static const int MEASURED_DISTANCE = 3*1000; // um
-
-	static const int outer_radius = 3100;
-	
-	static const int inner_radius = 2900;
-
-	static const double outer_radius_um = outer_radius / 1000.;
-
-	static const double inner_radius_um = inner_radius / 1000.;
-
-	static const double vol = 4. / 3. * M_PI * ( pow(outer_radius_um, 3) - pow(inner_radius_um, 3) );
+	static const double vol = sphere_volume(0.4); // um, just in this test statistics
 	
 	if (time % sinterval == 0)
 	{
 		const Vector* v = NULL;
-		int m_count = 0;
-
-		for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
+		for (vector<RCell>::const_iterator cit = rcells->begin(); cit != rcells->end(); ++cit)
 		{
-			v = (*it)->position();
-			double d = squared_distance_between_points(&init, v);
-			d = sqrt(d);
-			d /= sscale; // now in [nm]
-			if (d > inner_radius && d < outer_radius)
+			int m_count = 0;
+			double diameter = cit->radius();
+			diameter = diameter*diameter;
+
+			for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
 			{
-				m_count++;
+				v = (*it)->position();
+				double d = squared_distance_between_points(cit->position(), v);
+				//double d = squared_distance_between_points(&init, v);
+				if ( d < diameter )
+				{
+					m_count++;
+				}
 			}
+
+			ofstream stat_stream;
+			stringstream ss;
+			ss << "_rcell_" << cit->id();
+			stat_stream.open((string("results/") + time_prefix + ss.str() + string(".dat")).c_str(), ios::app);
+			stat_stream << time * sscale << " " << ( m_count / vol ) << endl;
+			stat_stream.close();
+
 		}
-
-		ofstream stat_stream;
-		stat_stream.open((string("results/") + time_prefix + string("_dens_") + string(".txt")).c_str(), ios::app);
-
-		stat_stream << time << " " << ( m_count / vol ) << endl;
-		stat_stream.close();
-
 	}
 }

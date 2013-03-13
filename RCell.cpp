@@ -29,8 +29,10 @@ RCell::~RCell()
 bool RCell::collide(Molecule *m)
 {
 //	TRI_LOG_STR("Collided with molecule " << *m);
-	rmolecules->push_back(m);
-	return true;
+	// rmolecules->push_back(m);
+	// return true;
+
+	return false;
 }
 
 std::vector<Molecule*>* RCell::molecules()

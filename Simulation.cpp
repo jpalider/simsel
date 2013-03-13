@@ -102,6 +102,7 @@ Simulation::Simulation()
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
 		double radius = cfg.lookup(prefix + string("radius"));
+		radius *= ssim_scale;
 		stransmitters->push_back(TCell(id, cp, radius));
 		TRI_LOG_STR("tcell pos" << cp);
 	}
