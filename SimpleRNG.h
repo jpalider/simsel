@@ -8,35 +8,35 @@
 class SimpleRNG
 {
 public:
-    
+
 	SimpleRNG();
 
 	SimpleRNG(unsigned int u, unsigned int v);
 
-	// Seed the random number generator 
+	// Seed the random number generator
 	void SetState(unsigned int u, unsigned int v);
 
 	// Extract the internal state of the generator
 	void GetState(unsigned int& u, unsigned int& v);
 
-	// A uniform random sample from the open interval (0, 1) 
+	// A uniform random sample from the open interval (0, 1)
 	double GetUniform();
 
-	// A uniform random sample from the set of unsigned integers 
+	// A uniform random sample from the set of unsigned integers
 	unsigned int GetUint();
 
-	// This stateless version makes it more convenient to get a uniform 
+	// This stateless version makes it more convenient to get a uniform
 	// random value and transfer the state in and out in one operation.
 	double GetUniform(unsigned int& u, unsigned int& v);
 
-	// This stateless version makes it more convenient to get a random unsigned integer 
+	// This stateless version makes it more convenient to get a random unsigned integer
 	// and transfer the state in and out in one operation.
 	unsigned int GetUint(unsigned int& u, unsigned int& v);
-        
-	// Normal (Gaussian) random sample 
+
+	// Normal (Gaussian) random sample
 	double GetNormal(double mean, double standardDeviation);
 
-	// Exponential random sample 
+	// Exponential random sample
 	double GetExponential(double mean);
 
 	// Gamma random sample
