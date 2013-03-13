@@ -24,7 +24,7 @@ Cell::~Cell()
 {
 }
 
-double Cell::radius()
+double Cell::radius() const
 {
 	return cradius;
 }

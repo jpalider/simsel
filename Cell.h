@@ -19,7 +19,7 @@ public:
 	Cell(const Cell &other);
 
 	virtual ~Cell();
-	double radius();
+	double radius() const;
 	const Vector* position() const;
 	long id() const;
 
