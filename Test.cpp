@@ -141,7 +141,7 @@ void test_diffusion_equation()
 	stat_stream.open((string("results/") + string("test_diff_eq") + string(".txt")).c_str(), ios::trunc);
 
 	int samples = 100000;
-	double time_step = 1e-6;
+	double time_step = 10*1e-6;
 	double r = 3e-6;
 	double Q = 5e5;
 	double D = 1e-9;
@@ -150,7 +150,7 @@ void test_diffusion_equation()
 	{
 		double t = i*time_step;
 		double c = concentration(r, t, D, Q);
-		c *= pow(1e-6,3);
+		c *= pow(1e-6,3); // um^3
 		stat_stream << t << " " << c << "\n";
 	}
 

@@ -20,6 +20,20 @@
 
 using namespace std;
 
+struct Interval
+{
+	long interval;
+	int series;
+	int number;
+	int transmitter;
+};
+
+
+union Generation
+{
+	struct Interval interval;
+} generation;
+
 Simulation::Simulation()
 {
 	ssim_scale = 1e-9;
@@ -50,13 +64,28 @@ Simulation::Simulation()
 
 	bm = new BrownianMotion(dimensions, tau);
 
-	int nom = cfg.lookup("simulation.molecules.number");
-	Vector p(0, 0, 0);
-	for (int i = 0; i < nom; i++)
+	// currently cannot mix generation types
+	string type = cfg.lookup("simulation.molecules.type");
+	TRI_LOG_STR("Getting molecule generation type: " << type);
+
+	if ( type.compare("interval") == 0 )
 	{
-		smolecules->push_back(new Molecule(i, p));
+		generation.interval.interval = cfg.lookup("simulation.molecules.interval");
+
+		generation.interval.series = cfg.lookup("simulation.molecules.series");
+
+		generation.interval.number = cfg.lookup("simulation.molecules.number");
+		Vector p(0, 0, 0);
+		for (int i = 0; i < generation.interval.number; i++)
+		{
+			smolecules->push_back(new Molecule(i, p));
+		}
+
+		generation.interval.transmitter = cfg.lookup("simulation.molecules.transmitter");
+		
+		TRI_LOG_STR("Number of molecules added to the environment: " << generation.interval.number);
 	}
-	TRI_LOG_STR("Number of molecules added to the environment: " << nom);
+	
 
 	int cells_no = 0;
 	TRI_LOG_STR("Sim: load receivers configuration");
@@ -145,6 +174,10 @@ void Simulation::run()
 
 	TRI_LOG_STR("Starting simulation");
 	int progress = -1;
+	bool added = false;
+
+	
+	
 	while (stime < duration)
 	{
 		int p = (((double)stime)/duration)*100.0f;
@@ -154,19 +187,36 @@ void Simulation::run()
 			TRI_LOG_STR("Progress: " << progress << " %");
 		}
 
+		if (!added)
+		{
+			if (stime > 10000)
+			{
+				added = true;
+				int mol = smolecules->size();
+				Vector p(0, 0, 0);
+				for (int i = 0; i < mol; i++)
+				{
+					smolecules->push_back(new Molecule(i+mol, p));
+				}
+			}
+		}
+
 		// for all molecules perform their action
 		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 		{
 			(*mit)->move(stime, bm->get_move());
-			for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
-			{
-				if ((*mit)->check_collision(&(*cit)))
-				{
-					// RCell->accept_molecule();
-					mit = smolecules->erase(mit);
-					break;
-				}
-			}
+			// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
+			// {
+			// 	// should check sector it belongs to
+			// 	// if ((*mit)->precheck_collision(&(*cit)))
+				
+			// 	if ((*mit)->check_collision(&(*cit)))
+			// 	{
+			// 		// RCell->accept_molecule();
+			// 		mit = smolecules->erase(mit);
+			// 		break;
+			// 	}
+			// }
 		}
 
 		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
