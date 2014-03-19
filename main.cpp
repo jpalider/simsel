@@ -107,53 +107,54 @@ int main(int argc, char **argv)
 	s->run();
 	return 0;
 
-	if (!p->show())
-	{
-		s->run();
-		return 0;
-	}
-	if( ! g_thread_supported() )
-		g_thread_init( NULL );
-
-	gdk_threads_init();
-
-	gdk_threads_enter();
-
-	GtkWidget *window;
-	GtkWidget *darea;
-	GThread *thread;
-	GError *error = NULL;
-
-	gtk_init(&argc, &argv);
-
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	darea = gtk_drawing_area_new();
-	gtk_container_add(GTK_CONTAINER(window), darea);
-
-	g_signal_connect(G_OBJECT(darea), "draw", 
-			 G_CALLBACK(on_draw_event), NULL); 
-	g_signal_connect(window, "destroy",
-			 G_CALLBACK(gtk_main_quit), NULL);
-
-	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-	gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
-	gtk_window_set_title(GTK_WINDOW(window), "Sim");
-
-	g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
-
-	// thread = g_thread_create( thread_func, NULL, FALSE, &error );
-	// if( ! thread )
+	// if (!p->show())
 	// {
-	// 	g_print( "Error: %s\n", error->message );
-	// 	return( -1 );
+	// 	s->run();
+	// 	return 0;
 	// }
 
-	gtk_widget_show_all(window);
+	// if( ! g_thread_supported() )
+	// 	g_thread_init( NULL );
 
-	gtk_main();
+	// gdk_threads_init();
 
-	// gdk_threads_leave();
+	// gdk_threads_enter();
+
+	// GtkWidget *window;
+	// GtkWidget *darea;
+	// GThread *thread;
+	// GError *error = NULL;
+
+	// gtk_init(&argc, &argv);
+
+	// window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+	// darea = gtk_drawing_area_new();
+	// gtk_container_add(GTK_CONTAINER(window), darea);
+
+	// g_signal_connect(G_OBJECT(darea), "draw", 
+	// 		 G_CALLBACK(on_draw_event), NULL); 
+	// g_signal_connect(window, "destroy",
+	// 		 G_CALLBACK(gtk_main_quit), NULL);
+
+	// gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+	// gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
+	// gtk_window_set_title(GTK_WINDOW(window), "Sim");
+
+	// g_timeout_add(p->interval_ms(), (GSourceFunc) time_handler, (gpointer) window);
+
+	// // thread = g_thread_create( thread_func, NULL, FALSE, &error );
+	// // if( ! thread )
+	// // {
+	// // 	g_print( "Error: %s\n", error->message );
+	// // 	return( -1 );
+	// // }
+
+	// gtk_widget_show_all(window);
+
+	// gtk_main();
+
+	// // gdk_threads_leave();
 
 	return 0;
 }
