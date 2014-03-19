@@ -86,7 +86,8 @@ void test_memory_usage_print()
 	buffer >> tSize >> resident >> share;
 	buffer.close();
 
-	long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+	//long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+	long page_size_kb = 4;
 	double rss = resident * page_size_kb;
 	cout << "RSS - " << rss << " kB\n";
 
