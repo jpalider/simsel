@@ -18,7 +18,7 @@ OBJ = main.o Molecule.o Vector.o BrownianMotion.o CairoColor.o \
 
 
 %.o: %.c
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -std++11 -c -o $@ $<
 
 sim: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
