@@ -1,14 +1,14 @@
 #ifndef SIM_TCELL_H
 #define SIM_TCELL_H
 
-#include "Cell.h"
+#include "Boundary.h"
 
 class Molecule;
 
-class TCell : public Cell
+class TCell : public Boundary
 {
 public:
-	TCell(long identifier, Vector position, double radius);
+	TCell(Id identifier, Vector position, Coordinate radius);
 	TCell(const TCell& other);
 	bool collide(Molecule *m);
 };

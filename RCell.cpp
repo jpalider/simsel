@@ -1,18 +1,18 @@
 #include <vector>
 #include "RCell.h"
 #include "Molecule.h"
+#include "Types.h"
 #include "tri_logger/tri_logger.hpp"
 
-RCell::RCell(long identifier, Vector position, double radius) :
-	Cell(identifier, position, radius)
+RCell::RCell(Id identifier, Vector position, Coordinate radius) :
+	Boundary(identifier, position, radius)
 {
 	rmolecules = new std::vector<Molecule*>();
 }
 
-RCell::RCell(const RCell& other) : Cell(other),	rmolecules( new std::vector<Molecule*>(*(other.rmolecules)) )
+RCell::RCell(const RCell& other) : Boundary(other), rmolecules( new std::vector<Molecule*>(*(other.rmolecules)) )
 {
 }
-
 
 RCell::~RCell()
 {

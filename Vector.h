@@ -2,12 +2,13 @@
 #define SIM_VECTOR_H
 
 #include <ostream>
+#include "Types.h"
 
 class Vector {
 public:	
-	double x, y, z;
+	Coordinate x, y, z;
 
-	Vector(double x, double y, double z);
+	Vector(Coordinate x, Coordinate y, Coordinate z);
 	Vector();
 
 	void translate(Vector* t);

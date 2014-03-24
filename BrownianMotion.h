@@ -5,11 +5,11 @@
 
 class BrownianMotion {
 private:
-	int bmdimensions;
+	int    bmdimensions;
 	double bmdiffusion_coefficient;
 	double bmtemperature_K;
 	double bmviscosity_eta;
-	double bmdiameter;
+	//double bmdiameter;
 	double bmtau;
 
 public:

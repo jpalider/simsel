@@ -4,28 +4,29 @@
 #include <map>
 #include <iostream>
 
+#include "Types.h"
 #include "Vector.h"
-#include "RCell.h"
+#include "Boundary.h"
 
 class RCell;
 
 class Molecule {
 private:
-	Vector mposition;
-	Vector mpposition;
-	double mradius;
-	std::map<long, Vector> mhistogram;
-	long mid;
-	RCell* mcell;
+	Vector                 mposition;
+	Vector                 mpposition;
+	Coordinate             mradius;
+	std::map<Time, Vector> mhistogram;
+	Id                     mid;
+	Boundary*              mcell;
 
 public:
-	Molecule(long identifier, Vector position);
+	Molecule(Id identifier, Vector position);
 
 	const Vector* position() const;
-	const std::map<long, Vector>* histogram() const;
+	const std::map<Time, Vector>* histogram() const;
 
-	void move(long time, Vector t);
-	bool check_collision(RCell *c);
+	void move(Time time, Vector t);
+	bool check_collision(Boundary *c);
 
 private:
 	friend std::ostream & operator<<(std::ostream &os, const Molecule& m);

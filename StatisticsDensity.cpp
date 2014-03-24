@@ -27,7 +27,7 @@ void StatisticsDensity::run(long time, const std::list<Molecule*>* const molecul
 	static const string time_prefix = current_time_as_string();
 
 	static const double vol = sphere_volume(0.4); // um, just in this test statistics
-	
+
 	if (time % sinterval == 0)
 	{
 		const Vector* v = NULL;
@@ -52,7 +52,7 @@ void StatisticsDensity::run(long time, const std::list<Molecule*>* const molecul
 			stringstream ss;
 			ss << "_rcell_" << cit->id();
 			stat_stream.open((string("results/") + time_prefix + ss.str() + string(".dat")).c_str(), ios::app);
-			stat_stream << time * sscale << " " << ( m_count / vol ) << endl;
+			stat_stream << time * sscale << " " << ( m_count / vol ) << " " << m_count << endl;
 			stat_stream.close();
 
 		}

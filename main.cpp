@@ -22,7 +22,7 @@
 #include "Statistics.h"
 #include "StatisticsDistribution.h"
 #include "StatisticsDensity.h"
-#include "Cell.h"
+#include "Boundary.h"
 #include "tri_logger/tri_logger.hpp"
 
 #include "Test.h"
@@ -85,24 +85,24 @@ int main(int argc, char **argv)
 {
 	TRI_LOG_STR("Welcome to the Sim");
 
-	if (argc > 1)
-	{
-		if (string(argv[1]).find("test") != std::string::npos)
-		{
-			//test_diffusion_coefficient();
-			//test_memory_usage();
-			test_diffusion_equation();
-			return 0;
-		}
-		//NUMBER_OF_MOLECULES = atoi(argv[1]);
-	}
+	// if (argc > 1)
+	// {
+	// 	if (string(argv[1]).find("test") != std::string::npos)
+	// 	{
+	// 		//test_diffusion_coefficient();
+	// 		//test_memory_usage();
+	// 		test_diffusion_equation();
+	// 		return 0;
+	// 	}
+	// 	//NUMBER_OF_MOLECULES = atoi(argv[1]);
+	// }
 
 	s = new Simulation();
 	Statistics* stat;
 	// stat = new StatisticsDistribution(s, INTERVAL_10_US);
 	stat = new StatisticsDensity(s, s->interval());
 	s->add(stat);
-	p = new Player(s);
+	// p = new Player(s);
 
 	s->run();
 	return 0;

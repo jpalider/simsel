@@ -55,7 +55,7 @@ static double player_scale = 1e10;
 
 CairoColor player_string_color(222,222,222);
 
-void Player::do_drawing_cell(cairo_t *cr, Cell* c, Vector* origin)
+void Player::do_drawing_cell(cairo_t *cr, Boundary* c, Vector* origin)
 {
 	cairo_set_source_rgb(cr, prcolor.red(), prcolor.green(), prcolor.blue());
 

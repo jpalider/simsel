@@ -4,18 +4,19 @@
 #include <vector>
 #include <memory>
 
-#include "Cell.h"
+#include "Boundary.h"
 #include "Vector.h"
+#include "Types.h"
 
 class Molecule;
 
-class RCell : public Cell
+class RCell : public Boundary
 {
 private:
 	std::vector<Molecule*>* rmolecules ;
 
 public:
-	RCell(long identifier, Vector position, double radius);
+	RCell(Id identifier, Vector position, Coordinate radius);
 	RCell(const RCell& other);
 	~RCell();
 

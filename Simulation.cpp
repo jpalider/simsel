@@ -85,16 +85,15 @@ Simulation::Simulation()
 		
 		TRI_LOG_STR("Number of molecules added to the environment: " << generation.interval.number);
 	}
-	
 
-	int cells_no = 0;
-	TRI_LOG_STR("Sim: load receivers configuration");
-	cells_no = cfg.lookup("simulation.rcells").getLength();
-	for (int i = 0; i < cells_no; i++)
+	TRI_LOG_STR("Sim: load obstacles configuration");
+	int bounds_no = cfg.lookup("simulation.bounds").getLength();
+
+	for (int i = 0; i < bounds_no; i++)
 	{
 		stringstream ss;
 		ss << i;
-		string prefix = string("simulation.rcells.[") + ss.str() + string("].");
+		string prefix = string("simulation.bounds.[") + ss.str() + string("].");
 		string param_x = prefix + string("pos.x");
 		string param_y = prefix + string("pos.y");
 		string param_z = prefix + string("pos.z");
@@ -105,20 +104,38 @@ Simulation::Simulation()
 		y *= ssim_scale;
 		z *= ssim_scale;
 		Vector cp(x, y, z);
-		int id = cfg.lookup(prefix + string("id"));
-		double radius = cfg.lookup(prefix + string("radius"));
-		radius *= ssim_scale;
-		sreceivers->push_back(RCell(id, cp, radius));
-		TRI_LOG_STR("rcell pos" << cp);
+		Id id = cfg.lookup(prefix + string("id"));
+		string shape = cfg.lookup(prefix + string("shape"));
+		if ( shape.find("cube") != string::npos)
+		{
+			TRI_LOG_STR("Sim: shape is cube");
+		}
+		else if ( shape.find("sphere") != string::npos)
+		{
+			TRI_LOG_STR("Sim: shape is cube");
+			Coordinate radius = cfg.lookup(prefix + string("radius"));
+			radius *= ssim_scale;
+			bool disabled = cfg.lookup(prefix + string("disabled"));
+			if (!disabled)
+			{
+				sreceivers->push_back(RCell(id, cp, radius));
+			}
+		}
+		else
+		{
+			TRI_LOG_STR("Sim: unknown shape");
+		}
+
+		TRI_LOG_STR("bound pos" << cp);
 	}
 
-	TRI_LOG_STR("Sim: load transmitters configuration");
-	cells_no = cfg.lookup("simulation.tcells").getLength();
-	for (int i = 0; i < cells_no; i++)
+	TRI_LOG_STR("Sim: load sources configuration");
+	int sources_no = cfg.lookup("simulation.sources").getLength();
+	for (int i = 0; i < sources_no; i++)
 	{
 		stringstream ss;
 		ss << i;
-		string prefix = string("simulation.tcells.[") + ss.str() + string("].");
+		string prefix = string("simulation.sources.[") + ss.str() + string("].");
 		string param_x = prefix + string("pos.x");
 		string param_y = prefix + string("pos.y");
 		string param_z = prefix + string("pos.z");
@@ -130,14 +147,13 @@ Simulation::Simulation()
 		z *= ssim_scale;
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
-		double radius = cfg.lookup(prefix + string("radius"));
-		radius *= ssim_scale;
-		stransmitters->push_back(TCell(id, cp, radius));
-		TRI_LOG_STR("tcell pos" << cp);
+		stransmitters->push_back(TCell(id, cp, 0));
+		TRI_LOG_STR("sources pos" << cp);
 	}
 
 	TRI_LOG_STR("Sim: load duration");
 	duration = cfg.lookup("simulation.duration");
+
 }
 
 Simulation::~Simulation()
@@ -187,7 +203,7 @@ void Simulation::run()
 			TRI_LOG_STR("Progress: " << progress << " %");
 		}
 
-		if (!added)
+		if (!added && false)
 		{
 			if (stime > 10000)
 			{
@@ -222,7 +238,6 @@ void Simulation::run()
 		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
 		{
 			(*sit)->run(stime, smolecules, sreceivers);
-
 		}
 
 		stime += stime_step;
