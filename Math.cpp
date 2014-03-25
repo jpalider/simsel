@@ -5,17 +5,19 @@
 #include "Math.h"
 #include "Vector.h"
 #include "SimpleRNG.h"
+#include "Types.h"
+
 
 using namespace std;
 
 Vector vzero(0,0,0);
 
-double squared_distance_between_points(const Vector* p1, const Vector* p2)
+Coordinate squared_distance_between_points(const Vector* p1, const Vector* p2)
 {
 	return (p2->x-p1->x)*(p2->x-p1->x) + (p2->y-p1->y)*(p2->y-p1->y) + (p2->z-p1->z)*(p2->z-p1->z);
 }
 
-double cos_at_ab(double a2, double b2, double c2, double ab)
+Coordinate cos_at_ab(Coordinate a2, Coordinate b2, Coordinate c2, Coordinate ab)
 {
 	return (a2 + b2 - c2) / (2 * ab);
 }
@@ -37,11 +39,11 @@ Vector cross_product(const Vector* a, const Vector* b, const Vector* c)
 // http://kb->komires->net/article->php?id=2
 // http://pl->wikipedia->org/wiki/Iloczyn_wektorowy
 // http://www->matematyka->pl/47774->htm
-double triangle_area(const Vector* a, const Vector* b, const Vector* c)
+Coordinate triangle_area(const Vector* a, const Vector* b, const Vector* c)
 {
 	Vector axb = cross_product(a, b, c);
 	//cout << a << b << c << axb;
-	double area = 0.5f * sqrt( squared_distance_between_points(&vzero, &axb) );
+	Coordinate area = 0.5f * sqrt( squared_distance_between_points(&vzero, &axb) );
 	return area;		
 }
 
@@ -51,7 +53,7 @@ double triangle_area(const Vector* a, const Vector* b, const Vector* c)
 /**
  * Returns true on intersection 
  */
-bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector *s, double r)
+bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector *s, Coordinate r)
 {	
 	if (p1 == p2)
 	{
@@ -60,16 +62,16 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 		return squared_distance_between_points(p1, s) <= r*r;
 	}	
 
-	double sq_p1_to_s = squared_distance_between_points(p1, s);
-	double sq_p2_to_s = squared_distance_between_points(p2, s);
-	double sq_p1_to_p2 = squared_distance_between_points(p1, p2);
-	double p1_to_p2 = sqrt( sq_p1_to_p2 );
-	double p1_to_s = sqrt( sq_p1_to_s );
-	double p2_to_s = sqrt( sq_p2_to_s );
+	Coordinate sq_p1_to_s = squared_distance_between_points(p1, s);
+	Coordinate sq_p2_to_s = squared_distance_between_points(p2, s);
+	Coordinate sq_p1_to_p2 = squared_distance_between_points(p1, p2);
+	Coordinate p1_to_p2 = sqrt( sq_p1_to_p2 );
+	Coordinate p1_to_s = sqrt( sq_p1_to_s );
+	Coordinate p2_to_s = sqrt( sq_p2_to_s );
 
 
-	double cos_p1 = cos_at_ab(sq_p1_to_s, sq_p1_to_p2, sq_p2_to_s, p1_to_p2 * p1_to_s );
-	double cos_p2 = cos_at_ab(sq_p2_to_s, sq_p1_to_p2, sq_p1_to_s, p1_to_p2 * p2_to_s );
+	Coordinate cos_p1 = cos_at_ab(sq_p1_to_s, sq_p1_to_p2, sq_p2_to_s, p1_to_p2 * p1_to_s );
+	Coordinate cos_p2 = cos_at_ab(sq_p2_to_s, sq_p1_to_p2, sq_p1_to_s, p1_to_p2 * p2_to_s );
 
 	 // cout << "dbg" << cos_p1 << " " << acos(cos_p1) * 360 / 2 / M_PI << " " << acute_angle(cos_p1) << endl;
 	 // cout << "dbg" << cos_p2 << " " << acos(cos_p2) * 360 / 2 / M_PI << " " << acute_angle(cos_p2) << endl;
@@ -161,7 +163,7 @@ double normal(double mean, double dev)
 	return srng.GetNormal(mean, dev);
 }
 
-double sphere_volume(double radius)
+Coordinate sphere_volume(double radius)
 {
 	return 4. / 3. * M_PI * pow(radius, 3);
 }

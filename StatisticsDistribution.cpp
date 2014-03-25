@@ -17,7 +17,7 @@ StatisticsDistribution::StatisticsDistribution(Simulation *s, long interval) : S
 {
 }
 
-void StatisticsDistribution::run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells)
+void StatisticsDistribution::run(long time, const std::list<Molecule*>* const molecules, const std::vector<Receptor>* const rcells)
 {
 
 	static const string time_prefix = current_time_as_string();

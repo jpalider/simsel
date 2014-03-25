@@ -71,7 +71,7 @@ void Player::do_drawing_cell(cairo_t *cr, Boundary* c, Vector* origin)
 	cairo_identity_matrix(cr);
 
 	stringstream ss;
-	ss <<  "[" << c->id() << "]: " << ((RCell*)c)->molecules()->size();
+	ss <<  "[" << c->id() << "]: " << ((Receptor*)c)->molecules()->size();
 	string s = ss.str();
 
 	cairo_text_extents_t extents;
@@ -169,7 +169,7 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	cairo_fill(cr);
 
 	// draw static cells
-	for (vector<RCell>::iterator it = psimulation->receivers()->begin(); it != psimulation->receivers()->end(); ++it)
+	for (vector<Receptor>::iterator it = psimulation->receivers()->begin(); it != psimulation->receivers()->end(); ++it)
 	{
 		do_drawing_cell(cr, &(*it), &origin);
 	}
@@ -191,7 +191,7 @@ void Player::do_drawing(cairo_t *cr, GtkWidget* widget)
 	}
 
 	//UNDER DEV: show only those molecules and tails that collide with rcells
-	// for (vector<RCell>::iterator rit = psimulation->receivers()->begin(); rit != psimulation->receivers()->end(); ++rit)
+	// for (vector<Receptor>::iterator rit = psimulation->receivers()->begin(); rit != psimulation->receivers()->end(); ++rit)
 	// {
 	// 	for (vector<Molecule*>::iterator it = rit->molecules()->begin(); it != rit->molecules()->end(); ++it)
 	// 	{

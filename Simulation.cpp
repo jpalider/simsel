@@ -13,8 +13,8 @@
 #include "Vector.h"
 #include "Molecule.h"
 #include "CairoColor.h"
-#include "RCell.h"
-#include "TCell.h"
+#include "Receptor.h"
+#include "Source.h"
 #include "Math.h"
 #include "tri_logger/tri_logger.hpp"
 
@@ -43,8 +43,8 @@ Simulation::Simulation()
 	stime = 0;
 
 	smolecules = new std::list<Molecule*>();
-	sreceivers = new std::vector<RCell>();
-	stransmitters = new std::vector<TCell>();
+	sreceivers = new std::vector<Receptor>();
+	stransmitters = new std::vector<Source>();
 
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
@@ -118,7 +118,7 @@ Simulation::Simulation()
 			bool disabled = cfg.lookup(prefix + string("disabled"));
 			if (!disabled)
 			{
-				sreceivers->push_back(RCell(id, cp, radius));
+				sreceivers->push_back(Receptor(id, cp, radius));
 			}
 		}
 		else
@@ -147,7 +147,7 @@ Simulation::Simulation()
 		z *= ssim_scale;
 		Vector cp(x, y, z);
 		int id = cfg.lookup(prefix + string("id"));
-		stransmitters->push_back(TCell(id, cp, 0));
+		stransmitters->push_back(Source(id, cp, 0));
 		TRI_LOG_STR("sources pos" << cp);
 	}
 
@@ -221,14 +221,14 @@ void Simulation::run()
 		for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 		{
 			(*mit)->move(stime, bm->get_move());
-			// for (vector<RCell>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
+			// for (vector<Receptor>::iterator cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
 			// {
 			// 	// should check sector it belongs to
 			// 	// if ((*mit)->precheck_collision(&(*cit)))
 				
 			// 	if ((*mit)->check_collision(&(*cit)))
 			// 	{
-			// 		// RCell->accept_molecule();
+			// 		// Receptor->accept_molecule();
 			// 		mit = smolecules->erase(mit);
 			// 		break;
 			// 	}
@@ -278,12 +278,12 @@ list<Molecule*>* Simulation::molecules()
 	return smolecules;
 }
 
-vector<RCell>* Simulation::receivers()
+vector<Receptor>* Simulation::receivers()
 {
 	return sreceivers;
 }
 
-vector<TCell>* Simulation::transmitters()
+vector<Source>* Simulation::transmitters()
 {
 	return stransmitters;
 }

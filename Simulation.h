@@ -7,8 +7,8 @@
 #include <libconfig.h++>
 
 #include "Molecule.h"
-#include "RCell.h"
-#include "TCell.h"
+#include "Receptor.h"
+#include "Source.h"
 #include "BrownianMotion.h"
 #include "Statistics.h"
 
@@ -24,8 +24,8 @@ private:
 	long stime_step;
 
 	std::list<Molecule*>* smolecules;
-	std::vector<RCell>* sreceivers;
-	std::vector<TCell>* stransmitters;
+	std::vector<Receptor>* sreceivers;
+	std::vector<Source>* stransmitters;
 
 	BrownianMotion* bm;
 	std::vector<Statistics*> sstat;
@@ -48,8 +48,8 @@ public:
 	// void add(Player* player); // one day maybe
 
 	std::list<Molecule*>* molecules();
-	std::vector<RCell>* receivers();
-	std::vector<TCell>* transmitters();
+	std::vector<Receptor>* receivers();
+	std::vector<Source>* transmitters();
 };
 
 #endif /* SIM_SIMULATION_H */

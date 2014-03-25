@@ -12,7 +12,7 @@ LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++` -lm
 OBJ = main.o Molecule.o Vector.o BrownianMotion.o CairoColor.o \
 	Math.o SimpleRNG.o \
 	Simulation.o Boundary.o tri_logger/tri_logger.o Player.o \
-	TCell.o RCell.o \
+	Source.o Receptor.o \
 	Statistics.o StatisticsDistribution.o StatisticsDensity.o \
 	Test.o
 

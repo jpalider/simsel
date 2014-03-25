@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Molecule.h"
-#include "RCell.h"
+#include "Receptor.h"
 
 class Simulation;
 
@@ -16,7 +16,7 @@ protected:
 	long sinterval; // [ns]
 public:
 	Statistics(Simulation* s, long interval);
-	virtual void run(long time, const std::list<Molecule*>* const molecules, const std::vector<RCell>* const rcells) = 0;
+	virtual void run(long time, const std::list<Molecule*>* const molecules, const std::vector<Receptor>* const rcells) = 0;
 protected:
 	std::string current_time_as_string();
 };
