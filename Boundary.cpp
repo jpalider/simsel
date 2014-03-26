@@ -4,8 +4,9 @@
 #include "CairoColor.h"
 #include "Vector.h"
 #include "Molecule.h"
+#include "Types.h"
 
-Boundary::Boundary(long identifier, Vector position, double radius)
+Boundary::Boundary(Id identifier, Vector position, Coordinate radius)
 {
 	cid = identifier;
 	cposition = position;
@@ -24,7 +25,7 @@ Boundary::~Boundary()
 {
 }
 
-double Boundary::radius() const
+Coordinate Boundary::radius() const
 {
 	return cradius;
 }
@@ -40,7 +41,7 @@ std::ostream & operator<<(std::ostream &os, const Boundary& c)
 	return os << "Boundary_" << c.cid << " (" << c.position()->x << "," << c.position()->y << "," << c.position()->z << ")";
 }
 
-long Boundary::id() const
+Id Boundary::id() const
 {
 	return cid;
 }

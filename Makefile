@@ -1,6 +1,6 @@
 # Makefile for Sim
 
-CXX = ccache g++ -Wno-deprecated -Wl,--export-dynamic
+CXX = ccache g++ -Wno-deprecated -Wl,--export-dynamic -std=c++11
 # -Wall
 #-Wunused-function -Wall
 
@@ -12,13 +12,13 @@ LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++` -lm
 OBJ = main.o Molecule.o Vector.o BrownianMotion.o CairoColor.o \
 	Math.o SimpleRNG.o \
 	Simulation.o Boundary.o tri_logger/tri_logger.o Player.o \
-	Source.o Receptor.o \
+	Boundary.o Source.o Receptor.o Obstacle.o \
 	Statistics.o StatisticsDistribution.o StatisticsDensity.o \
 	Test.o
 
 
 %.o: %.c
-	$(CXX) $(CXXFLAGS) -std++11 -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 sim: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)

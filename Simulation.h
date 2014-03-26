@@ -9,6 +9,7 @@
 #include "Molecule.h"
 #include "Receptor.h"
 #include "Source.h"
+#include "Obstacle.h"
 #include "BrownianMotion.h"
 #include "Statistics.h"
 
@@ -23,15 +24,19 @@ private:
 	long duration;
 	long stime_step;
 
-	std::list<Molecule*>* smolecules;
+	std::list<Molecule*>*  smolecules;
 	std::vector<Receptor>* sreceivers;
-	std::vector<Source>* stransmitters;
+	std::vector<Source>*   stransmitters;
+	std::vector<Obstacle>* sobstacles;
 
 	BrownianMotion* bm;
 	std::vector<Statistics*> sstat;
 
 	libconfig::Config cfg;
 
+	template<typename BoundaryType>
+	std::vector<BoundaryType>* load_configuration(std::string boundary);
+		
 public:
 	Simulation();
 	~Simulation();
@@ -47,9 +52,10 @@ public:
 	void add(Statistics* statistics);
 	// void add(Player* player); // one day maybe
 
-	std::list<Molecule*>* molecules();
+	std::list<Molecule*>*  molecules();
 	std::vector<Receptor>* receivers();
-	std::vector<Source>* transmitters();
+	std::vector<Source>*   transmitters();
+	std::vector<Obstacle>* obstacles();
 };
 
 #endif /* SIM_SIMULATION_H */

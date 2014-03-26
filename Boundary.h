@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Vector.h"
+#include "Types.h"
 
 class Molecule;
 
@@ -11,17 +12,16 @@ class Boundary
 {
 protected:
 	Vector cposition;
-	double cradius;
-	long cid;
-
+	Coordinate cradius;
+	Id cid;
 public:
-	Boundary(long identifier, Vector position, double radius);
+	Boundary(Id identifier, Vector position, Coordinate radius);
 	Boundary(const Boundary &other);
 
 	virtual ~Boundary();
-	double radius() const;
+	Coordinate radius() const;
 	const Vector* position() const;
-	long id() const;
+	Id id() const;
 
 	virtual bool collide(Molecule *m) = 0;
 
