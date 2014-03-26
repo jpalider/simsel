@@ -36,6 +36,8 @@ private:
 
 	template<typename BoundaryType>
 	std::vector<BoundaryType>* load_configuration(std::string boundary);
+
+	void print_progress();
 		
 public:
 	Simulation();

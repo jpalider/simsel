@@ -182,35 +182,11 @@ void Simulation::run()
 	sstarted = true;
 
 	TRI_LOG_STR("Starting simulation");
-	int progress = -1;
-	bool added = false;
-
-	
 	
 	while (stime < duration)
 	{
-		int p = (((double)stime)/duration)*100.0f;
-		if ( p - progress >= 1)
-		{
-			progress = p;
-			TRI_LOG_STR("Progress: " << progress << " %");
-		}
+		print_progress();
 
-		// if (!added)
-		// {
-		// 	if (stime > 10000)
-		// 	{
-		// 		added = true;
-		// 		int mol = smolecules->size();
-		// 		Vector p(0, 0, 0);
-		// 		for (int i = 0; i < mol; i++)
-		// 		{
-		// 			smolecules->push_back(new Molecule(i+mol, p));
-		// 		}
-		// 	}
-		// }
-
-		// for all molecules perform their action
 		for (auto mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 		{
 			(*mit)->move(stime, bm->get_move());
@@ -238,6 +214,19 @@ void Simulation::run()
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
 }
+
+void Simulation::print_progress()
+{
+	static int progress = -1;
+
+	int p = (((double)stime)/duration)*100.0f;
+	if ( p - progress >= 1)
+	{
+		progress = p;
+		TRI_LOG_STR("Progress: " << progress << " %");
+	}
+}
+
 
 bool Simulation::running()
 {
