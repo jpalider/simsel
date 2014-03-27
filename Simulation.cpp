@@ -189,13 +189,16 @@ void Simulation::run()
 
 		for (auto mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 		{
-			(*mit)->move(stime, bm->get_move());
+			Vector move = bm->get_move();
+			(*mit)->move(move);
 			
 			for (auto cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
 			{
 				if ((*mit)->check_collision(&(*cit)))
 				{
 					//mit = smolecules->erase(mit);
+					// cit->act(*mit)
+
 					break;
 				}
 			}

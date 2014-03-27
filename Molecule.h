@@ -15,7 +15,6 @@ private:
 	Vector                 mposition;
 	Vector                 mpposition;
 	Coordinate             mradius;
-	std::map<Time, Vector> mhistogram;
 	Id                     mid;
 	Boundary*              mcell;
 
@@ -23,9 +22,8 @@ public:
 	Molecule(Id identifier, Vector position);
 
 	const Vector* position() const;
-	const std::map<Time, Vector>* histogram() const;
 
-	void move(Time time, Vector t);
+	void move(Vector t);
 	bool check_collision(Boundary *c);
 
 private:

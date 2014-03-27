@@ -11,7 +11,6 @@ Molecule::Molecule(Id identifier, Vector position)
 	mid = identifier;
 	mposition = position;
 	mpposition = position;
-	mhistogram.insert( std::pair<Time,Vector>(0, position) );
 	mcell = NULL;
 }
 
@@ -20,16 +19,10 @@ const Vector* Molecule::position() const
 	return &mposition;
 }
 
-const map<Time, Vector>* Molecule::histogram() const
-{
-	return &mhistogram;
-}
-
-void Molecule::move(long time, Vector t)
+void Molecule::move(Vector t)
 {
 	mpposition = mposition;
 	mposition.translate(&t);
-	// mhistogram.insert( std::pair<long,Vector>(time, mposition) );
 }
 
 bool Molecule::check_collision(Boundary *c)

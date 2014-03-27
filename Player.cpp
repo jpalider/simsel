@@ -87,7 +87,7 @@ void Player::do_drawing_cell(cairo_t *cr, Boundary* c, Vector* origin)
 
 void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long t)
 {
-	const map<long, Vector>* h = m->histogram();
+	const map<long, Vector>* h = nullptr; // = m->histogram();
 	map<long, Vector>::const_iterator pit = h->lower_bound(t);
 	if (pit == h->end())
 		return;
@@ -104,7 +104,7 @@ void Player::do_drawing_molecule(cairo_t *cr, Molecule* m, Vector* origin, long 
 
 void Player::do_drawing_molecule_with_tail(cairo_t *cr, Molecule* m, Vector* origin, long t)
 {
-	const map<long, Vector>* h = m->histogram();
+	const map<long, Vector>* h = nullptr; // = m->histogram();
 	map<long, Vector>::const_iterator pit = h->lower_bound(t);
 	if (pit == h->end())
 	{
