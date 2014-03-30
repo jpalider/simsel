@@ -12,28 +12,32 @@
 #include <cmath>
 #include <cstdlib>
 
+#ifndef NOGUI
 #include <gtk/gtk.h>
+#endif
+#ifndef NOGUI
+#include "Player.h"
+#endif
 
 #include "Molecule.h"
 #include "Vector.h"
 #include "BrownianMotion.h"
 #include "Simulation.h"
-#include "Player.h"
 #include "Statistics.h"
 #include "StatisticsDistribution.h"
 #include "StatisticsDensity.h"
 #include "Boundary.h"
 #include "tri_logger/tri_logger.hpp"
-
 #include "Test.h"
 
 using namespace std;
 
 
 Simulation* s;
+
+#ifndef NOGUI
 Player* p;
 long vistime = 0;
-
 
 void do_drawing(cairo_t *, GtkWidget* widget);
 
@@ -76,6 +80,7 @@ static gpointer thread_func( gpointer data )
 	s->run();
 	return NULL;
 }
+#endif
 
 static const long INTERVAL_10_US = 10*1000;
 
