@@ -8,8 +8,6 @@
 #include "Vector.h"
 #include "Boundary.h"
 
-class RCell;
-
 class Molecule {
 private:
 	Vector                 mposition;
@@ -21,10 +19,14 @@ private:
 public:
 	Molecule(Id identifier, Vector position);
 
+	/** Tells currect object position */
 	const Vector* position() const;
-
-	void move(Vector t);
-	bool check_collision(Boundary *c);
+	/** Translate vector */
+	void move(const Vector t);
+	/** Restore position of last move() operation */
+	void move_back();
+	/** Checks collision between this molecule and another Boundary object */
+	bool check_collision(const Boundary *c);
 
 private:
 	friend std::ostream & operator<<(std::ostream &os, const Molecule& m);

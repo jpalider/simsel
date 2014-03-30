@@ -7,5 +7,6 @@ Obstacle::Obstacle(Id identifier, Vector position, Coordinate radius) : Boundary
 
 bool Obstacle::collide(Molecule *m)
 {
-	return false;
+	return true;
 }
+

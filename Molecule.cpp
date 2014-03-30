@@ -25,15 +25,14 @@ void Molecule::move(Vector t)
 	mposition.translate(&t);
 }
 
-bool Molecule::check_collision(Boundary *c)
+void Molecule::move_back()
 {
-	bool received = false;
-	if ( segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius()) )
-	{
-		received = c->collide(this);
-		this->mcell = c;
-	}
-	return received;
+	mposition = mpposition;
+}
+
+bool Molecule::check_collision(const Boundary *c)
+{
+	return segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius());
 }
 
 std::ostream & operator<<(std::ostream &os, const Molecule& m)

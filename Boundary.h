@@ -23,6 +23,7 @@ public:
 	const Vector* position() const;
 	Id id() const;
 
+	/** Returns true if a given on non-transparent or shall act on molecule */
 	virtual bool collide(Molecule *m) = 0;
 
 private:

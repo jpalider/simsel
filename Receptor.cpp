@@ -24,7 +24,7 @@ Receptor::~Receptor()
 }
 
 /**
- * return true if collision shall take place, and collision results in copying Molecule
+ * return true if collision shall take place and molecule shall be bounced off
  */
 bool Receptor::collide(Molecule *m)
 {
