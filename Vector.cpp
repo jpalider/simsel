@@ -1,6 +1,5 @@
-#include "iostream"
-#include "limits"
-
+#include <iostream>
+#include <limits>
 #include "Vector.h"
 
 Vector::Vector(Coordinate x, Coordinate y, Coordinate z) : x(x), y(y), z(z)
@@ -12,7 +11,7 @@ Vector::Vector()
 	x = y = z = std::numeric_limits<Coordinate>::infinity();
 }
 
-void Vector::translate(Vector* t)
+void Vector::translate(const Vector* t)
 {
 	x += t->x;
 	y += t->y;
@@ -26,14 +25,26 @@ std::ostream & operator<<(std::ostream &os, const Vector& v)
 
 Vector& Vector::operator+=(const Vector& v)
 {
-	this->x += v.x;
-	this->y += v.y;
-	this->z += v.z;
+	translate(&v);
 	return *this;
 }
 
-inline Vector operator+(Vector lhs, const Vector& rhs)
+Vector operator+(Vector lhs, const Vector& rhs)
 {
 	  lhs += rhs;
 	  return lhs;
+}
+
+Vector& Vector::operator/=(const float d)
+{
+	this->x /= d;
+	this->y /= d;
+	this->z /= d;
+	return *this;
+}
+
+Vector operator/(Vector lhs, float d)
+{
+	lhs /= d;
+	return lhs;
 }

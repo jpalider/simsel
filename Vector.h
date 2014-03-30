@@ -11,12 +11,15 @@ public:
 	Vector(Coordinate x, Coordinate y, Coordinate z);
 	Vector();
 
-	void translate(Vector* t);
+	void translate(const Vector* t);
 
 	Vector& operator+=(const Vector& v);
+	Vector& operator/=(const float);
 
 private:
-        friend std::ostream & operator<<(std::ostream &os, const Vector& p);
+	friend Vector operator/(Vector lhs, const float d);
+	friend Vector operator+(Vector lhs, const Vector& rhs);	
+	friend std::ostream & operator<<(std::ostream &os, const Vector& p);
 };
 
 #endif /* SIM_VECTOR_H */
