@@ -7,6 +7,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <cmath>
+#include <algorithm>
+#include <iterator>
 
 #include "Simulation.h"
 #include "Statistics.h"
@@ -182,27 +184,55 @@ void Simulation::run()
 	sstarted = true;
 
 	TRI_LOG_STR("Starting simulation");
+
+	vector<Boundary*> boundaries;
+	for_each(sreceivers->begin(), sreceivers->end(), [&boundaries](Receptor& b){ boundaries.push_back(&b); });
+	for_each(sobstacles->begin(), sobstacles->end(), [&boundaries](Obstacle& b){ boundaries.push_back(&b); });
+
+	long repeat_counter = 0;
+	long repeat_counter_again = 0;
 	
 	while (stime < duration)
 	{
 		print_progress();
 
-		for (auto mit = smolecules->begin(); mit != smolecules->end(); ++mit)
+		for (auto mit = smolecules->begin(); mit != smolecules->end(); )
 		{
 			Vector move = bm->get_move();
 			(*mit)->move(move);
-			
-			for (auto cit = sreceivers->begin(); cit != sreceivers->end(); ++cit)
+
+			bool repeat_move = false;
+			for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 			{
-				if ((*mit)->check_collision(&(*cit)))
+				auto obstacle = *cit;
+				if ((*mit)->check_collision(obstacle))
 				{
+					repeat_move = obstacle->collide(*mit);
 					//mit = smolecules->erase(mit);
 					// cit->act(*mit)
-
 					break;
 				}
 			}
 
+			if (repeat_move)
+			{
+				++repeat_counter;
+				//TRI_LOG_STR("Repeat move");
+				move = bm->get_move() / 2.f;
+				(*mit)->move_back();
+				(*mit)->move(move);
+				for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
+				{
+					auto obstacle = *cit;
+					if ((*mit)->check_collision(obstacle))
+					{
+						++repeat_counter_again;
+						//TRI_LOG_STR("Collision during move repeat");
+						continue; // means loop again on same molecule
+					}
+				}
+			}
+			++mit;
 		}
 
 		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
@@ -216,6 +246,8 @@ void Simulation::run()
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
+	TRI_LOG_STR("Finished simulation with " << repeat_counter << "repeats");
+	TRI_LOG_STR("Finished simulation with " << repeat_counter_again << "repeats again");
 }
 
 void Simulation::print_progress()
