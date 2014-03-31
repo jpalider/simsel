@@ -26,7 +26,7 @@ Vector BrownianMotion::get_move()
 
 Vector BrownianMotion::get_move(double scale)
 {
-	static double sqrt_of_3 = sqrt(3);
+	static const double sqrt_of_3 = sqrt(3);
 	scale /= sqrt_of_3;
 	double dx = normal(0., 1.*scale);
 	double dy = normal(0., 1.*scale);

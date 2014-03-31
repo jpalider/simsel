@@ -12,6 +12,5 @@ private:
 public:
 	Obstacle(Id identifier, Vector position, Coordinate radius);
 	bool collide(Molecule *m);
-
 };
 #endif /* SIM_OBSTACLE_H */
