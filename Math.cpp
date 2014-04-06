@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include <cstdlib>
+#include <random>
 
 #include "Math.h"
 #include "Vector.h"
@@ -159,7 +160,9 @@ double phi(double x)
 
 double normal(double mean, double dev)
 {
-	static SimpleRNG srng((unsigned int)rand(), (unsigned int)rand());
+	static std::mt19937 generator(123456789);
+	std::uniform_int_distribution<int> distribution(0,RAND_MAX);
+	static SimpleRNG srng(distribution(generator), distribution(generator));
 	return srng.GetNormal(mean, dev);
 }
 
