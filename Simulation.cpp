@@ -9,6 +9,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iterator>
+#include <pthread.h>
 
 #include "Simulation.h"
 #include "Statistics.h"
@@ -31,6 +32,64 @@ struct Interval
 	int transmitter;
 };
 
+struct PthData
+{
+	// std::list<Molecule*>::iterator b_iter;
+	// std::list<Molecule*>::iterator e_iter;
+	std::list<Molecule*> *smolecules;
+	vector<Boundary*>    *boundaries;
+	BrownianMotion       *bm;
+};
+
+namespace
+{
+
+void* move_molecules(void* arg)
+{
+	PthData* pthd = (PthData*)arg;
+	std::list<Molecule*> *smolecules =  pthd->smolecules;
+	vector<Boundary*>&    boundaries = *pthd->boundaries;
+	BrownianMotion       *bm         =  pthd->bm;
+
+	for (auto mit = smolecules->begin(); mit != smolecules->end(); )
+	{
+		Vector move = bm->get_move();
+		(*mit)->move(move);
+
+		bool repeat_move = false;
+		for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
+		{
+			auto obstacle = *cit;
+			if ((*mit)->check_collision(obstacle))
+			{
+				repeat_move = obstacle->collide(*mit);
+				//mit = smolecules->erase(mit);
+				// cit->act(*mit)
+				break;
+			}
+		}
+
+		if (repeat_move)
+		{
+			move /= 2;
+			(*mit)->move_back();
+			(*mit)->move(move);
+			for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
+			{
+				auto obstacle = *cit;
+				if ((*mit)->check_collision(obstacle))
+				{
+					//TRI_LOG_STR("Collision during move repeat");
+					continue; // means loop again on same molecule
+				}
+			}
+		}
+		++mit;
+	}
+
+}
+
+}
 
 union Generation
 {
@@ -103,12 +162,12 @@ Simulation::Simulation()
 
 Simulation::~Simulation()
 {
-	for (list<Molecule*>::iterator mit = smolecules->begin(); mit != smolecules->end(); ++mit)
+	for (auto mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 	{
 		delete (*mit);
 	}
 
-	for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
+	for (auto sit = sstat.begin(); sit != sstat.end(); ++sit)
 	{
 		delete (*sit);
 	}
@@ -191,49 +250,26 @@ void Simulation::run()
 
 	long repeat_counter = 0;
 	long repeat_counter_again = 0;
+
+	const size_t THREADS = 2;
+	const size_t div = smolecules->size() / THREADS;
+	auto molecules1 = new vector<Molecule*>;
+	auto molecules2 = new vector<Molecule*>;
+	for (size_t i = 0; i < THREADS; ++i)
+	{
+		// vector<int> v2( v.begin() + x, v.begin() + x + y );
+		// molecules1->copy_from_main_list
+			
+	}
+	
+	PthData pth_data_1 = { smolecules, &boundaries, bm };
+	PthData pth_data_2 = { smolecules, &boundaries, bm };
 	
 	while (stime < duration)
 	{
 		print_progress();
 
-		for (auto mit = smolecules->begin(); mit != smolecules->end(); )
-		{
-			Vector move = bm->get_move();
-			(*mit)->move(move);
-
-			bool repeat_move = false;
-			for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
-			{
-				auto obstacle = *cit;
-				if ((*mit)->check_collision(obstacle))
-				{
-					repeat_move = obstacle->collide(*mit);
-					//mit = smolecules->erase(mit);
-					// cit->act(*mit)
-					break;
-				}
-			}
-
-			if (repeat_move)
-			{
-				++repeat_counter;
-				//TRI_LOG_STR("Repeat move");
-				move = bm->get_move() / 2.f;
-				(*mit)->move_back();
-				(*mit)->move(move);
-				for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
-				{
-					auto obstacle = *cit;
-					if ((*mit)->check_collision(obstacle))
-					{
-						++repeat_counter_again;
-						//TRI_LOG_STR("Collision during move repeat");
-						continue; // means loop again on same molecule
-					}
-				}
-			}
-			++mit;
-		}
+		move_molecules(&pth_data_1);
 
 		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
 		{
