@@ -34,9 +34,8 @@ struct Interval
 
 struct PthData
 {
-	// std::list<Molecule*>::iterator b_iter;
-	// std::list<Molecule*>::iterator e_iter;
-	std::list<Molecule*> *smolecules;
+	std::list<Molecule*>::iterator b_iter;
+	std::list<Molecule*>::iterator e_iter;
 	vector<Boundary*>    *boundaries;
 	BrownianMotion       *bm;
 };
@@ -47,11 +46,12 @@ namespace
 void* move_molecules(void* arg)
 {
 	PthData* pthd = (PthData*)arg;
-	std::list<Molecule*> *smolecules =  pthd->smolecules;
-	vector<Boundary*>&    boundaries = *pthd->boundaries;
-	BrownianMotion       *bm         =  pthd->bm;
+	std::list<Molecule*>::iterator b_iter = pthd->b_iter;
+	std::list<Molecule*>::iterator e_iter = pthd->e_iter;
+	vector<Boundary*>&    boundaries      = *pthd->boundaries;
+	BrownianMotion       *bm              =  pthd->bm;
 
-	for (auto mit = smolecules->begin(); mit != smolecules->end(); )
+	for (auto mit = b_iter; mit != e_iter; )
 	{
 		Vector move = bm->get_move();
 		(*mit)->move(move);
@@ -253,24 +253,36 @@ void Simulation::run()
 
 	const size_t THREADS = 2;
 	const size_t div = smolecules->size() / THREADS;
-	auto molecules1 = new vector<Molecule*>;
-	auto molecules2 = new vector<Molecule*>;
-	for (size_t i = 0; i < THREADS; ++i)
-	{
-		// vector<int> v2( v.begin() + x, v.begin() + x + y );
-		// molecules1->copy_from_main_list
+	std::list<Molecule*>::iterator split = std::next(std::begin(*smolecules), div);
+
+	// for (size_t i = 0; i < THREADS; ++i)
+	// {
+	// 	vector<int> v2( v.begin() + x, v.begin() + x + y );
+	// 	molecules1->copy_from_main_list
 			
-	}
+	// }
+
+	pthread_t pth_1;
+	pthread_t pth_2;
 	
-	PthData pth_data_1 = { smolecules, &boundaries, bm };
-	PthData pth_data_2 = { smolecules, &boundaries, bm };
+	PthData pth_data_1 = { smolecules->begin(), split, &boundaries, bm };
+	PthData pth_data_2 = { split, smolecules->end(),   &boundaries, bm };
 	
 	while (stime < duration)
 	{
 		print_progress();
 
-		move_molecules(&pth_data_1);
+		pthread_create(&pth_1, NULL, move_molecules, &pth_data_1);
+		pthread_create(&pth_2, NULL, move_molecules, &pth_data_2);
 
+		int rv = 0;
+		rv += pthread_join(pth_1, NULL);
+		rv += pthread_join(pth_2, NULL);
+		if (rv)
+		{
+			TRI_LOG_STR("Thread problem");
+		}
+		
 		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
 		{
 			(*sit)->run(stime, smolecules, sreceivers);
