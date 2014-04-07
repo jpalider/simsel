@@ -30,7 +30,7 @@ void StatisticsDistribution::run(long time, const std::list<Molecule*>* const mo
 	{
 
 		int molecules_at_distance[MAX_DISTANCE] = {};
-		const Vector* v = NULL;
+		const Vector* v = nullptr;
 
 		for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
 		{

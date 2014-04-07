@@ -30,7 +30,7 @@ void StatisticsDensity::run(long time, const std::list<Molecule*>* const molecul
 
 	if (time % sinterval == 0)
 	{
-		const Vector* v = NULL;
+		const Vector* v = nullptr;
 		for (vector<Receptor>::const_iterator cit = rcells->begin(); cit != rcells->end(); ++cit)
 		{
 			int m_count = 0;

@@ -11,7 +11,7 @@ Molecule::Molecule(Id identifier, Vector position)
 	mid = identifier;
 	mposition = position;
 	mpposition = position;
-	mcell = NULL;
+	mcell = nullptr;
 }
 
 const Vector* Molecule::position() const
