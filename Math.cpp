@@ -5,7 +5,6 @@
 
 #include "Math.h"
 #include "Vector.h"
-#include "SimpleRNG.h"
 #include "Types.h"
 
 
@@ -161,9 +160,8 @@ double phi(double x)
 double normal(double mean, double dev)
 {
 	static std::mt19937 generator(123456789);
-	std::uniform_int_distribution<int> distribution(0,RAND_MAX);
-	static SimpleRNG srng(distribution(generator), distribution(generator));
-	return srng.GetNormal(mean, dev);
+	std::normal_distribution<double> distribution(mean,dev);
+	return distribution(generator);
 }
 
 Coordinate sphere_volume(double radius)
