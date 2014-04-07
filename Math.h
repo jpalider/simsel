@@ -5,15 +5,15 @@
 
 Coordinate squared_distance_between_points(const Vector* p1, const Vector* p2);
 
-Coordinate cos_at_ab(Coordinate a2, Coordinate b2, Coordinate c2, Coordinate ab);
+Coordinate cos_at_ab(const Coordinate a2, const Coordinate b2, const Coordinate c2, const Coordinate ab);
 
-bool acute_angle(double cos);
+bool acute_angle(const double cos);
 
 Vector cross_product(const Vector* a, const Vector* b, const Vector* c);
 
 Coordinate triangle_area(const Vector* a, const Vector* b, const Vector* c);
 
-bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector* s, Coordinate r);
+bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector* s, const Coordinate r);
 
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter);
 

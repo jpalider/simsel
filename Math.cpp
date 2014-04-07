@@ -10,20 +10,20 @@
 
 using namespace std;
 
-Vector vzero(0,0,0);
+const Vector vzero(0,0,0);
 
 Coordinate squared_distance_between_points(const Vector* p1, const Vector* p2)
 {
 	return (p2->x-p1->x)*(p2->x-p1->x) + (p2->y-p1->y)*(p2->y-p1->y) + (p2->z-p1->z)*(p2->z-p1->z);
 }
 
-Coordinate cos_at_ab(Coordinate a2, Coordinate b2, Coordinate c2, Coordinate ab)
+Coordinate cos_at_ab(const Coordinate a2, const Coordinate b2, const Coordinate c2, const Coordinate ab)
 {
 	return (a2 + b2 - c2) / (2 * ab);
 }
 
 // Works for 0-180
-bool acute_angle(double cos)
+bool acute_angle(const double cos)
 {
 	return cos > 0;
 }
@@ -53,7 +53,7 @@ Coordinate triangle_area(const Vector* a, const Vector* b, const Vector* c)
 /**
  * Returns true on intersection 
  */
-bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector *s, Coordinate r)
+bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector *s, const Coordinate r)
 {	
 	if (p1 == p2)
 	{
@@ -73,24 +73,20 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 	Coordinate cos_p1 = cos_at_ab(sq_p1_to_s, sq_p1_to_p2, sq_p2_to_s, p1_to_p2 * p1_to_s );
 	Coordinate cos_p2 = cos_at_ab(sq_p2_to_s, sq_p1_to_p2, sq_p1_to_s, p1_to_p2 * p2_to_s );
 
-	 // cout << "dbg" << cos_p1 << " " << acos(cos_p1) * 360 / 2 / M_PI << " " << acute_angle(cos_p1) << endl;
-	 // cout << "dbg" << cos_p2 << " " << acos(cos_p2) * 360 / 2 / M_PI << " " << acute_angle(cos_p2) << endl;
-
 	// maybe move this before 
 	if ( acute_angle(cos_p1) )
 	{
 		if (sq_p1_to_s < r*r)
 		{
-			//cout << "intersection.. = " << endl;
-			return true;
+			return true; //intersection
 		}
 	}
 
 	if ( acute_angle(cos_p2) )
 	{
-		if (sq_p2_to_s < r*r) {
-			//cout << "intersection... = " << endl;
-			return true;
+		if (sq_p2_to_s < r*r)
+		{
+			return true; //intersection
 		}
 	}
 	
@@ -99,17 +95,16 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 		// procedure for intersection
 		if ( 2 * triangle_area(p1, p2, s) / p1_to_p2 < r)
 		{
-			//cout << "intersection.... = " << endl;
-			return true;
+			return true; //intersection
 		}
 	}
-	
+
 	return false;
 }
 
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter)
 {
-	static double k_b = 1.38E-23;
+	static const double k_b = 1.38E-23;
 	
 	return k_b * temperature_K / ( 3 * M_PI * viscosity_eta * diameter);
 }
@@ -149,18 +144,10 @@ double phi(double x)
     return 0.5*(1.0 + sign*y);
 }
 
-// approximation
-//http://www.protonfish.com/random.shtml
-// double normal(double mean, double dev)
-// {
-// 	double x = (((double)rand()/RAND_MAX) * 2 - 1) + (((double)rand()/RAND_MAX) * 2 - 1) + (((double)rand()/RAND_MAX) * 2 - 1);
-// 	return dev * x + mean;
-// }
-
 double normal(double mean, double dev)
 {
 	static std::mt19937 generator(123456789);
-	std::normal_distribution<double> distribution(mean,dev);
+	std::normal_distribution<double> distribution(mean, dev);
 	return distribution(generator);
 }
 
