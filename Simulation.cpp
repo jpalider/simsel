@@ -291,6 +291,8 @@ void Simulation::run()
 		stime += stime_step;
 	}
 
+	cout << endl;
+
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
@@ -306,7 +308,7 @@ void Simulation::print_progress()
 	if ( p - progress >= 1)
 	{
 		progress = p;
-		TRI_LOG_STR("Progress: " << progress << " %");
+		cerr << "\rProgress: " << progress << " % ";
 	}
 }
 
