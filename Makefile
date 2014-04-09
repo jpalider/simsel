@@ -8,7 +8,7 @@ CXX = ccache g++ -Wno-deprecated -Wl,--export-dynamic -std=c++11
 CXXFLAGS = -O2 `pkg-config --cflags libconfig++` -DTLOG -DNOGUI
 #-DFTLOG=test
 
-LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++` -lm -lpthread
+LDFLAGS = `pkg-config --libs gtk+-3.0 libconfig++` -lm -pthread
 
 OBJ = main.o Molecule.o Vector.o BrownianMotion.o CairoColor.o \
 	Math.o \
