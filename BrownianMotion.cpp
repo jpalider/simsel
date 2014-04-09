@@ -16,20 +16,19 @@ BrownianMotion::BrownianMotion(int dimensions, double tau)
 	//bmdiameter = 1e-6; // 1 um
 	//bmdiffusion_coefficient = diffusion_coefficient(bmtemperature_K, bmviscosity_eta, bmdiameter);
 	bmdiffusion_coefficient = 1e-9;
+
+	scale = displacement_factor(bmdimensions, bmdiffusion_coefficient, bmtau);
+	scale /= sqrt(3);;
+
+	std::random_device rd;
+	generator = std::mt19937(rd());
+	distribution = std::normal_distribution<double>(0., 1.*scale);
 }
 
 Vector BrownianMotion::get_move()
 {	
-	static const double SCALER = displacement_factor(bmdimensions, bmdiffusion_coefficient, bmtau);
-	return get_move(SCALER);
-}
-
-Vector BrownianMotion::get_move(double scale)
-{
-	static const double sqrt_of_3 = sqrt(3);
-	scale /= sqrt_of_3;
-	double dx = normal(0., 1.*scale);
-	double dy = normal(0., 1.*scale);
-	double dz = bmdimensions == 2 ? 0.0 : normal(0., 1.*scale);
+	double dx = distribution(generator);
+	double dy = distribution(generator);
+	double dz = bmdimensions == 2 ? 0.0 : distribution(generator);
 	return Vector(dx, dy, dz);
 }

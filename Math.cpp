@@ -144,13 +144,6 @@ double phi(double x)
     return 0.5*(1.0 + sign*y);
 }
 
-double normal(double mean, double dev)
-{
-	static std::mt19937 generator(123456789);
-	std::normal_distribution<double> distribution(mean, dev);
-	return distribution(generator);
-}
-
 Coordinate sphere_volume(double radius)
 {
 	return 4. / 3. * M_PI * pow(radius, 3);

@@ -23,8 +23,6 @@ double displacement_factor(int dimensions, double diffusion_coefficient, double 
 
 double phi(double x);
 
-double normal(double mean, double dev);
-
 Coordinate sphere_volume(double radius);
 
 #endif /* SIM_MATH_H */
