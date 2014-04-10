@@ -43,6 +43,13 @@ struct PthData
 namespace
 {
 
+const size_t THREADS = 2;
+bool stop_worker_threads = false;
+
+pthread_barrier_t trigger_from_main;
+pthread_barrier_t wait_from_main;
+
+
 void* move_molecules(void* arg)
 {
 	PthData* pthd = (PthData*)arg;
@@ -51,42 +58,50 @@ void* move_molecules(void* arg)
 	vector<Boundary*>&    boundaries      = *pthd->boundaries;
 	BrownianMotion       *bm              =  pthd->bm;
 
-	for (auto mit = b_iter; mit != e_iter; )
-	{
-		Vector move = bm->get_move();
-		(*mit)->move(move);
+	while(1) {
+		pthread_barrier_wait(&trigger_from_main);
 
-		bool repeat_move = false;
-		for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
+		for (auto mit = b_iter; mit != e_iter; )
 		{
-			auto obstacle = *cit;
-			if ((*mit)->check_collision(obstacle))
-			{
-				repeat_move = obstacle->collide(*mit);
-				//mit = smolecules->erase(mit);
-				// cit->act(*mit)
-				break;
-			}
-		}
-
-		if (repeat_move)
-		{
-			move /= 2;
-			(*mit)->move_back();
+			Vector move = bm->get_move();
 			(*mit)->move(move);
+
+			bool repeat_move = false;
 			for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 			{
 				auto obstacle = *cit;
 				if ((*mit)->check_collision(obstacle))
 				{
-					//TRI_LOG_STR("Collision during move repeat");
-					continue; // means loop again on same molecule
+					repeat_move = obstacle->collide(*mit);
+					//mit = smolecules->erase(mit);
+					// cit->act(*mit)
+					break;
 				}
 			}
-		}
-		++mit;
-	}
 
+			if (repeat_move)
+			{
+				move /= 2;
+				(*mit)->move_back();
+				(*mit)->move(move);
+				for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
+				{
+					auto obstacle = *cit;
+					if ((*mit)->check_collision(obstacle))
+					{
+						//TRI_LOG_STR("Collision during move repeat");
+						continue; // means loop again on same molecule
+					}
+				}
+			}
+			++mit;
+		}
+
+		pthread_barrier_wait(&wait_from_main);
+
+		if (stop_worker_threads)
+			break;
+	}
 }
 
 }
@@ -251,7 +266,6 @@ void Simulation::run()
 	long repeat_counter = 0;
 	long repeat_counter_again = 0;
 
-	const size_t THREADS = 2;
 	const size_t div = smolecules->size() / THREADS;
 	std::list<Molecule*>::iterator split = std::next(std::begin(*smolecules), div);
 
@@ -264,31 +278,50 @@ void Simulation::run()
 
 	pthread_t pth_1;
 	pthread_t pth_2;
-	
+
 	PthData pth_data_1 = { smolecules->begin(), split, &boundaries, bm };
 	PthData pth_data_2 = { split, smolecules->end(),   &boundaries, bm };
-	
+
+	pthread_create(&pth_1, NULL, move_molecules, &pth_data_1);
+	pthread_create(&pth_2, NULL, move_molecules, &pth_data_2);
+
+	pthread_barrier_init(&trigger_from_main, NULL, THREADS+1);
+	pthread_barrier_init(&wait_from_main,    NULL, THREADS+1);
+
+	pthread_barrier_wait(&trigger_from_main); // initial: let threads run
+
 	while (stime < duration)
 	{
+		pthread_barrier_wait(&wait_from_main); // wait for worker threads to finish
+		                                       // in order to start statistics
+
 		print_progress();
 
-		pthread_create(&pth_1, NULL, move_molecules, &pth_data_1);
-		pthread_create(&pth_2, NULL, move_molecules, &pth_data_2);
-
-		int rv = 0;
-		rv += pthread_join(pth_1, NULL);
-		rv += pthread_join(pth_2, NULL);
-		if (rv)
-		{
-			TRI_LOG_STR("Thread problem");
-		}
-		
 		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
 		{
 			(*sit)->run(stime, smolecules, sreceivers);
 		}
 
 		stime += stime_step;
+
+		pthread_barrier_wait(&trigger_from_main); // let worker threads continue
+	}
+	// worker threads run once again but we are not interesed in the results anymore
+
+	stop_worker_threads = true;
+	pthread_barrier_wait(&wait_from_main); // unlock this barrier to let worker threads exit
+
+	int rv = 0;
+
+	rv += pthread_join(pth_1, NULL);
+	rv += pthread_join(pth_2, NULL);
+
+	pthread_barrier_destroy(&wait_from_main);
+	pthread_barrier_destroy(&trigger_from_main);
+
+	if (rv)
+	{
+		TRI_LOG_STR("Thread problem");
 	}
 
 	cout << endl;
