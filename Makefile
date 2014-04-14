@@ -1,6 +1,6 @@
 # Makefile for Sim
 
-CXX = ccache g++ -Wno-deprecated -Wl,--export-dynamic -std=c++11
+CXX = ccache g++ -Wno-deprecated -Wl,--export-dynamic -std=c++11 -Wall
 # -Wall
 #-Wunused-function -Wall
 

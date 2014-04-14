@@ -16,6 +16,7 @@ protected:
 	long sinterval; // [ns]
 public:
 	Statistics(Simulation* s, long interval);
+	virtual ~Statistics();
 	virtual void run(long time, const std::list<Molecule*>* const molecules, const std::vector<Receptor>* const rcells) = 0;
 protected:
 	std::string current_time_as_string();

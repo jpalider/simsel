@@ -20,6 +20,10 @@ Statistics::Statistics(Simulation* s, long interval)
 	sinterval = interval;
 }
 
+Statistics::~Statistics()
+{
+}
+
 string Statistics::current_time_as_string()
 {
 	time_t rawtime;
