@@ -15,3 +15,8 @@ bool Source::collide(Molecule *m)
 {
 	return false;
 }
+
+void Source::handle_collision(Molecule *m)
+{
+
+}

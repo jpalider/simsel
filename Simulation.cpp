@@ -56,26 +56,37 @@ void* move_molecules(void* arg)
 	PthData* pthd = (PthData*)arg;
 	std::list<Molecule*>::iterator b_iter = pthd->b_iter;
 	std::list<Molecule*>::iterator e_iter = pthd->e_iter;
-	vector<Boundary*>&    boundaries      = *pthd->boundaries;
-	BrownianMotion       *bm              =  pthd->bm;
-
+	vector<Boundary*>&    boundaries      =*pthd->boundaries;
+	BrownianMotion       *bm              = pthd->bm;
+	Simulation           *sim             = pthd->sim;
 	while(1) {
 		pthread_barrier_wait(&trigger_from_main);
 
 		for (auto mit = b_iter; mit != e_iter; )
 		{
+			auto molecule = *mit;
+
+			if (!molecule->is_owner(sim))
+			{
+				++mit;
+				continue;
+			}
+
 			Vector move = bm->get_move();
-			(*mit)->move(move);
+			molecule->move(move);
 
 			bool repeat_move = false;
 			for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 			{
 				auto obstacle = *cit;
-				if ((*mit)->check_collision(obstacle))
+
+				if (molecule->check_collision(obstacle))
 				{
-					repeat_move = obstacle->collide(*mit);
-					//mit = smolecules->erase(mit);
-					// cit->act(*mit)
+					repeat_move = obstacle->collide(molecule);
+					if (!repeat_move)
+					{
+						obstacle->handle_collision(molecule);
+					}
 					break;
 				}
 			}
@@ -83,15 +94,15 @@ void* move_molecules(void* arg)
 			if (repeat_move)
 			{
 				move /= 2;
-				(*mit)->move_back();
-				(*mit)->move(move);
+				molecule->move_back();
+				molecule->move(move);
 				for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 				{
 					auto obstacle = *cit;
-					if ((*mit)->check_collision(obstacle))
+					if (molecule->check_collision(obstacle))
 					{
-						//TRI_LOG_STR("Collision during move repeat");
-						continue; // means loop again on same molecule
+						molecule->move_back();
+						break;
 					}
 				}
 			}

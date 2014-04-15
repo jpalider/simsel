@@ -10,3 +10,6 @@ bool Obstacle::collide(Molecule *m)
 	return true;
 }
 
+void Obstacle::handle_collision(Molecule *m)
+{
+}

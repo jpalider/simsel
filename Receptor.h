@@ -22,6 +22,7 @@ public:
 
 	std::vector<Molecule*>* molecules();
 	bool collide(Molecule *m);
+	void handle_collision(Molecule *m);
 
 	Receptor& operator=(Receptor other);
 	friend void swap(Receptor& first, Receptor& second);

@@ -12,6 +12,7 @@ class Source : public Boundary
 public:
 	Source(Id identifier, Vector position, Coordinate radius);
 	bool collide(Molecule *m);
+	void handle_collision(Molecule *m);
 	void release(Molecule *m);
 };
 

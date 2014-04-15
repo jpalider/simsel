@@ -35,6 +35,14 @@ bool Receptor::collide(Molecule *m)
 	return false;
 }
 
+void Receptor::handle_collision(Molecule *m)
+{
+	// shall take over = set owner.
+	// with some probability?
+	// m->change_owner(this);
+}
+
+
 std::vector<Molecule*>* Receptor::molecules()
 {
 	return rmolecules;
