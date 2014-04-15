@@ -38,6 +38,7 @@ struct PthData
 	std::list<Molecule*>::iterator e_iter;
 	vector<Boundary*>    *boundaries;
 	BrownianMotion       *bm;
+	Simulation           *sim;
 };
 
 namespace
@@ -102,6 +103,7 @@ void* move_molecules(void* arg)
 		if (stop_worker_threads)
 			break;
 	}
+	return nullptr;
 }
 
 }
@@ -153,7 +155,7 @@ Simulation::Simulation()
 		Vector p(0, 0, 0);
 		for (int i = 0; i < generation.interval.number; i++)
 		{
-			smolecules->push_back(new Molecule(i, p));
+			smolecules->push_back(new Molecule(i, p, this));
 		}
 
 		generation.interval.transmitter = cfg.lookup("simulation.molecules.transmitter");
@@ -263,8 +265,8 @@ void Simulation::run()
 	for_each(sreceivers->begin(), sreceivers->end(), [&boundaries](Receptor& b){ boundaries.push_back(&b); });
 	for_each(sobstacles->begin(), sobstacles->end(), [&boundaries](Obstacle& b){ boundaries.push_back(&b); });
 
-	long repeat_counter = 0;
-	long repeat_counter_again = 0;
+	// long repeat_counter = 0;
+	// long repeat_counter_again = 0;
 
 	const size_t div = smolecules->size() / THREADS;
 	std::list<Molecule*>::iterator split = std::next(std::begin(*smolecules), div);
@@ -279,8 +281,8 @@ void Simulation::run()
 	pthread_t pth_1;
 	pthread_t pth_2;
 
-	PthData pth_data_1 = { smolecules->begin(), split, &boundaries, bm };
-	PthData pth_data_2 = { split, smolecules->end(),   &boundaries, bm };
+	PthData pth_data_1 = { smolecules->begin(), split, &boundaries, bm, this };
+	PthData pth_data_2 = { split, smolecules->end(),   &boundaries, bm, this };
 
 	pthread_create(&pth_1, NULL, move_molecules, &pth_data_1);
 	pthread_create(&pth_2, NULL, move_molecules, &pth_data_2);
@@ -329,8 +331,8 @@ void Simulation::run()
 	sfinished = true;
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
-	TRI_LOG_STR("Finished simulation with " << repeat_counter << "repeats");
-	TRI_LOG_STR("Finished simulation with " << repeat_counter_again << "repeats again");
+	// TRI_LOG_STR("Finished simulation with " << repeat_counter << "repeats");
+	// TRI_LOG_STR("Finished simulation with " << repeat_counter_again << "repeats again");
 }
 
 void Simulation::print_progress()

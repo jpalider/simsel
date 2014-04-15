@@ -6,12 +6,13 @@
 
 using namespace std;
 
-Molecule::Molecule(Id identifier, Vector position)
+Molecule::Molecule(Id identifier, Vector position, void *owner)
 {
 	mid = identifier;
 	mposition = position;
 	mpposition = position;
 	mcell = nullptr;
+	mowner = owner;
 }
 
 const Vector* Molecule::position() const
@@ -34,6 +35,17 @@ bool Molecule::check_collision(const Boundary *c)
 {
 	return segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius());
 }
+
+bool Molecule::is_owner(void * owner)
+{
+	return mowner == owner;
+}
+
+void Molecule::change_owner(void * owner)
+{
+	mowner = owner;
+}
+
 
 std::ostream & operator<<(std::ostream &os, const Molecule& m)
 {
