@@ -24,21 +24,13 @@
 
 using namespace std;
 
-struct Interval
-{
-	long interval;
-	int series;
-	int number;
-	int transmitter;
-};
-
 struct PthData
 {
-	std::list<Molecule*>::iterator b_iter;
-	std::list<Molecule*>::iterator e_iter;
-	vector<Boundary*>    *boundaries;
-	BrownianMotion       *bm;
-	Simulation           *sim;
+	MStoreIter              b_iter;
+	MStoreIter              e_iter;
+	std::vector<Boundary*> *boundaries;
+	BrownianMotion         *bm;
+	Simulation             *sim;
 };
 
 namespace
@@ -56,8 +48,8 @@ pthread_barrier_t wait_from_main;
 void* pth_worker(void* arg)
 {
 	PthData* pthd = (PthData*)arg;
-	std::list<Molecule*>::iterator b_iter = pthd->b_iter;
-	std::list<Molecule*>::iterator e_iter = pthd->e_iter;
+	MStoreIter            b_iter          = pthd->b_iter;
+	MStoreIter            e_iter          = pthd->e_iter;
 	vector<Boundary*>&    boundaries      =*pthd->boundaries;
 	BrownianMotion       *bm              = pthd->bm;
 	Simulation           *sim             = pthd->sim;
@@ -136,7 +128,7 @@ Simulation::Simulation()
 	sfinished = false;
 	stime = 0;
 
-	smolecules = new std::list<Molecule*>();
+	smolecules = new MStore();
 
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
@@ -284,7 +276,7 @@ void Simulation::run()
 	// long repeat_counter_again = 0;
 
 	const size_t div = smolecules->size() / THREADS;
-	std::list<Molecule*>::iterator split = std::next(std::begin(*smolecules), div);
+	auto split = std::next(std::begin(*smolecules), div);
 
 	// for (size_t i = 0; i < THREADS; ++i)
 	// {
@@ -388,7 +380,7 @@ long Simulation::interval()
 	return stime_step;
 }
 
-list<Molecule*>* Simulation::molecules()
+MStore* Simulation::molecules()
 {
 	return smolecules;
 }

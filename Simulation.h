@@ -6,12 +6,21 @@
 #include <list>
 #include <libconfig.h++>
 
+#include "Types.h"
 #include "Molecule.h"
 #include "Receptor.h"
 #include "Source.h"
 #include "Obstacle.h"
 #include "BrownianMotion.h"
 #include "Statistics.h"
+
+struct Interval
+{
+	long interval;
+	int series;
+	int number;
+	int transmitter;
+};
 
 class Simulation
 {
@@ -24,12 +33,12 @@ private:
 	long duration;
 	long stime_step;
 
-	std::list<Molecule*>*  smolecules;
-	std::vector<Receptor>* sreceivers;
-	std::vector<Source>*   stransmitters;
-	std::vector<Obstacle>* sobstacles;
+	MStore                *smolecules;
+	std::vector<Receptor> *sreceivers;
+	std::vector<Source>   *stransmitters;
+	std::vector<Obstacle> *sobstacles;
 
-	BrownianMotion* bm;
+	BrownianMotion *bm;
 	std::vector<Statistics*> sstat;
 
 	libconfig::Config cfg;
@@ -54,7 +63,7 @@ public:
 	void add(Statistics* statistics);
 	// void add(Player* player); // one day maybe
 
-	std::list<Molecule*>*  molecules();
+	MStore*                molecules();
 	std::vector<Receptor>* receivers();
 	std::vector<Source>*   transmitters();
 	std::vector<Obstacle>* obstacles();

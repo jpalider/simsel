@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 
+#include "Types.h"
 #include "Molecule.h"
 #include "Receptor.h"
 
@@ -17,7 +18,7 @@ protected:
 public:
 	Statistics(Simulation* s, long interval);
 	virtual ~Statistics();
-	virtual void run(long time, const std::list<Molecule*>* const molecules, const std::vector<Receptor>* const rcells) = 0;
+	virtual void run(long time, const MStore* const molecules, const std::vector<Receptor>* const rcells) = 0;
 protected:
 	std::string current_time_as_string();
 };

@@ -21,7 +21,7 @@ StatisticsDensity::StatisticsDensity(Simulation *s, long interval) : Statistics(
 {
 }
 
-void StatisticsDensity::run(long time, const std::list<Molecule*>* const molecules, const std::vector<Receptor>* const rcells)
+void StatisticsDensity::run(long time, const MStore* const molecules, const std::vector<Receptor>* const rcells)
 {
 
 	static const string time_prefix = current_time_as_string();
@@ -37,7 +37,7 @@ void StatisticsDensity::run(long time, const std::list<Molecule*>* const molecul
 			double diameter = cit->radius();
 			diameter = diameter*diameter;
 
-			for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
+			for (auto it = molecules->begin(); it != molecules->end(); ++it)
 			{
 				v = (*it)->position();
 				double d = squared_distance_between_points(cit->position(), v);

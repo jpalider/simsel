@@ -17,7 +17,7 @@ StatisticsDistribution::StatisticsDistribution(Simulation *s, long interval) : S
 {
 }
 
-void StatisticsDistribution::run(long time, const std::list<Molecule*>* const molecules, const std::vector<Receptor>* const rcells)
+void StatisticsDistribution::run(long time, const MStore* const molecules, const std::vector<Receptor>* const rcells)
 {
 
 	static const string time_prefix = current_time_as_string();
@@ -32,7 +32,7 @@ void StatisticsDistribution::run(long time, const std::list<Molecule*>* const mo
 		int molecules_at_distance[MAX_DISTANCE] = {};
 		const Vector* v = nullptr;
 
-		for (list<Molecule*>::const_iterator it = molecules->begin(); it != molecules->end(); ++it)
+		for (auto it = molecules->begin(); it != molecules->end(); ++it)
 		{
 			v = (*it)->position();
 			double d = squared_distance_between_points(&init, v);
