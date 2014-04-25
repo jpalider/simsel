@@ -291,11 +291,11 @@ void Simulation::run()
 	PthData pth_data_1 = { smolecules->begin(), split, &boundaries, bm, this };
 	PthData pth_data_2 = { split, smolecules->end(),   &boundaries, bm, this };
 
-	pthread_create(&pth_1, NULL, pth_worker, &pth_data_1);
-	pthread_create(&pth_2, NULL, pth_worker, &pth_data_2);
-
 	pthread_barrier_init(&trigger_from_main, NULL, THREADS+1);
 	pthread_barrier_init(&wait_from_main,    NULL, THREADS+1);
+
+	pthread_create(&pth_1, NULL, pth_worker, &pth_data_1);
+	pthread_create(&pth_2, NULL, pth_worker, &pth_data_2);
 
 	pthread_barrier_wait(&trigger_from_main); // initial: let threads run
 
