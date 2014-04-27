@@ -38,7 +38,6 @@ namespace
 
 void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Simulation *sim);
 
-const size_t THREADS = 2;
 bool stop_worker_threads = false;
 
 pthread_barrier_t trigger_from_main;
@@ -127,12 +126,16 @@ Simulation::Simulation()
 	sstarted = false;
 	sfinished = false;
 	stime = 0;
+	sthreads = 1;
 
 	smolecules = new MStore();
 
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
 	TRI_LOG_STR("Simulation:\n" << description);
+
+	TRI_LOG_STR("Sim: load number of threads for parallelism");
+	sthreads = cfg.lookup("simulation.threads");
 
 	bool repetitive = cfg.lookup("simulation.repetitive");
 	int seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
@@ -180,7 +183,6 @@ Simulation::Simulation()
 	stransmitters = load_configuration<Source>("sources");
 
 	TRI_LOG_STR("Sim: load duration");
-
 	duration = cfg.lookup("simulation.duration");
 }
 
@@ -275,27 +277,25 @@ void Simulation::run()
 	// long repeat_counter = 0;
 	// long repeat_counter_again = 0;
 
-	const size_t div = smolecules->size() / THREADS;
-	auto split = std::next(std::begin(*smolecules), div);
+	const size_t range = smolecules->size() / sthreads;
+	pthread_t pths[sthreads];
+	PthData pth_data[sthreads];
+	auto from = std::begin(*smolecules);
+	for (size_t i = 0; i < sthreads; ++i)
+	{
+		auto to = std::next(from, range);
+		pth_data[i] = {from, to, &boundaries, bm, this };
+		from = to;
+	}
+	pth_data[sthreads-1].e_iter = std::end(*smolecules);
 
-	// for (size_t i = 0; i < THREADS; ++i)
-	// {
-	// 	vector<int> v2( v.begin() + x, v.begin() + x + y );
-	// 	molecules1->copy_from_main_list
-			
-	// }
+	pthread_barrier_init(&trigger_from_main, NULL, sthreads+1);
+	pthread_barrier_init(&wait_from_main,    NULL, sthreads+1);
 
-	pthread_t pth_1;
-	pthread_t pth_2;
-
-	PthData pth_data_1 = { smolecules->begin(), split, &boundaries, bm, this };
-	PthData pth_data_2 = { split, smolecules->end(),   &boundaries, bm, this };
-
-	pthread_barrier_init(&trigger_from_main, NULL, THREADS+1);
-	pthread_barrier_init(&wait_from_main,    NULL, THREADS+1);
-
-	pthread_create(&pth_1, NULL, pth_worker, &pth_data_1);
-	pthread_create(&pth_2, NULL, pth_worker, &pth_data_2);
+	for (size_t i = 0; i < sthreads; ++i)
+	{
+		pthread_create(&pths[i], NULL, pth_worker, &pth_data[i]);
+	}
 
 	pthread_barrier_wait(&trigger_from_main); // initial: let threads run
 
@@ -322,8 +322,10 @@ void Simulation::run()
 
 	int rv = 0;
 
-	rv += pthread_join(pth_1, NULL);
-	rv += pthread_join(pth_2, NULL);
+	for (size_t i = 0; i < sthreads; ++i)
+	{
+		rv += pthread_join(pths[i], NULL);
+	}
 
 	pthread_barrier_destroy(&wait_from_main);
 	pthread_barrier_destroy(&trigger_from_main);

@@ -32,6 +32,7 @@ private:
 	long stime;
 	long duration;
 	long stime_step;
+	size_t sthreads;
 
 	MStore                *smolecules;
 	std::vector<Receptor> *sreceivers;
