@@ -53,7 +53,8 @@ void* pth_worker(void* arg)
 	BrownianMotion       *bm              = pthd->bm;
 	Simulation           *sim             = pthd->sim;
 
-	while(1) {
+	while(!stop_worker_threads)
+	{
 		pthread_barrier_wait(&trigger_from_main);
 
 		for (auto mit = b_iter; mit != e_iter; ++mit )
@@ -61,9 +62,6 @@ void* pth_worker(void* arg)
 			move_molecule(*mit, boundaries, bm, sim);
 		}
 		pthread_barrier_wait(&wait_from_main);
-
-		if (stop_worker_threads)
-			break;
 	}
 	return nullptr;
 }
