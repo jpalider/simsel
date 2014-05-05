@@ -137,17 +137,15 @@ Simulation::Simulation()
 
 	bool repetitive = cfg.lookup("simulation.repetitive");
 	int seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
-	srand(seed);
+	//srand(seed);
 	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false") << " with seed: " << seed);
 
-	int dimensions = cfg.lookup("simulation.dimensions");
-	TRI_LOG_STR("Brownian motion diemnsions set to: " << dimensions);
+	sdimensions = cfg.lookup("simulation.dimensions");
+	TRI_LOG_STR("Brownian motion diemnsions set to: " << sdimensions);
 
 	stime_step = cfg.lookup("simulation.time_step_ns");
-	double tau = stime_step * 1e-9;
-	TRI_LOG_STR("Brownian motion time step set to: " << tau);
-
-	bm = new BrownianMotion(dimensions, tau);
+	stau = stime_step * 1e-9;
+	TRI_LOG_STR("Brownian motion time step set to: " << stau);
 
 	// currently cannot mix generation types
 	string type = cfg.lookup("simulation.molecules.type");
@@ -272,17 +270,17 @@ void Simulation::run()
 	for_each(sreceivers->begin(), sreceivers->end(), [&boundaries](Receptor& b){ boundaries.push_back(&b); });
 	for_each(sobstacles->begin(), sobstacles->end(), [&boundaries](Obstacle& b){ boundaries.push_back(&b); });
 
-	// long repeat_counter = 0;
-	// long repeat_counter_again = 0;
-
 	const size_t range = smolecules->size() / sthreads;
 	pthread_t pths[sthreads];
 	PthData pth_data[sthreads];
+	BrownianMotion *pth_bm[sthreads];
 	auto from = std::begin(*smolecules);
 	for (size_t i = 0; i < sthreads; ++i)
 	{
 		auto to = std::next(from, range);
-		pth_data[i] = {from, to, &boundaries, bm, this };
+		pth_bm[i] = new BrownianMotion(sdimensions, stau);
+		pth_data[i] = {from, to, &boundaries, pth_bm[i], this };
+		TRI_LOG_STR("sthread range= " << (to - from));
 		from = to;
 	}
 	pth_data[sthreads-1].e_iter = std::end(*smolecules);
@@ -336,6 +334,12 @@ void Simulation::run()
 	cout << endl;
 
 	sfinished = true;
+
+	for (size_t i = 0; i < sthreads; ++i)
+	{
+		delete pth_bm[i];
+	}
+
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
 	// TRI_LOG_STR("Finished simulation with " << repeat_counter << "repeats");

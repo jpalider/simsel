@@ -34,6 +34,9 @@ private:
 	long stime_step;
 	size_t sthreads;
 
+	int sdimensions;
+	double stau;
+
 	MStore                *smolecules;
 	std::vector<Receptor> *sreceivers;
 	std::vector<Source>   *stransmitters;
