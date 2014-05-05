@@ -17,9 +17,15 @@ private:
 	double scale;
 
 	// randomness
-	std::mt19937 generator;
-	std::normal_distribution<double> distribution;
+	static const int MAX_DIST_ELEMENTS = 1*1000*1000;
 
+	std::mt19937 bmgenerator;
+	std::normal_distribution<double> bmdistribution;
+	std::vector<double> bmdistribution_data;
+
+	std::uniform_int_distribution<int> bmuniform;
+
+	int bmiteration;
 public:
 	BrownianMotion(int dimensions = 3, double tau = 1);
 	Vector get_move();
