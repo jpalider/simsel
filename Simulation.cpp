@@ -77,6 +77,18 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 	Vector move = bm->get_move();
 	molecule->move(move);
 
+	if (!space->has_inside(molecule))
+	{
+		molecule->move_back();
+		Vector move = bm->get_move();
+		molecule->move(move);
+		if (!space->has_inside(molecule))
+		{
+			molecule->move_back();
+			return;
+		}
+	}
+
 	bool repeat_move = false;
 	for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 	{
@@ -151,6 +163,18 @@ Simulation::Simulation()
 	string type = cfg.lookup("simulation.molecules.type");
 	TRI_LOG_STR("Getting molecule generation type: " << type);
 
+	TRI_LOG_STR("Sim: load receptor configuration");
+	sreceivers = load_configuration<Receptor>("receptors");
+
+	TRI_LOG_STR("Sim: load obstacle configuration");
+	sobstacles = load_configuration<Obstacle>("obstacles");
+
+	TRI_LOG_STR("Sim: load sources configuration");
+	stransmitters = load_configuration<Source>("sources");
+
+	TRI_LOG_STR("Sim: load enclosure configuration");
+	sspace = &load_configuration<Obstacle>("volume")->at(0);
+
 	if ( type.compare("interval") == 0 )
 	{
 		generation.interval.interval = cfg.lookup("simulation.molecules.interval");
@@ -168,15 +192,6 @@ Simulation::Simulation()
 		
 		TRI_LOG_STR("Number of molecules added to the environment: " << generation.interval.number);
 	}
-
-	TRI_LOG_STR("Sim: load receptor configuration");
-	sreceivers = load_configuration<Receptor>("receptors");
-
-	TRI_LOG_STR("Sim: load obstacle configuration");
-	sobstacles = load_configuration<Obstacle>("obstacles");
-
-	TRI_LOG_STR("Sim: load sources configuration");
-	stransmitters = load_configuration<Source>("sources");
 
 	TRI_LOG_STR("Sim: load duration");
 	duration = cfg.lookup("simulation.duration");
