@@ -149,7 +149,7 @@ Simulation::Simulation()
 
 	bool repetitive = cfg.lookup("simulation.repetitive");
 	int seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
-	//srand(seed);
+
 	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false") << " with seed: " << seed);
 
 	sdimensions = cfg.lookup("simulation.dimensions");
