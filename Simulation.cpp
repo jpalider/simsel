@@ -30,13 +30,13 @@ struct PthData
 	MStoreIter              e_iter;
 	std::vector<Boundary*> *boundaries;
 	BrownianMotion         *bm;
-	Simulation             *sim;
+	Obstacle               *space;
 };
 
 namespace
 {
 
-void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Simulation *sim);
+void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space);
 
 bool stop_worker_threads = false;
 
@@ -46,12 +46,12 @@ pthread_barrier_t wait_from_main;
 
 void* pth_worker(void* arg)
 {
-	PthData* pthd = (PthData*)arg;
+	PthData              *pthd            = (PthData*)arg;
 	MStoreIter            b_iter          = pthd->b_iter;
 	MStoreIter            e_iter          = pthd->e_iter;
 	vector<Boundary*>&    boundaries      =*pthd->boundaries;
 	BrownianMotion       *bm              = pthd->bm;
-	Simulation           *sim             = pthd->sim;
+	Obstacle             *space           = pthd->space;
 
 	while(!stop_worker_threads)
 	{
@@ -59,17 +59,17 @@ void* pth_worker(void* arg)
 
 		for (auto mit = b_iter; mit != e_iter; ++mit )
 		{
-			move_molecule(*mit, boundaries, bm, sim);
+			move_molecule(*mit, boundaries, bm, space);
 		}
 		pthread_barrier_wait(&wait_from_main);
 	}
 	return nullptr;
 }
 
-void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Simulation *sim)
+void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space)
 {
 
-	if (!molecule->is_owner(sim))
+	if (!molecule->is_owner(space))
 	{
 		return;
 	}
@@ -161,7 +161,7 @@ Simulation::Simulation()
 		Vector p(0, 0, 0);
 		for (int i = 0; i < generation.interval.number; i++)
 		{
-			smolecules->push_back(new Molecule(i, p, this));
+			smolecules->push_back(new Molecule(i, p, sspace));
 		}
 
 		generation.interval.transmitter = cfg.lookup("simulation.molecules.transmitter");
@@ -279,7 +279,7 @@ void Simulation::run()
 	{
 		auto to = std::next(from, range);
 		pth_bm[i] = new BrownianMotion(sdimensions, stau);
-		pth_data[i] = {from, to, &boundaries, pth_bm[i], this };
+		pth_data[i] = {from, to, &boundaries, pth_bm[i], sspace };
 		TRI_LOG_STR("sthread range= " << (to - from));
 		from = to;
 	}

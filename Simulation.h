@@ -41,6 +41,7 @@ private:
 	std::vector<Receptor> *sreceivers;
 	std::vector<Source>   *stransmitters;
 	std::vector<Obstacle> *sobstacles;
+	Obstacle              *sspace;
 
 	BrownianMotion *bm;
 	std::vector<Statistics*> sstat;
