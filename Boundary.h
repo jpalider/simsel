@@ -26,6 +26,7 @@ public:
 	/** Returns true if a given on non-transparent or shall act on molecule */
 	virtual bool collide(Molecule *m) = 0;
 	virtual void handle_collision(Molecule *m) = 0;
+	virtual bool has_inside(Molecule *m);
 
 private:
         friend std::ostream & operator<<(std::ostream &os, const Boundary& c);

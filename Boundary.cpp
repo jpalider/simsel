@@ -5,6 +5,7 @@
 #include "Vector.h"
 #include "Molecule.h"
 #include "Types.h"
+#include "Math.h"
 
 Boundary::Boundary(Id identifier, Vector position, Coordinate radius)
 {
@@ -33,6 +34,11 @@ Coordinate Boundary::radius() const
 const Vector* Boundary::position() const
 {
 	return &cposition;
+}
+
+bool Boundary::has_inside(Molecule *m)
+{
+	return squared_distance_between_points(position(), m->position()) < cradius*cradius;
 }
 
 
