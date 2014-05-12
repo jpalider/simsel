@@ -24,6 +24,13 @@ Statistics::~Statistics()
 {
 }
 
+string Statistics::filename(string custom)
+{
+	static const string time_prefix = current_time_as_string();
+
+	return string("results/") + time_prefix + custom + string(".dat");
+}
+
 string Statistics::current_time_as_string()
 {
 	time_t rawtime;

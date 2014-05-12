@@ -21,6 +21,7 @@ public:
 	virtual void run(long time, const MStore* const molecules, const std::vector<Receptor>* const rcells) = 0;
 protected:
 	std::string current_time_as_string();
+	std::string filename(std::string custom);
 };
 
 #endif /* SIM_STATISTICS_H */

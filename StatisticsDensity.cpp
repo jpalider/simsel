@@ -14,35 +14,28 @@
 
 using namespace std;
 
-/**
- * Density at 3um distance
- */
 StatisticsDensity::StatisticsDensity(Simulation *s, long interval) : Statistics(s, interval)
 {
 }
 
 void StatisticsDensity::run(long time, const MStore* const molecules, const std::vector<Receptor>* const rcells)
 {
-
-	static const string time_prefix = current_time_as_string();
-
-	static const double vol = sphere_volume(0.4); // um, just in this test statistics
-
 	if (time % sinterval == 0)
 	{
 		const Vector* v = nullptr;
+		const double units_um = 0.001;
 		for (vector<Receptor>::const_iterator cit = rcells->begin(); cit != rcells->end(); ++cit)
 		{
+			const double diameter   = cit->radius();
+			const double sqdiameter = diameter*diameter;
+			const double vol        = sphere_volume(diameter / sscale * units_um); // back to nm and then to um
 			int m_count = 0;
-			double diameter = cit->radius();
-			diameter = diameter*diameter;
 
 			for (auto it = molecules->begin(); it != molecules->end(); ++it)
 			{
 				v = (*it)->position();
-				double d = squared_distance_between_points(cit->position(), v);
-				//double d = squared_distance_between_points(&init, v);
-				if ( d < diameter )
+				double sqd = squared_distance_between_points(cit->position(), v);
+				if ( sqd < sqdiameter )
 				{
 					m_count++;
 				}
@@ -51,7 +44,7 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 			ofstream stat_stream;
 			stringstream ss;
 			ss << "_rcell_" << cit->id();
-			stat_stream.open((string("results/") + time_prefix + ss.str() + string(".dat")).c_str(), ios::app);
+			stat_stream.open(filename(ss.str()).c_str(), ios::app);
 			stat_stream << time * sscale << " " << ( m_count / vol ) << " " << m_count << endl;
 			stat_stream.close();
 

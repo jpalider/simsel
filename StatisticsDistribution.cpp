@@ -47,9 +47,9 @@ void StatisticsDistribution::run(long time, const MStore* const molecules, const
 		}
 
 		stringstream ss;
-		ss << time;
+		ss << "_dist_" << time;
 		ofstream stat_stream;
-		stat_stream.open((string("results/") + time_prefix + string("_dist_") + ss.str() + string(".txt")).c_str());
+		stat_stream.open(filename(ss.str()).c_str());
 
 		for (int i = 0; i < MAX_DISTANCE; i++)
 		{

@@ -10,6 +10,9 @@
 
 class Molecule;
 
+/*
+  Receptor object is transparent to the molecules, it serves as a volume for statistics
+ */
 class Receptor : public Boundary
 {
 private:
