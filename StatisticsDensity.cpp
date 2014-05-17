@@ -71,9 +71,9 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 			ss << "_rcell_" << cit->id();
 			stat_stream.open(filename(ss.str()).c_str(), ios::app);
 			stat_stream << time * sscale
-				    << " " << ( m_count / vol                      )
-				    << " " << ( m_count                            )
-				    << " " << ( m_count / MOLECULES_UM3_TO_U_MOLES )
+				    << " " << ( m_count / vol                            )
+				    << " " << ( m_count                                  )
+				    << " " << ( m_count / vol * MOLECULES_UM3_TO_U_MOLES )
 				    << endl;
 			stat_stream.close();
 		}
