@@ -55,6 +55,11 @@ Receptor& Receptor::operator=(Receptor other)
 	return *this;
 }
 
+std::ostream & operator<<(std::ostream &os, const Receptor& p)
+{
+	return os << "Receptor [" << p.id()  << "] of size=" << p.radius() << " at " << *p.position() << ")";
+}
+
 // http://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
 // http://stackoverflow.com/questions/7515617/copy-and-swap-idiom-with-inheritance
 void swap(Receptor& first, Receptor& second) // nothrow

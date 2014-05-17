@@ -28,6 +28,7 @@ public:
 	void handle_collision(Molecule *m);
 
 	Receptor& operator=(Receptor other);
+	friend std::ostream & operator<<(std::ostream &os, const Receptor& p);
 	friend void swap(Receptor& first, Receptor& second);
 };
 
