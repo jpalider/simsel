@@ -14,6 +14,7 @@ OBJ = main.o Molecule.o Vector.o BrownianMotion.o CairoColor.o \
 	Math.o \
 	Simulation.o Boundary.o tri_logger/tri_logger.o \
 	Boundary.o Source.o Receptor.o Obstacle.o \
+	Generator.o \
 	Statistics.o StatisticsDistribution.o StatisticsDensity.o
 #	Test.o
 #	Player.o
