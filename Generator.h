@@ -13,6 +13,7 @@ public:
 
 	static float data_test_Po_plus40mV(float concentration);
 	static float data_test_to_plus40mV(float concentration);
+	static float data_test_tc_plus40mV(float concentration);
 	
 };
 
