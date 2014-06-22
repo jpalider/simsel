@@ -15,6 +15,8 @@ Coordinate triangle_area(const Vector* a, const Vector* b, const Vector* c);
 
 bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector* s, const Coordinate r);
 
+bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2);
+
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter);
 
 double squared_displacement(int dimensions, double diffusion_coefficient, double tau);

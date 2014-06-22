@@ -102,6 +102,65 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 	return false;
 }
 
+//-------------------
+// http://www.3dkingdoms.com/weekly/weekly.php?a=3
+
+namespace {
+
+bool inline get_intersection(Coordinate fDst1, Coordinate fDst2, Vector P1, Vector P2, Vector &hit) {
+	if ( (fDst1 * fDst2) >= 0.0f) return false;
+	if ( fDst1 == fDst2) return false;
+	hit = P1 + (P2-P1) * ( -fDst1/(fDst2-fDst1) );
+	return true;
+}
+
+bool inline in_box(Vector hit, Vector b1, Vector b2, const int axis) {
+	if (axis==1 && hit.z > b1.z && hit.z < b2.z && hit.y > b1.y && hit.y < b2.y) return true;
+	if (axis==2 && hit.z > b1.z && hit.z < b2.z && hit.x > b1.x && hit.x < b2.x) return true;
+	if (axis==3 && hit.x > b1.x && hit.x < b2.x && hit.y > b1.y && hit.y < b2.y) return true;
+	return false;
+}
+
+// returns true if line (l1, l2) intersects with the box (b1, b2)
+// returns intersection point in hit
+
+bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2, Vector &hit)
+{
+
+	if (l2.x < b1.x && l1.x < b1.x) return false;
+	if (l2.x > b2.x && l1.x > b2.x) return false;
+	if (l2.y < b1.y && l1.y < b1.y) return false;
+	if (l2.y > b2.y && l1.y > b2.y) return false;
+	if (l2.z < b1.z && l1.z < b1.z) return false;
+	if (l2.z > b2.z && l1.z > b2.z) return false;
+
+	if (l1.x > b1.x && l1.x < b2.x &&
+	    l1.y > b1.y && l1.y < b2.y &&
+	    l1.z > b1.z && l1.z < b2.z)
+	{
+		hit = l1;
+		return true;
+	}
+
+	if ( (get_intersection( l1.x-b1.x, l2.x-b1.x, l1, l2, hit) && in_box( hit, b1, b2, 1 ))
+	     || (get_intersection( l1.y-b1.y, l2.y-b1.y, l1, l2, hit) && in_box( hit, b1, b2, 2 ))
+	     || (get_intersection( l1.z-b1.z, l2.z-b1.z, l1, l2, hit) && in_box( hit, b1, b2, 3 ))
+	     || (get_intersection( l1.x-b2.x, l2.x-b2.x, l1, l2, hit) && in_box( hit, b1, b2, 1 ))
+	     || (get_intersection( l1.y-b2.y, l2.y-b2.y, l1, l2, hit) && in_box( hit, b1, b2, 2 ))
+	     || (get_intersection( l1.z-b2.z, l2.z-b2.z, l1, l2, hit) && in_box( hit, b1, b2, 3 )))
+		return true;
+
+	return false;
+}
+
+}
+
+bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2)
+{
+	Vector hit;
+	return segment_line_box_intersect(b1, b2, l1, l2, hit);
+}
+
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter)
 {
 	static const double k_b = 1.38E-23;
