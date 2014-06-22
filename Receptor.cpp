@@ -57,7 +57,7 @@ Receptor& Receptor::operator=(Receptor other)
 
 std::ostream & operator<<(std::ostream &os, const Receptor& p)
 {
-	return os << "Receptor [" << p.id()  << "] of size=" << p.radius() << " at " << *p.position() << ")";
+	return os << "Receptor [" << p.id()  << "] of size=" << p.cradius << " at " << p.cposition << ")";
 }
 
 // http://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom

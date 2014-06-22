@@ -36,6 +36,12 @@ const Vector* Boundary::position() const
 	return &cposition;
 }
 
+
+bool Boundary::check_collision(const Molecule *m)
+{
+	return segment_line_sphere_intersect(m->position(), m->prev_position(), &cposition, cradius);
+}
+
 bool Boundary::has_inside(Molecule *m)
 {
 	return squared_distance_between_points(position(), m->position()) < cradius*cradius;

@@ -22,12 +22,12 @@ public:
 
 	/** Tells currect object position */
 	const Vector* position() const;
+	/** Tells previous object position - before move*/
+	const Vector* prev_position() const;
 	/** Translate vector */
 	void move(const Vector t);
 	/** Restore position of last move() operation */
 	void move_back();
-	/** Checks collision between this molecule and another Boundary object */
-	bool check_collision(const Boundary *c);
 	/** Molecule can be free or bound or even destroyed - owner denotes where it is*/
 	bool is_owner(void * owner);
 	/** Moving from one object into another */

@@ -20,6 +20,11 @@ const Vector* Molecule::position() const
 	return &mposition;
 }
 
+const Vector* Molecule::prev_position() const
+{
+	return &mpposition;
+}
+
 void Molecule::move(Vector t)
 {
 	mpposition = mposition;
@@ -29,11 +34,6 @@ void Molecule::move(Vector t)
 void Molecule::move_back()
 {
 	mposition = mpposition;
-}
-
-bool Molecule::check_collision(const Boundary *c)
-{
-	return segment_line_sphere_intersect(&mposition, &mpposition, c->position(), c->radius());
 }
 
 bool Molecule::is_owner(void * owner)
