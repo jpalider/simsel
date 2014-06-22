@@ -90,17 +90,15 @@ int main(int argc, char **argv)
 {
 	TRI_LOG_STR("Welcome to the Sim");
 
-	// if (argc > 1)
-	// {
-	// 	if (string(argv[1]).find("test") != std::string::npos)
-	// 	{
-	// 		//test_diffusion_coefficient();
-	// 		//test_memory_usage();
-	// 		test_diffusion_equation();
-	// 		return 0;
-	// 	}
-	// 	//NUMBER_OF_MOLECULES = atoi(argv[1]);
-	// }
+	if (argc > 1)
+	{
+		if (string(argv[1]).find("test") != std::string::npos)
+		{
+			test_box_intersection();
+			TRI_LOG_STR("All tests passed.");
+			return 0;
+		}
+	}
 
 	s = new Simulation();
 	Statistics* stat;
