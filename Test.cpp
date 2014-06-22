@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <cassert>
 
 #include "Test.h"
 #include "Math.h"
@@ -11,32 +12,6 @@
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
-
-void test_normal_distribution()
-{
-//	srand ( time(NULL) );
-
-	const int nrolls=10000;  // number of experiments
-	const int nstars=100;    // maximum number of stars to distribute
-
-	int pr[10]={};
-//	srand ( time(NULL) );
-
-
-	for (int i=0; i<nrolls; ++i) {
-		float number = normal(2, 5);
-		++pr[int(number)];
-	}
-
-	TRI_LOG_STR("normal_distribution (5.0,2.0):");
-
-	for (int i=0; i<10; ++i) {
-		TRI_LOG_STR(i << "-" << (i+1) << ": ");
-		TRI_LOG_STR(std::string(pr[i]*nstars/nrolls,'*'));
-	}
-
-	return;
-}
 
 void test_diffusion_coefficient()
 {
@@ -158,4 +133,40 @@ void test_diffusion_equation()
 	stat_stream << endl;
 	stat_stream.close();
 
+}
+
+void test_box_intersection()
+{
+	Vector box_begin ( 0,  0,  0);
+	Vector box_end   (10, 10, 10);
+	Vector line1_begin( 5,  5, -1);
+	Vector line1_end  ( 5,  5, 11);
+	Vector line2_begin( 5,  5,  5);
+	Vector line2_end  ( 5,  5,  6);
+	Vector line3_begin( 5,  5,  5);
+	Vector line3_end  ( 5,  5, 15);
+	Vector line4_begin( 5,  5, 11);
+	Vector line4_end  ( 5,  5, 15);
+
+	assert( segment_line_box_intersect(box_begin, box_end, line1_begin, line1_end));
+	assert( segment_line_box_intersect(box_begin, box_end, line2_begin, line2_end));
+	assert( segment_line_box_intersect(box_begin, box_end, line3_begin, line3_end));
+	assert(!segment_line_box_intersect(box_begin, box_end, line4_begin, line4_end));
+}
+
+
+void test_log_log_proportional()
+{
+
+	// const float CaC_100nM =   1e-7;
+	// const float CaC_1uM   =   1e-6;
+	// //return get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, concentration);
+
+	// TRI_LOG_STR(":::" << gen::get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, CaC_100nM*1) );
+	// TRI_LOG_STR(":::" << gen::get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, CaC_100nM*5) );
+	// TRI_LOG_STR(":::" << gen::get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, CaC_1uM*1) );
+	// TRI_LOG_STR(":::" << gen::get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, CaC_1uM*5) );
+	// TRI_LOG_STR(":::" << gen::get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, CaC_1uM*10) );
+
+	return;
 }
