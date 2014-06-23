@@ -89,12 +89,13 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 		}
 	}
 
+	// check for collision with other objects
 	bool repeat_move = false;
 	for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 	{
 		auto obstacle = *cit;
 
-		if (molecule->check_collision(obstacle))
+		if (obstacle->check_collision(molecule))
 		{
 			repeat_move = obstacle->collide(molecule);
 			if (!repeat_move)
@@ -113,7 +114,7 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 		for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 		{
 			auto obstacle = *cit;
-			if (molecule->check_collision(obstacle))
+			if (obstacle->check_collision(molecule))
 			{
 				molecule->move_back();
 				break;
