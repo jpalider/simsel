@@ -242,11 +242,24 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		string shape = cfg.lookup(prefix + string("shape"));
 		if ( shape.find("cube") != string::npos)
 		{
-			TRI_LOG_STR("Sim: shape is cube [unsupported]");
+			string param_x = prefix + string("size.x");
+			string param_y = prefix + string("size.y");
+			string param_z = prefix + string("size.z");
+			double x = cfg.lookup(param_x);
+			double y = cfg.lookup(param_y);
+			double z = cfg.lookup(param_z);
+			x *= ssim_scale;
+			y *= ssim_scale;
+			z *= ssim_scale;
+
+			bool disabled = cfg.lookup(prefix + string("disabled"));
+			if (!disabled)
+			{
+				v->push_back(BoundaryType(id, cp, x, y, z));
+			}
 		}
 		else if ( shape.find("sphere") != string::npos)
 		{
-			TRI_LOG_STR("Sim: shape is sphere");
 			Coordinate radius = cfg.lookup(prefix + string("radius"));
 			radius *= ssim_scale;
 			bool disabled = cfg.lookup(prefix + string("disabled"));
