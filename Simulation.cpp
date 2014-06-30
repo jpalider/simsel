@@ -94,7 +94,6 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 	for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 	{
 		auto obstacle = *cit;
-
 		if (obstacle->check_collision(molecule))
 		{
 			repeat_move = obstacle->collide(molecule);
@@ -143,37 +142,37 @@ Simulation::Simulation()
 
 	cfg.readFile("cfg/Simulation.cfg");
 	string description = cfg.lookup("description");
-	TRI_LOG_STR("Simulation:\n" << description);
+	TRI_LOG_STR("Simulation: " << description);
 
-	TRI_LOG_STR("Sim: load number of threads for parallelism");
 	sthreads = cfg.lookup("simulation.threads");
+	TRI_LOG_STR("Worker threads: " << sthreads);
 
 	bool repetitive = cfg.lookup("simulation.repetitive");
 	int seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
 
-	TRI_LOG_STR("Repetitivity set to: " << (repetitive ? "true" : "false") << " with seed: " << seed);
+	TRI_LOG_STR("Repetitivity (not validated): " << (repetitive ? "true" : "false") << " with seed: " << seed);
 
 	sdimensions = cfg.lookup("simulation.dimensions");
-	TRI_LOG_STR("Brownian motion diemnsions set to: " << sdimensions);
+	TRI_LOG_STR("Brownian motion dimensions: " << sdimensions);
 
 	stime_step = cfg.lookup("simulation.time_step_ns");
 	stau = stime_step * 1e-9;
-	TRI_LOG_STR("Brownian motion time step set to: " << stau);
+	TRI_LOG_STR("Brownian motion time step: " << stau << " seconds");
 
 	// currently cannot mix generation types
 	string type = cfg.lookup("simulation.molecules.type");
-	TRI_LOG_STR("Getting molecule generation type: " << type);
+	TRI_LOG_STR("Molecule generation type: " << type);
 
-	TRI_LOG_STR("Sim: load receptor configuration");
+	TRI_LOG_STR("Load receptor configuration...");
 	sreceivers = load_configuration<Receptor>("receptors");
 
-	TRI_LOG_STR("Sim: load obstacle configuration");
+	TRI_LOG_STR("Loading obstacle configuration...");
 	sobstacles = load_configuration<Obstacle>("obstacles");
 
-	TRI_LOG_STR("Sim: load sources configuration");
+	TRI_LOG_STR("Loading sources configuration...");
 	stransmitters = load_configuration<Source>("sources");
 
-	TRI_LOG_STR("Sim: load enclosure configuration");
+	TRI_LOG_STR("Loading enclosure configuration...");
 	sspace = &load_configuration<Obstacle>("volume")->at(0);
 
 	if ( type.compare("interval") == 0 )
@@ -194,8 +193,8 @@ Simulation::Simulation()
 		TRI_LOG_STR("Number of molecules added to the environment: " << generation.interval.number);
 	}
 
-	TRI_LOG_STR("Sim: load duration");
 	duration = cfg.lookup("simulation.duration");
+	TRI_LOG_STR("Duration: " << duration << " seconds");
 }
 
 Simulation::~Simulation()
@@ -272,11 +271,9 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		{
 			TRI_LOG_STR("Sim: unknown shape");
 		}
-
 		TRI_LOG_STR(boundary << " pos" << cp);
 	}
 	return v;
-
 }
 
 double Simulation::scale()
