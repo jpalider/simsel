@@ -20,12 +20,10 @@ public:
 class Boundary
 {
 
-private:
+protected:
 	Collider* collider;
 
-protected:
 	Vector cposition;
-
 	Coordinate cradius;
 	Coordinate xsize;
 	Coordinate ysize;

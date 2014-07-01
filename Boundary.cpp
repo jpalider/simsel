@@ -39,6 +39,8 @@ Boundary::Boundary(const Boundary& other)
 	ysize = other.ysize;
 	zsize = other.zsize;
 	collider = other.collider;
+	corner_b = other.corner_b;
+	corner_e = other.corner_e;
 }
 
 
@@ -79,7 +81,7 @@ bool Boundary::has_inside(Molecule *m)
 
 std::ostream & operator<<(std::ostream &os, const Boundary& c)
 {
-	return os << "Boundary_" << c.cid << " (" << c.position()->x << "," << c.position()->y << "," << c.position()->z << ")";
+	return os << "Boundary_" << c.cid << " " << c.cposition << " " << c.corner_b << c.corner_e;
 }
 
 Id Boundary::id() const
