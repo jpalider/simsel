@@ -10,9 +10,11 @@ public:
 
 	Vector(Coordinate x, Coordinate y, Coordinate z);
 	Vector();
+	Vector(const Vector& v);
 
 	void translate(const Vector* t);
 
+	Vector& operator=(const Vector& v);
 	Vector& operator+=(const Vector& v);
 	Vector& operator-=(const Vector& v);
 	Vector& operator/=(const Coordinate);

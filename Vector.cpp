@@ -11,6 +11,10 @@ Vector::Vector()
 	x = y = z = std::numeric_limits<Coordinate>::infinity();
 }
 
+Vector::Vector(const Vector& v) : x(v.x), y(v.y), z(v.z)
+{
+}
+
 void Vector::translate(const Vector* t)
 {
 	x += t->x;
@@ -21,6 +25,14 @@ void Vector::translate(const Vector* t)
 std::ostream & operator<<(std::ostream &os, const Vector& v)
 {
 	return os << "(" << v.x << "," << v.y << "," << v.z << ")";
+}
+
+Vector& Vector::operator=(const Vector& v)
+{
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	return *this;
 }
 
 Vector& Vector::operator+=(const Vector& v)
