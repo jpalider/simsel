@@ -10,6 +10,12 @@ Receptor::Receptor(Id identifier, Vector position, Coordinate radius) :
 	rmolecules = new std::vector<Molecule*>();
 }
 
+Receptor::Receptor(Id identifier, Vector position, Coordinate size_x, Coordinate size_y, Coordinate size_z) :
+	Boundary(identifier, position, size_x, size_y, size_z)
+{
+	rmolecules = new std::vector<Molecule*>();
+}
+
 Receptor::Receptor(const Receptor& other) : Boundary(other), rmolecules( new std::vector<Molecule*>(*(other.rmolecules)) )
 {
 }

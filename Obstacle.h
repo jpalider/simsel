@@ -11,7 +11,9 @@ private:
 
 public:
 	Obstacle(Id identifier, Vector position, Coordinate radius);
+	Obstacle(Id identifier, Vector position, Coordinate size_x, Coordinate size_y, Coordinate size_z);
 	bool collide(Molecule *m);
 	void handle_collision(Molecule *m);
+	bool check_collision(const Molecule *m);
 };
 #endif /* SIM_OBSTACLE_H */

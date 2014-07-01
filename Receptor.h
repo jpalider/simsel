@@ -20,6 +20,7 @@ private:
 
 public:
 	Receptor(Id identifier, Vector position, Coordinate radius);
+	Receptor(Id identifier, Vector position, Coordinate size_x, Coordinate size_y, Coordinate size_z);
 	Receptor(const Receptor& other);
 	~Receptor();
 

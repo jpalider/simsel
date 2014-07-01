@@ -11,6 +11,7 @@ class Source : public Boundary
 {
 public:
 	Source(Id identifier, Vector position, Coordinate radius);
+	Source(Id identifier, Vector position, Coordinate size_x, Coordinate size_y, Coordinate size_z);
 	bool collide(Molecule *m);
 	void handle_collision(Molecule *m);
 	void release(Molecule *m);

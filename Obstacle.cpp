@@ -4,6 +4,9 @@ Obstacle::Obstacle(Id identifier, Vector position, Coordinate radius) : Boundary
 {
 }
 
+Obstacle::Obstacle(Id identifier, Vector position, Coordinate size_x, Coordinate size_y, Coordinate size_z) : Boundary(identifier, position, size_x, size_y, size_z)
+{
+}
 
 bool Obstacle::collide(Molecule *m)
 {
