@@ -64,7 +64,7 @@ private:
 	public:
 		bool check_collision(const Molecule *m, const Boundary* b) const
 		{
-e			return segment_line_box_intersect(*b->corner_begin(), *b->corner_end(), *m->position(), *m->prev_position());
+			return segment_line_box_intersect(*b->corner_begin(), *b->corner_end(), *m->position(), *m->prev_position());
 		}
 		bool has_inside(Molecule *m, const Boundary *b) const
 		{
