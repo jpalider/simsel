@@ -65,6 +65,12 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 	Coordinate sq_p1_to_s = squared_distance_between_points(p1, s);
 	Coordinate sq_p2_to_s = squared_distance_between_points(p2, s);
 	Coordinate sq_p1_to_p2 = squared_distance_between_points(p1, p2);
+
+	if (sq_p1_to_s < r*r || sq_p2_to_s < r*r)
+	{
+		return true; //intersection
+	}
+
 	Coordinate p1_to_p2 = sqrt( sq_p1_to_p2 );
 	Coordinate p1_to_s = sqrt( sq_p1_to_s );
 	Coordinate p2_to_s = sqrt( sq_p2_to_s );
@@ -74,21 +80,21 @@ bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vec
 	Coordinate cos_p2 = cos_at_ab(sq_p2_to_s, sq_p1_to_p2, sq_p1_to_s, p1_to_p2 * p2_to_s );
 
 	// maybe move this before 
-	if ( acute_angle(cos_p1) )
-	{
-		if (sq_p1_to_s < r*r)
-		{
-			return true; //intersection
-		}
-	}
+	// if ( acute_angle(cos_p1) )
+	// {
+	// 	if (sq_p1_to_s < r*r)
+	// 	{
+	// 		return true; //intersection
+	// 	}
+	// }
 
-	if ( acute_angle(cos_p2) )
-	{
-		if (sq_p2_to_s < r*r)
-		{
-			return true; //intersection
-		}
-	}
+	// if ( acute_angle(cos_p2) )
+	// {
+	// 	if (sq_p2_to_s < r*r)
+	// 	{
+	// 		return true; //intersection
+	// 	}
+	// }
 	
 	if ( acute_angle(cos_p1) && acute_angle(cos_p2) )
 	{
@@ -126,7 +132,7 @@ bool inline in_box(Vector hit, Vector b1, Vector b2, const int axis) {
 
 bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2, Vector &hit)
 {
-
+	abort();
 	if (l2.x < b1.x && l1.x < b1.x) return false;
 	if (l2.x > b2.x && l1.x > b2.x) return false;
 	if (l2.y < b1.y && l1.y < b1.y) return false;
@@ -153,12 +159,26 @@ bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2, Vect
 	return false;
 }
 
+bool segment_line_box_intersect_tmp(const Vector &b1, const Vector &b2, const Vector &l1, const Vector &l2)
+{
+	// trivial solution, but for most basic tests should suffice
+	// anyway, this is a must-have for final simulations
+	return vector_in_box(l1, b1, b2) || vector_in_box(l2, b1, b2) || vector_in_box((l1+l2)/2, b1, b2);
 }
 
-bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2)
+}
+
+
+bool vector_in_box(const Vector &v, const Vector &b1, const Vector &b2)
 {
-	Vector hit;
-	return segment_line_box_intersect(b1, b2, l1, l2, hit);
+	return (v.x > b1.x && v.x < b2.x && v.y > b1.y && v.y < b2.y && v.z > b1.z && v.z < b2.z);
+}
+
+bool segment_line_box_intersect(const Vector &b1, const Vector &b2, const Vector &l1, const Vector &l2)
+{
+	// Vector hit;
+	// return segment_line_box_intersect(b1, b2, l1, l2, hit);
+	return segment_line_box_intersect_tmp(b1, b2, l1, l2);
 }
 
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter)

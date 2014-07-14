@@ -62,21 +62,28 @@ private:
 	class BoxCollider : public Collider
 	{
 	public:
-		bool check_collision(const Molecule *m, const Boundary* b)
+		bool check_collision(const Molecule *m, const Boundary* b) const
 		{
-			return segment_line_box_intersect(*m->position(), *m->prev_position(), *b->corner_begin(), *b->corner_end());
+e			return segment_line_box_intersect(*b->corner_begin(), *b->corner_end(), *m->position(), *m->prev_position());
 		}
-		bool has_inside(Molecule *m, const Boundary *b) { return false; }
+		bool has_inside(Molecule *m, const Boundary *b) const
+		{
+			return vector_in_box(*m->position(), *b->corner_begin(), *b->corner_end());
+		}
 	};
 
 	class SphereCollider : public Collider
 	{
 	public:
-		bool check_collision(const Molecule *m, const Boundary* b)
+		bool check_collision(const Molecule *m, const Boundary* b) const
 		{
 			return segment_line_sphere_intersect(m->position(), m->prev_position(), b->position(), b->radius());
 		}
-		bool has_inside(Molecule *m, const Boundary *b) { return false; }
+		bool has_inside(Molecule *m, const Boundary *b) const
+		{
+			auto r = b->radius();
+			return squared_distance_between_points(b->position(), m->position()) < r*r;
+		}
 	};
 
 	class ColliderFactory

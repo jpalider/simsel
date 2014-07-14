@@ -2,6 +2,7 @@
 #define SIM_MATH_H
 
 #include "Vector.h"
+#include "Types.h"
 
 Coordinate squared_distance_between_points(const Vector* p1, const Vector* p2);
 
@@ -15,7 +16,9 @@ Coordinate triangle_area(const Vector* a, const Vector* b, const Vector* c);
 
 bool segment_line_sphere_intersect(const Vector* p1, const Vector* p2, const Vector* s, const Coordinate r);
 
-bool segment_line_box_intersect(Vector b1, Vector b2, Vector l1, Vector l2);
+bool vector_in_box(const Vector &v, const Vector &b1, const Vector &b2);
+
+bool segment_line_box_intersect(const Vector &b1, const Vector &b2, const Vector &l1, const Vector &l2);
 
 double diffusion_coefficient(double temperature_K, double viscosity_eta, double diameter);
 
