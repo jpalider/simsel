@@ -13,8 +13,8 @@ class Boundary;
 class Collider
 {
 public:
-	virtual bool check_collision(const Molecule *m, const Boundary *b) = 0;
-	virtual bool has_inside(Molecule *m, const Boundary *b) = 0;
+	virtual bool check_collision(const Molecule *m, const Boundary *b) const = 0;
+	virtual bool has_inside(Molecule *m, const Boundary *b) const = 0;
 };
 
 class Boundary
@@ -48,9 +48,9 @@ public:
 	/** Returns true if a given on non-transparent or shall act on molecule */
 	virtual bool collide(Molecule *m) = 0;
 	/** Checks collision between  molecule and this object */
-	virtual bool check_collision(const Molecule *m);
+	virtual bool check_collision(const Molecule *m) const;
 	virtual void handle_collision(Molecule *m) = 0;
-	virtual bool has_inside(Molecule *m);
+	virtual bool has_inside(Molecule *m) const;
 
 private:
         friend std::ostream & operator<<(std::ostream &os, const Boundary& c);

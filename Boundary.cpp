@@ -68,20 +68,20 @@ const Vector* Boundary::corner_end() const
 	return &corner_e;
 }
 
-bool Boundary::check_collision(const Molecule *m)
+bool Boundary::check_collision(const Molecule *m) const
 {
 	return collider->check_collision(m, this);
 }
 
-bool Boundary::has_inside(Molecule *m)
+bool Boundary::has_inside(Molecule *m) const
 {
-	return squared_distance_between_points(position(), m->position()) < cradius*cradius;
+	return collider->has_inside(m, this);
 }
 
 
 std::ostream & operator<<(std::ostream &os, const Boundary& c)
 {
-	return os << "Boundary_" << c.cid << " " << c.cposition << " " << c.corner_b << c.corner_e;
+	return os << "Boundary_" << c.cid << " " << c.cposition << " " << c.cradius << " " << c.corner_b << c.corner_e;
 }
 
 Id Boundary::id() const
