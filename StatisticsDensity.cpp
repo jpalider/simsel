@@ -3,7 +3,6 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
-#include <strstream>
 #include <string>
 
 #include "StatisticsDensity.h"
@@ -30,7 +29,6 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 
 	if (time % sinterval == 0)
 	{
-		const Vector* v = nullptr;
 		const double units_um = 0.001;
 
 		if (first_run)
@@ -52,15 +50,13 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 		for (vector<Receptor>::const_iterator cit = rcells->begin(); cit != rcells->end(); ++cit)
 		{
 			const Coordinate diameter   = cit->radius();
-			const Coordinate sqdiameter = diameter*diameter;
 			const Coordinate vol        = sphere_volume(diameter / sscale * units_um); // back to nm and then to um
 			int m_count = 0;
 
 			for (auto it = molecules->begin(); it != molecules->end(); ++it)
 			{
-				v = (*it)->position();
-				Coordinate sqd = squared_distance_between_points(cit->position(), v);
-				if ( sqd < sqdiameter )
+				auto m = *it;
+				if (cit->has_inside(m))
 				{
 					m_count++;
 				}
