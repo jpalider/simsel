@@ -24,7 +24,12 @@ void Vector::translate(const Vector* t)
 
 std::ostream & operator<<(std::ostream &os, const Vector& v)
 {
-	return os << "(" << v.x << "," << v.y << "," << v.z << ")";
+	static const float _TO_UM = 1000*1000;
+	os.precision(2);
+	os.width(3);
+	os.fill(' ');
+	os.width(5);
+	return os << "(" << v.x * _TO_UM << "," << v.y * _TO_UM << "," << v.z * _TO_UM << ")um";
 }
 
 Vector& Vector::operator=(const Vector& v)
