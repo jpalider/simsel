@@ -92,9 +92,13 @@ int main(int argc, char **argv)
 
 	if (argc > 1)
 	{
-		if (string(argv[1]).find("test") != std::string::npos)
+		if (string(argv[1]).find("test") != std::string::npos ||
+		    string(argv[1]).find("-t")   != std::string::npos)
 		{
 			test_box_intersection();
+			test_box_intersection2();
+			test_sphere_containing();
+			test_box_containing();
 			TRI_LOG_STR("All tests passed.");
 			return 0;
 		}

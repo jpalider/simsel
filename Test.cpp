@@ -154,6 +154,20 @@ void test_box_intersection()
 	assert(!segment_line_box_intersect(box_begin, box_end, line4_begin, line4_end));
 }
 
+void test_box_intersection2()
+{
+	Vector box_begin  (  -5,  -5,  -5);
+	Vector box_end    (   5,   5,   5);
+	Vector line1_begin( -10, -10, -10);
+	Vector line1_end  (  10,  10,  10);
+	Vector line2_begin(  -4.9,   -4.9,  -4.9);
+	Vector line2_end  (  5,   5,   5);
+
+	assert(segment_line_box_intersect(box_begin, box_end, line1_begin, line1_end));
+	assert(segment_line_box_intersect(box_begin, box_end, line2_begin, line2_end));
+}
+
+
 
 void test_log_log_proportional()
 {
@@ -169,4 +183,33 @@ void test_log_log_proportional()
 	// TRI_LOG_STR(":::" << gen::get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, CaC_1uM*10) );
 
 	return;
+}
+
+void test_sphere_containing()
+{
+	Receptor r1(-1, Vector(3.0, 0, 0), 1.4 );
+	Molecule m1(-2, Vector(3.3, 0.71, 0.31));
+
+	Receptor r2(-1, Vector(3.0, 0, 0), 1.4 );
+	Molecule m2(-3, Vector(3.1, 1.3,  0.86));
+
+	assert( r1.has_inside(&m1));
+	assert(!r2.has_inside(&m2));
+}
+
+void test_box_containing()
+{
+	Receptor r1(-1, Vector(3,0,0), 0.8, 0.8, 0.8);
+	Molecule m1(-2, Vector(3.39,0.32,0.31));
+	Molecule m2(-3, Vector(3.3,0.21,0.15));
+	Molecule m3(-4, Vector(3.41,0.32,0.31));
+	assert( r1.has_inside(&m1));
+	assert( r1.has_inside(&m2));
+	assert(!r1.has_inside(&m3));
+
+	Receptor r10(-1, Vector(3,0,0), 0.9, 0.9, 0.9);
+	Molecule m11(-2, Vector(3.1,0.16,-0.095));
+	Molecule m12(-3, Vector(3.2,-0.013,-0.2));
+	assert(r10.has_inside(&m11));
+	assert(r10.has_inside(&m12));
 }
