@@ -6,7 +6,8 @@
 
 #include "Types.h"
 #include "Vector.h"
-#include "Boundary.h"
+
+class Boundary;
 
 class Molecule {
 private:

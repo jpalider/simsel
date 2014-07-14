@@ -28,7 +28,7 @@ const Vector* Molecule::prev_position() const
 void Molecule::move(Vector t)
 {
 	mpposition = mposition;
-	mposition.translate(&t);
+	mposition += t;
 }
 
 void Molecule::move_back()
@@ -45,7 +45,6 @@ void Molecule::change_owner(void * owner)
 {
 	mowner = owner;
 }
-
 
 std::ostream & operator<<(std::ostream &os, const Molecule& m)
 {
