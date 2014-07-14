@@ -16,3 +16,9 @@ bool Obstacle::collide(Molecule *m)
 void Obstacle::handle_collision(Molecule *m)
 {
 }
+
+std::ostream & operator<<(std::ostream &os, const Obstacle& c)
+{
+	return os << "Obstacle_" << c.cid << " " << c.cposition << " " << c.cradius << " " << c.corner_b << c.corner_e;
+}
+
