@@ -233,6 +233,12 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		stringstream ss;
 		ss << i;
 		string prefix = string("simulation." + boundary + ".[") + ss.str() + string("].");
+
+		if (static_cast<bool>(cfg.lookup(prefix + string("disabled"))))
+		{
+			continue;
+		}
+
 		string param_x = prefix + string("pos.x");
 		string param_y = prefix + string("pos.y");
 		string param_z = prefix + string("pos.z");
@@ -256,22 +262,13 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 			x *= ssim_scale;
 			y *= ssim_scale;
 			z *= ssim_scale;
-
-			bool disabled = cfg.lookup(prefix + string("disabled"));
-			if (!disabled)
-			{
-				v->push_back(BoundaryType(id, cp, x, y, z));
-			}
+			v->push_back(BoundaryType(id, cp, x, y, z));
 		}
 		else if ( shape.find("sphere") != string::npos)
 		{
 			Coordinate radius = cfg.lookup(prefix + string("radius"));
 			radius *= ssim_scale;
-			bool disabled = cfg.lookup(prefix + string("disabled"));
-			if (!disabled)
-			{
-				v->push_back(BoundaryType(id, cp, radius));
-			}
+			v->push_back(BoundaryType(id, cp, radius));
 		}
 		else
 		{
