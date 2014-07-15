@@ -311,8 +311,8 @@ void Simulation::run()
 	{
 		auto to = std::next(from, range);
 		pth_bm[i] = new BrownianMotion(sdimensions, stau);
-		pth_data[i] = {from, to, &boundaries, pth_bm[i], sspace };
-		TRI_LOG_STR("sthread range= " << (to - from));
+		pth_data[i] = { from, to, &boundaries, pth_bm[i], sspace };
+		TRI_LOG_STR("sthread range = " << (to - from));
 		from = to;
 	}
 	pth_data[sthreads-1].e_iter = std::end(*smolecules);
@@ -374,8 +374,6 @@ void Simulation::run()
 
 	TRI_LOG_STR("Finished simulation");
 	TRI_LOG_STR("Finished simulation with " << smolecules->size() << " free molecules");
-	// TRI_LOG_STR("Finished simulation with " << repeat_counter << "repeats");
-	// TRI_LOG_STR("Finished simulation with " << repeat_counter_again << "repeats again");
 }
 
 void Simulation::print_progress()
