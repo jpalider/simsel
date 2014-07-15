@@ -77,7 +77,8 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 	Vector move = bm->get_move();
 	molecule->move(move);
 
-	if (!space->has_inside(molecule))
+	// after move check for space boundaries (twice)
+	if (space && !space->has_inside(molecule))
 	{
 		molecule->move_back();
 		Vector move = bm->get_move();
@@ -173,7 +174,12 @@ Simulation::Simulation()
 	stransmitters = load_configuration<Source>("sources");
 
 	TRI_LOG_STR("Loading enclosure configuration...");
-	sspace = &load_configuration<Obstacle>("volume")->at(0);
+	try {
+		sspace = &load_configuration<Obstacle>("volume")->at(0);
+	} catch(...)
+	{
+		sspace = nullptr;
+	}
 
 	if ( type.compare("interval") == 0 )
 	{
