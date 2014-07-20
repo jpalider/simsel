@@ -99,6 +99,9 @@ int main(int argc, char **argv)
 			test_box_intersection2();
 			test_sphere_containing();
 			test_box_containing();
+			test_Po();
+			test_to();
+			test_or();
 			TRI_LOG_STR("All tests passed.");
 			return 0;
 		}

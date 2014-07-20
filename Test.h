@@ -11,6 +11,12 @@ void test_box_intersection();
 
 void test_log_log_proportional();
 
+void test_Po();
+
+void test_to();
+
+void test_or();
+
 void test_box_intersection1();
 
 void test_box_intersection2();

@@ -3,12 +3,14 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cmath>
 #include <cassert>
 
 #include "Test.h"
 #include "Math.h"
 #include "Simulation.h"
+#include "Generator.h"
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
@@ -212,4 +214,89 @@ void test_box_containing()
 	Molecule m12(-3, Vector(3.2,-0.013,-0.2));
 	assert(r10.has_inside(&m11));
 	assert(r10.has_inside(&m12));
+}
+
+namespace {
+
+template<typename T>
+void print_to_file(std::string filename, std::vector<T>& data, std::vector<T>& val)
+{
+	ofstream po_stream;
+	stringstream ss;
+
+	ss << "test/" << filename;
+
+	po_stream.open(ss.str().c_str(), ios::trunc);
+	if (!po_stream.is_open())
+	{
+		assert(false);
+	}
+
+	po_stream << "# " << endl;
+	for (auto v = val.begin(), d = data.begin(); v != val.end(); ++v, ++d)
+	{
+		po_stream << *d << " " << *v << endl;
+	}
+
+	po_stream.close();
+}
+
+std::vector<float> concentrations = {
+	0.000001, 0.000002, 0.000003, 0.000004, 0.000005, // (5)    1 uM, ...,   5 uM
+	0.000006, 0.000007, 0.000008, 0.000009,           // (9)    6 uM, ...,   9 uM
+	0.000010, 0.000020, 0.000030, 0.000040, 0.000050, // (14)  10 uM, ...,  50 uM
+	0.000060, 0.000070, 0.000080, 0.000090,           // (18)  60 uM, ...,  90 uM,
+	0.000100, 0.000200, 0.000300, 0.000400, 0.000005, // (23) 100 uM, ..., 400 uM (ca. 0.5mM)
+	0.000600, 0.000700, 0.000800, 0.000900,           // (27) 600 uM, ..., 900 uM
+	0.001000, 0.002000, 0.003000, 0.004000, 0.00500,  // (32    1 mM, ...,   5 mM
+	0.006000, 0.007000, 0.008000, 0.009000,           // (36)   6 mM, ...,   9 mM
+	0.010000, 0.020000, 0.030000, 0.040000, 0.05000,  // (41)  10 mM, ...,  50 mM
+};
+
+std::vector<float> concentrations_Po(concentrations.begin(),concentrations.begin() + 23);
+std::vector<float> concentrations_to(concentrations.begin(),concentrations.begin() + 9);
+std::vector<float> concentrations_or(concentrations.begin(),concentrations.begin() + 9);
+
+}
+
+void test_Po()
+{
+	std::vector<float> values;
+
+	for (auto &c : concentrations_Po)
+	{
+		values.push_back(Generator::data_test_Po_plus40mV(c));
+	}
+
+	assert(concentrations_Po.size() == values.size());
+
+	print_to_file<float>("test_Po.dat", concentrations_Po, values);
+}
+
+void test_to()
+{
+	std::vector<float> values;
+
+	for (auto &c : concentrations_to)
+	{
+		values.push_back(Generator::data_test_to_plus40mV(c));
+	}
+
+	assert(concentrations_to.size() == values.size());
+
+	print_to_file<float>("test_to.dat", concentrations_to, values);
+}
+
+void test_or()
+{
+	std::vector<float> values;
+
+	for (auto &c : concentrations_or)
+	{
+		values.push_back(Generator::data_test_or_plus40mV(c));
+	}
+
+	assert(concentrations_or.size() == values.size());
+
+	print_to_file<float>("test_or.dat", concentrations_or, values);
 }
