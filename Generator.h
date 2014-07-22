@@ -10,10 +10,17 @@ private:
 	Generator();
 
 public:
-	static float data_test_Po_plus40mV(float concentration);
-	static float data_test_to_plus40mV(float concentration);
-	static float data_test_tc_plus40mV(float concentration);
-	static float data_test_or_plus40mV(float concentration);
+	// x_ - no ATP
+	static float x_Po_plus40mV(float concentration);
+	static float x_to_plus40mV(float concentration);
+	// static float x_tc_plus40mV(float concentration);
+	static float x_or_plus40mV(float concentration);
+
+	// o_ - with ATP
+	static float o_Po_plus40mV(float concentration);
+	static float o_to_plus40mV(float concentration);
+	// static float o_tc_plus40mV(float concentration);
+	static float o_or_plus40mV(float concentration);
 };
 
 #endif /* SIM_GENERATOR_H */

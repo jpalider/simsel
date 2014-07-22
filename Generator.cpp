@@ -58,7 +58,7 @@ namespace
 
 // http://aups.org.au/Proceedings/38/59-67/
 // no ATP
-float Generator::data_test_Po_plus40mV(float concentration)
+float Generator::x_Po_plus40mV(float concentration)
 {
 	if (concentration < CaC_1uM)
 	{
@@ -88,7 +88,7 @@ float Generator::data_test_Po_plus40mV(float concentration)
 	assert(false); // we do not expect other ranges
 }
 
-float Generator::data_test_to_plus40mV(float concentration)
+float Generator::x_to_plus40mV(float concentration)
 {
 	if (concentration < CaC_100nM)
 	{
@@ -103,14 +103,14 @@ float Generator::data_test_to_plus40mV(float concentration)
 		return 2;
 	}
 
-	TRI_LOG_STR(" ERROR in data_test_to_plus40mV(): " << concentration);
+	TRI_LOG_STR(" ERROR in x_to_plus40mV(): " << concentration);
 	assert(false); // check to see if this needs improvement
 }
 
 //return get_logarithmic_linear_proportional(CaC_log_3uM, CaC_log_10uM, 1, 2, concentration);
 
 // This is rate: to/(to+tc)
-float Generator::data_test_or_plus40mV(float concentration)
+float Generator::x_or_plus40mV(float concentration)
 {
 	if (concentration < CaC_100nM)
 	{
@@ -118,7 +118,7 @@ float Generator::data_test_or_plus40mV(float concentration)
 	}
 	else if (concentration < CaC_10uM)
 	{
-		return get_logarithmic_logarithmic_proportional(CaC_log_100nM, CaC_log_10uM, 0.1, 1000, concentration); // 300 not 1000
+		return get_logarithmic_logarithmic_proportional(CaC_log_100nM, CaC_log_10uM, 0.1, 300, concentration);
 	}
 	else
 	{
@@ -127,9 +127,81 @@ float Generator::data_test_or_plus40mV(float concentration)
 	// assert(false); // check to see if this needs improvement
 }
 
-float Generator::data_test_tc_plus40mV(float concentration)
+// float Generator::x_tc_plus40mV(float concentration)
+// {
+// 	// no data available
+// 	// assert(concentration >= CaC_log_100nM && concentration <= CaC_log_10uM);
+// 	return get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, concentration);
+// }
+
+float Generator::o_Po_plus40mV(float concentration)
 {
-	// no data available
-	// assert(concentration >= CaC_log_100nM && concentration <= CaC_log_10uM);
-	return get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, concentration);
+	if (concentration < CaC_100nM)
+	{
+		return 0;
+	}
+	else if (concentration < CaC_1uM)
+	{
+		return get_logarithmic_linear_proportional(CaC_log_100nM, CaC_log_1uM, 0, 0.4, concentration);
+	}
+	else if (concentration < CaC_3uM)
+	{
+		return get_logarithmic_linear_proportional(CaC_log_1uM, CaC_log_3uM, 0.4, 0.6, concentration);
+	}
+	else if (concentration < CaC_10uM)
+	{
+		return get_logarithmic_linear_proportional(CaC_log_3uM, CaC_log_10uM, 0.6, 0.65, concentration);
+	}
+	else if (concentration < CaC_1mM)
+	{
+		return 0.65;
+	}
+
+	assert(false); // we do not expect other ranges
 }
+
+float Generator::o_to_plus40mV(float concentration)
+{
+	if (concentration < CaC_100nM)
+	{
+		assert(concentration >= CaC_100nM);
+	}
+	else if (concentration < CaC_300nM)
+	{
+		return 1.5;
+	}
+	else if (concentration < CaC_3uM)
+	{
+		return get_logarithmic_linear_proportional(CaC_log_300nM, CaC_log_3uM, 1.5, 8, concentration);
+	}
+
+	TRI_LOG_STR(" ERROR in x_to_plus40mV(): " << concentration);
+	assert(false); // check to see if this needs improvement
+}
+
+//return get_logarithmic_linear_proportional(CaC_log_3uM, CaC_log_10uM, 1, 2, concentration);
+
+// This is rate: to/(to+tc)
+float Generator::o_or_plus40mV(float concentration)
+{
+	if (concentration < CaC_300nM)
+	{
+		return 1.0;
+	}
+	else if (concentration < CaC_10uM)
+	{
+		return get_logarithmic_logarithmic_proportional(CaC_log_300nM, CaC_log_10uM, 1.0, 1000, concentration);
+	}
+	else
+	{
+		return 300;
+	}
+	// assert(false); // check to see if this needs improvement
+}
+
+// float Generator::o_tc_plus40mV(float concentration)
+// {
+// 	// no data available
+// 	// assert(concentration >= CaC_log_100nM && concentration <= CaC_log_10uM);
+// 	return get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, concentration);
+// }

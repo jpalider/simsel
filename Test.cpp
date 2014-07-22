@@ -265,7 +265,7 @@ void test_Po()
 
 	for (auto &c : concentrations_Po)
 	{
-		values.push_back(Generator::data_test_Po_plus40mV(c));
+		values.push_back(Generator::x_Po_plus40mV(c));
 	}
 
 	assert(concentrations_Po.size() == values.size());
@@ -279,7 +279,7 @@ void test_to()
 
 	for (auto &c : concentrations_to)
 	{
-		values.push_back(Generator::data_test_to_plus40mV(c));
+		values.push_back(Generator::x_to_plus40mV(c));
 	}
 
 	assert(concentrations_to.size() == values.size());
@@ -293,7 +293,7 @@ void test_or()
 
 	for (auto &c : concentrations_or)
 	{
-		values.push_back(Generator::data_test_or_plus40mV(c));
+		values.push_back(Generator::x_or_plus40mV(c));
 	}
 
 	assert(concentrations_or.size() == values.size());
