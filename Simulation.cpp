@@ -66,6 +66,29 @@ void* pth_worker(void* arg)
 	return nullptr;
 }
 
+// Return true on successful move within the boundary. False return value indicates
+// move outside the border which mean - in such case original position is restored,
+// as if nothing happened.
+bool move_molecule_in_space(Molecule *molecule, BrownianMotion *bm, Obstacle *space, Vector *move)
+{
+	*move = bm->get_move();
+	molecule->move(*move);
+	// after move check for space boundaries (twice)
+	if (space && !space->has_inside(molecule))
+	{
+		molecule->move_back();
+		*move = bm->get_move();
+		molecule->move(*move);
+		if (!space->has_inside(molecule))
+		{
+			molecule->move_back();
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space)
 {
 
@@ -73,54 +96,56 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 	{
 		return;
 	}
-
-	Vector move = bm->get_move();
-	molecule->move(move);
-
-	// after move check for space boundaries (twice)
-	if (space && !space->has_inside(molecule))
+	Vector move;
+	bool moved = move_molecule_in_space(molecule, bm, space, &move);
+	if (!moved)
 	{
-		molecule->move_back();
-		Vector move = bm->get_move();
-		molecule->move(move);
-		if (!space->has_inside(molecule))
-		{
-			molecule->move_back();
-			return;
-		}
+		// no need to do any more collision checks
+		return;
 	}
 
-	// check for collision with other objects
-	bool repeat_move = false;
+	Boundary *bouncer = nullptr;
+	// First try - look for the first one that bounces the molecule.
+	// For complex structures this will not work, but sparse structures shall be fine
 	for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
 	{
 		auto obstacle = *cit;
+
+		if (obstacle->id() == 1)
+			continue;
+
+		// if molecule crossed the boundary
 		if (obstacle->check_collision(molecule))
 		{
-			repeat_move = obstacle->collide(molecule);
-			if (!repeat_move)
+			if (obstacle->collide(molecule))
 			{
-				obstacle->handle_collision(molecule);
+				bouncer = obstacle;
+				// First obstacle collided indicates
+				break;
 			}
-			break;
+			else
+			{
+				// if can cross the boundary freely
+				// handle it here, and for simplicity skip other obstacles
+				obstacle->handle_collision(molecule);
+				return;
+			}
 		}
 	}
 
-	if (repeat_move)
+	if (bouncer)
 	{
-		move /= 2;
 		molecule->move_back();
+		move /= 2;
 		molecule->move(move);
-		for (auto cit = boundaries.begin(); cit != boundaries.end(); ++cit)
+		if (bouncer->check_collision(molecule))
 		{
-			auto obstacle = *cit;
-			if (obstacle->check_collision(molecule))
-			{
-				molecule->move_back();
-				break;
-			}
+			// if half of the first move does not help leave it as is
+			// note: space with highier obstacle density may have problems
+			molecule->move_back();
 		}
 	}
+
 }
 
 }
@@ -178,6 +203,7 @@ Simulation::Simulation()
 		sspace = &load_configuration<Obstacle>("volume")->at(0);
 	} catch(...)
 	{
+		TRI_LOG_STR("No enclosure.");
 		sspace = nullptr;
 	}
 
