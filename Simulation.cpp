@@ -277,6 +277,7 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		Vector cp(x, y, z);
 		Id id = cfg.lookup(prefix + string("id"));
 		string shape = cfg.lookup(prefix + string("shape"));
+		BoundaryType* new_boundary;
 		if ( shape.find("cube") != string::npos)
 		{
 			string param_x = prefix + string("size.x");
@@ -288,18 +289,21 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 			x *= ssim_scale;
 			y *= ssim_scale;
 			z *= ssim_scale;
-			v->push_back(BoundaryType(id, cp, x, y, z));
+			new_boundary = new BoundaryType(id, cp, x, y, z);
 		}
 		else if ( shape.find("sphere") != string::npos)
 		{
 			Coordinate radius = cfg.lookup(prefix + string("radius"));
 			radius *= ssim_scale;
-			v->push_back(BoundaryType(id, cp, radius));
+			new_boundary = new BoundaryType(id, cp, radius);
 		}
 		else
 		{
 			TRI_LOG_STR("Sim: unknown shape");
 		}
+
+		v->push_back(*new_boundary);
+
 		TRI_LOG_STR(boundary << " pos" << cp);
 	}
 	return v;
