@@ -39,6 +39,7 @@ namespace
 void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space);
 
 bool stop_worker_threads = false;
+bool balance_worker_threads = false;
 
 pthread_barrier_t trigger_from_main;
 pthread_barrier_t wait_from_main;
@@ -56,6 +57,10 @@ void* pth_worker(void* arg)
 	while(!stop_worker_threads)
 	{
 		pthread_barrier_wait(&trigger_from_main);
+		if (balance_worker_threads)
+		{
+			return nullptr;
+		}
 
 		for (auto mit = b_iter; mit != e_iter; ++mit )
 		{
@@ -329,15 +334,19 @@ void Simulation::run()
 	for_each(sreceivers->begin(), sreceivers->end(), [&boundaries](Receptor& b){ boundaries.push_back(&b); });
 	for_each(sobstacles->begin(), sobstacles->end(), [&boundaries](Obstacle& b){ boundaries.push_back(&b); });
 
-	const size_t range = smolecules->size() / sthreads;
+	size_t range = smolecules->size() / sthreads;
 	pthread_t pths[sthreads];
 	PthData pth_data[sthreads];
 	BrownianMotion *pth_bm[sthreads];
 	auto from = std::begin(*smolecules);
 	for (size_t i = 0; i < sthreads; ++i)
 	{
-		auto to = std::next(from, range);
 		pth_bm[i] = new BrownianMotion(sdimensions, stau);
+	}
+
+	for (size_t i = 0; i < sthreads; ++i)
+	{
+		auto to = std::next(from, range);
 		pth_data[i] = { from, to, &boundaries, pth_bm[i], sspace };
 		TRI_LOG_STR("sthread range = " << (to - from));
 		from = to;
@@ -356,6 +365,10 @@ void Simulation::run()
 
 	while (stime < duration)
 	{
+		// the processing in other threads takes part between barriers:
+		// after 'trigger_from_main' at the end of this loop
+		// and before 'wait_from_main' at the beginning
+
 		pthread_barrier_wait(&wait_from_main); // wait for worker threads to finish
 		                                       // in order to start statistics
 
@@ -369,6 +382,46 @@ void Simulation::run()
 		stime += stime_step;
 
 		pthread_barrier_wait(&trigger_from_main); // let worker threads continue
+
+		if (balance_worker_threads)
+		{
+			// join all threads
+			int irv = 0;
+			for (size_t i = 0; i < sthreads; ++i)
+			{
+				irv += pthread_join(pths[i], NULL);
+			}
+			if (irv)
+			{
+				TRI_LOG_STR("Balancing: thread problem");
+			}
+
+			// now we can clear the flag
+			balance_worker_threads = false;
+
+			// lots of code duplication: fixme
+
+			// split molecules into ranges
+			range = smolecules->size() / sthreads;
+			from = std::begin(*smolecules);
+			for (size_t i = 0; i < sthreads; ++i)
+			{
+				auto to = std::next(from, range);
+				pth_data[i] = { from, to, &boundaries, pth_bm[i], sspace };
+				from = to;
+			}
+			pth_data[sthreads-1].e_iter = std::end(*smolecules);
+
+			// recreate threads
+			for (size_t i = 0; i < sthreads; ++i)
+			{
+				pthread_create(&pths[i], NULL, pth_worker, &pth_data[i]);
+			}
+
+			pthread_barrier_wait(&trigger_from_main); // init worker threads
+			TRI_LOG_STR("Balancing: done");
+		}
+
 	}
 	// worker threads run once again but we are not interesed in the results anymore
 
