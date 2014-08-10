@@ -37,6 +37,10 @@ namespace
 {
 
 void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space);
+bool move_molecule_in_space(Molecule *molecule, BrownianMotion *bm, Obstacle *space, Vector *move);
+void join_worker_threads(pthread_t* pts, size_t ptsn);
+void setup_worker_threads(PthData *ptd, size_t ptsn, MStore *ms, BrownianMotion **ptbm, vector<Boundary*> *boundaries, Obstacle *space);
+void create_worker_threads(pthread_t* pts, size_t ptsn, PthData *ptd);
 
 bool stop_worker_threads = false;
 bool balance_worker_threads = false;
@@ -151,6 +155,40 @@ void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMo
 		}
 	}
 
+}
+
+void join_worker_threads(pthread_t* pts, size_t ptsn)
+{
+	int irv = 0;
+	for (size_t i = 0; i < ptsn; ++i)
+	{
+		irv += pthread_join(pts[i], NULL);
+	}
+	if (irv)
+	{
+		TRI_LOG_STR("Thread problem : joining");
+	}
+}
+
+void setup_worker_threads(PthData *ptd, size_t ptsn, MStore *ms, BrownianMotion **ptbm, vector<Boundary*> *boundaries, Obstacle *space)
+{
+	size_t range = ms->size() / ptsn;
+	auto from = std::begin(*ms);
+	for (size_t i = 0; i < ptsn; ++i)
+	{
+		auto to = std::next(from, range);
+		ptd[i] = { from, to, boundaries, ptbm[i], space };
+		from = to;
+	}
+	ptd[ptsn-1].e_iter = std::end(*ms);
+}
+
+void create_worker_threads(pthread_t* pts, size_t ptsn, PthData *ptd)
+{
+	for (size_t i = 0; i < ptsn; ++i)
+	{
+		pthread_create(&pts[i], NULL, pth_worker, &ptd[i]);
+	}
 }
 
 }
@@ -334,32 +372,20 @@ void Simulation::run()
 	for_each(sreceivers->begin(), sreceivers->end(), [&boundaries](Receptor& b){ boundaries.push_back(&b); });
 	for_each(sobstacles->begin(), sobstacles->end(), [&boundaries](Obstacle& b){ boundaries.push_back(&b); });
 
-	size_t range = smolecules->size() / sthreads;
 	pthread_t pths[sthreads];
 	PthData pth_data[sthreads];
 	BrownianMotion *pth_bm[sthreads];
-	auto from = std::begin(*smolecules);
 	for (size_t i = 0; i < sthreads; ++i)
 	{
 		pth_bm[i] = new BrownianMotion(sdimensions, stau);
 	}
 
-	for (size_t i = 0; i < sthreads; ++i)
-	{
-		auto to = std::next(from, range);
-		pth_data[i] = { from, to, &boundaries, pth_bm[i], sspace };
-		TRI_LOG_STR("sthread range = " << (to - from));
-		from = to;
-	}
-	pth_data[sthreads-1].e_iter = std::end(*smolecules);
+	setup_worker_threads(pth_data, sthreads, smolecules, pth_bm, &boundaries, sspace);
 
 	pthread_barrier_init(&trigger_from_main, NULL, sthreads+1);
 	pthread_barrier_init(&wait_from_main,    NULL, sthreads+1);
 
-	for (size_t i = 0; i < sthreads; ++i)
-	{
-		pthread_create(&pths[i], NULL, pth_worker, &pth_data[i]);
-	}
+	create_worker_threads(pths, sthreads, pth_data);
 
 	pthread_barrier_wait(&trigger_from_main); // initial: let threads run
 
@@ -385,40 +411,13 @@ void Simulation::run()
 
 		if (balance_worker_threads)
 		{
-			// join all threads
-			int irv = 0;
-			for (size_t i = 0; i < sthreads; ++i)
-			{
-				irv += pthread_join(pths[i], NULL);
-			}
-			if (irv)
-			{
-				TRI_LOG_STR("Balancing: thread problem");
-			}
-
-			// now we can clear the flag
+			join_worker_threads(pths, sthreads);
+			// it is safe now to clear the flag as no other thread reads it
 			balance_worker_threads = false;
+			setup_worker_threads(pth_data, sthreads, smolecules, pth_bm, &boundaries, sspace);
+			create_worker_threads(pths, sthreads, pth_data);
 
-			// lots of code duplication: fixme
-
-			// split molecules into ranges
-			range = smolecules->size() / sthreads;
-			from = std::begin(*smolecules);
-			for (size_t i = 0; i < sthreads; ++i)
-			{
-				auto to = std::next(from, range);
-				pth_data[i] = { from, to, &boundaries, pth_bm[i], sspace };
-				from = to;
-			}
-			pth_data[sthreads-1].e_iter = std::end(*smolecules);
-
-			// recreate threads
-			for (size_t i = 0; i < sthreads; ++i)
-			{
-				pthread_create(&pths[i], NULL, pth_worker, &pth_data[i]);
-			}
-
-			pthread_barrier_wait(&trigger_from_main); // init worker threads
+			pthread_barrier_wait(&trigger_from_main); // start worker threads
 			TRI_LOG_STR("Balancing: done");
 		}
 
@@ -428,20 +427,11 @@ void Simulation::run()
 	stop_worker_threads = true;
 	pthread_barrier_wait(&wait_from_main); // unlock this barrier to let worker threads exit
 
-	int rv = 0;
-
-	for (size_t i = 0; i < sthreads; ++i)
-	{
-		rv += pthread_join(pths[i], NULL);
-	}
+	join_worker_threads(pths, sthreads);
 
 	pthread_barrier_destroy(&wait_from_main);
 	pthread_barrier_destroy(&trigger_from_main);
 
-	if (rv)
-	{
-		TRI_LOG_STR("Thread problem");
-	}
 
 	cout << endl;
 
