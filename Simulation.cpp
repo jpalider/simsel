@@ -407,6 +407,14 @@ void Simulation::run()
 
 		stime += stime_step;
 
+		for (vector<Source>::iterator tit = stransmitters->begin(); tit != stransmitters->end(); ++tit)
+		{
+			if (tit->release(stime, smolecules, sspace))
+			{
+				balance_worker_threads = true;
+			}
+		}
+
 		pthread_barrier_wait(&trigger_from_main); // let worker threads continue
 
 		if (balance_worker_threads)
