@@ -10,9 +10,19 @@ Source::Source(Id identifier, Vector position, Coordinate size_x, Coordinate siz
 {
 }
 
-void Source::release(Molecule *m)
+bool Source::release(long time, MStore *molecules, Obstacle *space)
 {
-
+	static bool done = false;
+	if (time > 500000 && !done)
+	{
+		done = true;
+		for (int i = 0; i < 100000; i++)
+		{
+			molecules->push_back(Molecule(i, cposition, space));
+		}
+		return true;
+	}
+	return false;
 }
 
 bool Source::collide(Molecule *m)
