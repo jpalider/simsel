@@ -9,8 +9,8 @@ typedef long Time;
 typedef long Id;
 
 class Molecule;
-typedef std::vector<Molecule*> MStore;
-typedef MStore::iterator       MStoreIter;
+typedef std::vector<Molecule> MStore;
+typedef MStore::iterator      MStoreIter;
 
 
 

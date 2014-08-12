@@ -68,7 +68,7 @@ void* pth_worker(void* arg)
 
 		for (auto mit = b_iter; mit != e_iter; ++mit )
 		{
-			move_molecule(*mit, boundaries, bm, space);
+			move_molecule(&*mit, boundaries, bm, space);
 		}
 		pthread_barrier_wait(&wait_from_main);
 	}
@@ -260,7 +260,7 @@ Simulation::Simulation()
 		Vector p(0, 0, 0);
 		for (int i = 0; i < generation.interval.number; i++)
 		{
-			smolecules->push_back(new Molecule(i, p, sspace));
+			smolecules->push_back(Molecule(i, p, sspace));
 		}
 
 		generation.interval.transmitter = cfg.lookup("simulation.molecules.transmitter");
@@ -276,7 +276,7 @@ Simulation::~Simulation()
 {
 	for (auto mit = smolecules->begin(); mit != smolecules->end(); ++mit)
 	{
-		delete (*mit);
+		delete (&*mit);
 	}
 
 	for (auto sit = sstat.begin(); sit != sstat.end(); ++sit)

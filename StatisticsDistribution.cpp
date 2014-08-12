@@ -34,7 +34,7 @@ void StatisticsDistribution::run(long time, const MStore* const molecules, const
 
 		for (auto it = molecules->begin(); it != molecules->end(); ++it)
 		{
-			v = (*it)->position();
+			v = it->position();
 			double d = squared_distance_between_points(&init, v);
 			d = sqrt(d);
 			d /= sscale; // now in [nm]

@@ -56,7 +56,7 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 			for (auto it = molecules->begin(); it != molecules->end(); ++it)
 			{
 				auto m = *it;
-				if (cit->has_inside(m))
+				if (cit->has_inside(&m))
 				{
 					m_count++;
 				}
