@@ -10,7 +10,7 @@ Source::Source(Id identifier, Vector position, Coordinate size_x, Coordinate siz
 {
 }
 
-bool Source::release(long time, MStore *molecules, Obstacle *space)
+bool Source::release(Time time, MStore *molecules, Obstacle *space)
 {
 	if (time == 5000000)
 	{
@@ -21,6 +21,16 @@ bool Source::release(long time, MStore *molecules, Obstacle *space)
 		return true;
 	}
 	return false;
+}
+
+bool Source::sense()
+{
+
+}
+
+void Source::add_sensor(Boundary* b)
+{
+
 }
 
 bool Source::collide(Molecule *m)
