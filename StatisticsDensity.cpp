@@ -10,14 +10,10 @@
 #include "Molecule.h"
 #include "Math.h"
 #include "Types.h"
+#include "Conversion.h"
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
-
-namespace
-{
-	static const double MOLECULES_UM3_TO_U_MOLES = 2.2 / 1320;
-}
 
 StatisticsDensity::StatisticsDensity(Simulation *s, long interval) : Statistics(s, interval)
 {
@@ -67,9 +63,9 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 			ss << "_rcell_" << cit->id();
 			stat_stream.open(filename(ss.str()).c_str(), ios::app);
 			stat_stream << time * sscale
-				    << " " << ( m_count / vol                            )
-				    << " " << ( m_count                                  )
-				    << " " << ( m_count / vol * MOLECULES_UM3_TO_U_MOLES )
+				    << " " << ( m_count / vol                                 )
+				    << " " << ( m_count                                       )
+				    << " " << ( Conversion::molecules_um3_to_uM(m_count, vol) )
 				    << endl;
 			stat_stream.close();
 		}
