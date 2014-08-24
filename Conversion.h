@@ -1,6 +1,6 @@
 #ifndef SIM_CONVERSION_H
 #define SIM_CONVERSION_H
-
+#include <cmath>
 #include "Types.h"
 #include "tri_logger/tri_logger.hpp"
 
@@ -10,10 +10,11 @@ private:
 
 public:
 	static constexpr double MOLECULES_UM3_TO_U_MOLES = 2.2 / 1320;
+	static constexpr double M3_TO_UM3 = pow(10, 3*6);
 
 	static double molecules_um3_to_uM(uint count, Coordinate volume)
 	{
-		return count / volume * MOLECULES_UM3_TO_U_MOLES;
+		return count / volume / M3_TO_UM3 * MOLECULES_UM3_TO_U_MOLES;
 	}
 
 };
