@@ -62,7 +62,7 @@ float Generator::x_Po_plus40mV(float concentration)
 {
 	if (concentration < CaC_1uM)
 	{
-		return 0;
+		return 0.01;
 	}
 	else if (concentration < CaC_3uM)
 	{
@@ -92,7 +92,7 @@ float Generator::x_to_plus40mV(float concentration)
 {
 	if (concentration < CaC_100nM)
 	{
-		assert(concentration >= CaC_100nM);
+		assert(concentration <= CaC_100nM);
 	}
 	else if (concentration < CaC_3uM)
 	{
@@ -103,8 +103,9 @@ float Generator::x_to_plus40mV(float concentration)
 		return 2;
 	}
 
-	TRI_LOG_STR(" ERROR in x_to_plus40mV(): " << concentration);
-	assert(false); // check to see if this needs improvement
+//	TRI_LOG_STR(" ERROR in x_to_plus40mV(): " << concentration);
+	return 2;
+//	assert(false); // check to see if this needs improvement
 }
 
 //return get_logarithmic_linear_proportional(CaC_log_3uM, CaC_log_10uM, 1, 2, concentration);
@@ -127,12 +128,14 @@ float Generator::x_or_plus40mV(float concentration)
 	// assert(false); // check to see if this needs improvement
 }
 
-// float Generator::x_tc_plus40mV(float concentration)
-// {
-// 	// no data available
-// 	// assert(concentration >= CaC_log_100nM && concentration <= CaC_log_10uM);
-// 	return get_logarithmic_logarithmic_proportional(-7, -5, -1, 3, concentration);
-// }
+float Generator::x_tc_plus40mV(float concentration)
+{
+	// no data available
+	// assert(concentration >= CaC_log_100nM && concentration <= CaC_log_10uM);
+	float to = x_to_plus40mV(concentration);
+	float Po = x_Po_plus40mV(concentration);
+	return to/Po - to;
+}
 
 float Generator::o_Po_plus40mV(float concentration)
 {

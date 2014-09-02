@@ -13,7 +13,7 @@ public:
 	// x_ - no ATP
 	static float x_Po_plus40mV(float concentration);
 	static float x_to_plus40mV(float concentration);
-	// static float x_tc_plus40mV(float concentration);
+	static float x_tc_plus40mV(float concentration);
 	static float x_or_plus40mV(float concentration);
 
 	// o_ - with ATP
