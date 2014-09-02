@@ -27,6 +27,11 @@ public:
 		return count * 160 / 500*1000 ;
 	}
 
+	static double ms_to_ns(Time count)
+	{
+		return count*1000*1000 ;
+	}
+
 };
 
 #endif /* SIM_CONVERSION_H */
