@@ -17,6 +17,16 @@ public:
 		return count / volume / M3_TO_UM3 * MOLECULES_UM3_TO_U_MOLES;
 	}
 
+	static double pA_to_molecules(double pA)
+	{
+		return pA * 500*1000 / 160;
+	}
+
+	static double molecules_to_pA(uint count)
+	{
+		return count * 160 / 500*1000 ;
+	}
+
 };
 
 #endif /* SIM_CONVERSION_H */
