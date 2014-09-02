@@ -10,20 +10,32 @@
 
 class Molecule;
 
+enum class State
+{
+	UNKNOWN,
+	OPEN,
+	CLOSED
+};
+
 class Source : public Boundary
 {
 private:
-	std::vector<Boundary*> sensors;
+	State state;
+	Time cycle_start_time;    // when the sensing and releasing cycle start
+	Time open_time;
+	Time closed_time;
+	bool released;
 
+	void init();
 public:
 	Source(Id identifier, Vector position, Coordinate radius);
 	Source(Id identifier, Vector position, Coordinate size_x, Coordinate size_y, Coordinate size_z);
 	bool collide(Molecule *m);
 	void handle_collision(Molecule *m);
 
-	virtual bool release(long time, MStore *molecules, Obstacle *space = nullptr);
-	virtual bool sense();
-	void add_sensor(Boundary *);
+	virtual bool run(long time, MStore *molecules, Obstacle *space = nullptr);
+	virtual bool release(long time, MStore *molecules, uint count, Obstacle *space = nullptr);
+	virtual float sense(Time time, MStore *molecules);
 
 };
 
