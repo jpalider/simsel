@@ -31,8 +31,8 @@ void Source::init()
 	released = true; // we do not want release on simulation startup
 	float offset_from_cycle_start = uniform(mt_gen);
 
-	Time to = ms_to_ns(x_to(0.1 * 0.001 * 0.001));
-	Time tc = ms_to_ns(x_tc(0.1 * 0.001 * 0.001));
+	Time to = Conversion::ms_to_ns(x_to(0.1 * 0.001 * 0.001));
+	Time tc = Conversion::ms_to_ns(x_tc(0.1 * 0.001 * 0.001));
 	Time cycle_time = to + tc;
 	cycle_start_time = 0 + offset_from_cycle_start*cycle_time/100; // time is simulation beginning = 0
 	open_time = cycle_start_time - to;
@@ -57,8 +57,8 @@ bool Source::run(Time time, MStore *molecules, Obstacle *space)
 		if (time >= cycle_start_time)
 		{
 			state = State::CLOSED;
-			open_time = time + ms_to_ns(Generator::x_tc_plus40mV(concentration));
-			cycle_start_time = closed_time = ms_to_ns(Generator::x_to_plus40mV(concentration));
+			open_time = time + Conversion::ms_to_ns(Generator::x_tc_plus40mV(concentration));
+			cycle_start_time = closed_time = Conversion::ms_to_ns(Generator::x_to_plus40mV(concentration));
 			TRI_LOG_STR("Switched to CLOSED " << time << " ----> " << cycle_start_time);
 		}
 
