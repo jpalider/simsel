@@ -100,7 +100,6 @@ bool move_molecule_in_space(Molecule *molecule, BrownianMotion *bm, Obstacle *sp
 
 void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space)
 {
-
 	if (!molecule->is_owner(space))
 	{
 		return;
@@ -320,7 +319,7 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		Vector cp(x, y, z);
 		Id id = cfg.lookup(prefix + string("id"));
 		string shape = cfg.lookup(prefix + string("shape"));
-		BoundaryType* new_boundary;
+		BoundaryType* new_boundary = nullptr;
 		if ( shape.find("cube") != string::npos)
 		{
 			string param_x = prefix + string("size.x");
@@ -345,7 +344,13 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 			TRI_LOG_STR("Sim: unknown shape");
 		}
 
-		v->push_back(*new_boundary);
+		//--- specific stuff for sources etc.
+
+		//---
+		if (new_boundary != nullptr)
+		{
+			v->push_back(*new_boundary);
+		}
 
 		TRI_LOG_STR(boundary << " pos" << cp);
 	}
@@ -400,19 +405,19 @@ void Simulation::run()
 
 		print_progress();
 
-		for (vector<Statistics*>::iterator sit = sstat.begin(); sit != sstat.end(); ++sit)
+		for (auto sit = sstat.begin(); sit != sstat.end(); ++sit)
 		{
 			(*sit)->run(stime, smolecules, sreceivers);
 		}
 
 		stime += stime_step;
 
-		for (vector<Source>::iterator tit = stransmitters->begin(); tit != stransmitters->end(); ++tit)
+		for (auto tit = stransmitters->begin(); tit != stransmitters->end(); ++tit)
 		{
-			if (tit->release(stime, smolecules, sspace))
+			if (tit->run(stime, smolecules, sspace))
 			{
 				balance_worker_threads = true;
-			}
+			} // else _do_not_ set to false
 		}
 
 		pthread_barrier_wait(&trigger_from_main); // let worker threads continue
@@ -426,7 +431,7 @@ void Simulation::run()
 			create_worker_threads(pths, sthreads, pth_data);
 
 			pthread_barrier_wait(&trigger_from_main); // start worker threads
-			TRI_LOG_STR("Balancing: done");
+			//TRI_LOG_STR("Balancing: done");
 		}
 
 	}
@@ -462,7 +467,7 @@ void Simulation::print_progress()
 	if ( p - progress >= 1)
 	{
 		progress = p;
-		cerr << "\rProgress: " << progress << " % ";
+		cerr << "\rProgress: " << progress << "% - " << (stime/(1000*1000)) << " [ms]";
 	}
 }
 
