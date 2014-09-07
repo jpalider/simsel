@@ -49,7 +49,7 @@ bool Source::run(Time time, MStore *molecules, Obstacle *space)
 		float concentration = concentration_uM * pow(10,-6);
 		if (!released)
 		{
-			uint count = 10000;
+			uint count = Conversion::pA_to_molecules(20);
 			released = release(time, molecules, count, space);
 			return released;
 		}
