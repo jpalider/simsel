@@ -8,7 +8,7 @@
 namespace
 {
 	float (*x_to)(float) = Generator::x_to_plus40mV;
-	float (*x_tc)(float) = Generator::x_to_plus40mV;
+	float (*x_tc)(float) = Generator::x_tc_plus40mV;
 }
 
 Source::Source(Id identifier, Vector position, Coordinate radius) : Boundary(identifier, position, radius)
