@@ -445,7 +445,7 @@ void Simulation::run()
 	pthread_barrier_destroy(&wait_from_main);
 	pthread_barrier_destroy(&trigger_from_main);
 
-
+	print_progress();
 	cout << endl;
 
 	sfinished = true;
