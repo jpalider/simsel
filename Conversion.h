@@ -11,6 +11,7 @@ private:
 public:
 	static constexpr double MOLECULES_UM3_TO_U_MOLES = 2.2 / 1320;
 	static constexpr double M3_TO_UM3 = pow(10, 3*6);
+	static constexpr double uM = pow(10, -6);
 
 	static double molecules_um3_to_uM(uint count, Coordinate volume)
 	{
