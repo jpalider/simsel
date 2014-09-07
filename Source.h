@@ -36,7 +36,7 @@ public:
 	virtual bool run(long time, MStore *molecules, Obstacle *space = nullptr);
 	virtual bool release(long time, MStore *molecules, uint count, Obstacle *space = nullptr);
 	virtual float sense(Time time, MStore *molecules);
-
+	virtual float normalize(float concentration_uM);
 };
 
 #endif /* SIM_SOURCE_H */

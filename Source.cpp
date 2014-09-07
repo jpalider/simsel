@@ -106,6 +106,19 @@ float Source::sense(Time time, MStore *molecules)
 	return concentration;
 }
 
+float Source::normalize(float concentration_uM)
+{
+	if (concentration_uM < 0.1 * Conversion::uM)
+	{
+		return 0.1 * Conversion::uM;
+	}
+	if (concentration_uM > 1000 * Conversion::uM)
+	{
+		return 1000 * Conversion::uM;
+	}
+	return concentration_uM;
+}
+
 bool Source::collide(Molecule *m)
 {
 	return false;
