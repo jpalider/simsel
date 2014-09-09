@@ -46,7 +46,7 @@ bool Source::run(Time time, MStore *molecules, Obstacle *space)
 	if (state == State::OPEN)
 	{
 		float concentration_uM = sense(time, molecules);
-		float concentration = concentration_uM * pow(10,-6);
+		float concentration = normalize(concentration_uM) * pow(10,-6);
 		if (!released)
 		{
 			uint count = Conversion::pA_to_molecules(20);
