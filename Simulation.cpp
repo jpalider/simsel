@@ -20,6 +20,7 @@
 #include "Source.h"
 #include "Obstacle.h"
 #include "Math.h"
+#include "Conversion.h"
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
@@ -268,7 +269,7 @@ Simulation::Simulation()
 	}
 
 	duration = cfg.lookup("simulation.duration");
-	TRI_LOG_STR("Duration: " << duration << " seconds");
+	TRI_LOG_STR("Duration: " << Conversion::ns_to_ms(duration) << " milliseconds");
 }
 
 Simulation::~Simulation()
