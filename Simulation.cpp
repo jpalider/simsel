@@ -467,7 +467,8 @@ void Simulation::print_progress()
 	if ( p - progress >= 1)
 	{
 		progress = p;
-		cerr << "\rProgress: " << progress << "% - " << (stime/(1000*1000)) << " [ms]";
+		cout << "\rProgress: " << progress << "% - " << (stime/(1000*1000)) << " [ms] "
+		     << "(" << smolecules->size() << " molecules)" << flush;
 	}
 }
 
