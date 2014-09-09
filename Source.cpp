@@ -23,22 +23,30 @@ Source::Source(Id identifier, Vector position, Coordinate size_x, Coordinate siz
 
 void Source::init()
 {
+	static double constexpr Ca100nM = 0.1 * 0.001 * 0.001;
 	std::random_device rd;
 	std::mt19937 mt_gen = std::mt19937(rd());
 	std::uniform_int_distribution<int> uniform = std::uniform_int_distribution<int>(0,100);
 
 	state = State::UNKNOWN;
 	released = true; // we do not want release on simulation startup
-	float offset_from_cycle_start = uniform(mt_gen);
+	float offset_from_cycle_start = 100 - uniform(mt_gen);
 
-	Time to = Conversion::ms_to_ns(x_to(0.1 * 0.001 * 0.001));
-	Time tc = Conversion::ms_to_ns(x_tc(0.1 * 0.001 * 0.001));
+	Time to = Conversion::ms_to_ns(x_to(Ca100nM));
+	Time tc = Conversion::ms_to_ns(x_tc(Ca100nM));
 	Time cycle_time = to + tc;
 	cycle_start_time = 0 + offset_from_cycle_start*cycle_time/100; // time is simulation beginning = 0
+	if (cycle_start_time < to)
+	{
+		cycle_start_time += cycle_time;
+	}
 	open_time = cycle_start_time - to;
-	state = cycle_start_time > tc ? State::OPEN : State::CLOSED;
-	TRI_LOG_STR("init Switched to  " << (state == State::OPEN ? "OPEN" : "CLOSED") << offset_from_cycle_start << " ----> cycle start=" << cycle_start_time << " open start=" << open_time);
-
+	state = cycle_start_time > (0 + tc) ? State::OPEN : State::CLOSED;
+	// TRI_LOG_STR(id() << " Initialized to  " << (state == State::OPEN ? "OPEN " : "CLOSED ") <<
+	// 	    offset_from_cycle_start << "% ----> next cycle start=" <<
+	// 	    Conversion::ns_to_ms(cycle_start_time) << " [ms]" <<
+	// 	    " next open start=" << Conversion::ns_to_ms(open_time) << " [ms]" <<
+	// 	    " cycle total = " << Conversion::ns_to_ms(tc+to) );
 }
 
 bool Source::run(Time time, MStore *molecules, Obstacle *space)
@@ -57,9 +65,10 @@ bool Source::run(Time time, MStore *molecules, Obstacle *space)
 		if (time >= cycle_start_time)
 		{
 			state = State::CLOSED;
-			open_time = time + Conversion::ms_to_ns(Generator::x_tc_plus40mV(concentration));
-			cycle_start_time = closed_time = Conversion::ms_to_ns(Generator::x_to_plus40mV(concentration));
-			TRI_LOG_STR("Switched to CLOSED " << time << " ----> " << cycle_start_time);
+			open_time = time + Conversion::ms_to_ns(x_tc(concentration));
+			cycle_start_time = closed_time = open_time + Conversion::ms_to_ns(x_to(concentration));
+			// TRI_LOG_STR(id() << " Switched to CLOSED at " << Conversion::ns_to_ms(time) << "[ms]" <<
+			// 	    " for " << Conversion::ns_to_ms(open_time - time) << "[ms]" );
 		}
 
 		return false;
@@ -70,7 +79,8 @@ bool Source::run(Time time, MStore *molecules, Obstacle *space)
 		if (time >= open_time)
 		{
 			state = State::OPEN;
-			TRI_LOG_STR("Switched to OPEN " << time << " ----> " << cycle_start_time);
+			// TRI_LOG_STR("Switched to OPEN at " << Conversion::ns_to_ms(time) << "[ms]" <<
+			// 	    " for " << Conversion::ns_to_ms(cycle_start_time - time) << "[ms]" );
 		}
 	}
 	else {
