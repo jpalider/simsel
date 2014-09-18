@@ -15,7 +15,7 @@ public:
 
 	static double molecules_um3_to_uM(uint count, Coordinate volume)
 	{
-		return count / volume / M3_TO_UM3 * MOLECULES_UM3_TO_U_MOLES;
+		return count / volume /*** / M3_TO_UM3 ***/ * MOLECULES_UM3_TO_U_MOLES;
 	}
 
 	static double pA_to_molecules(double pA)
