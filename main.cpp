@@ -107,7 +107,17 @@ int main(int argc, char **argv)
 		}
 	}
 
-	s = new Simulation();
+	if (argc > 1)
+	{
+		std::string config(argv[1]);
+		// here may come some test for file existence and permissions
+		s = new Simulation(config);
+	}
+	else
+	{
+		s = new Simulation();
+	}
+
 	Statistics* stat;
 	// stat = new StatisticsDistribution(s, INTERVAL_10_US);
 	stat = new StatisticsDensity(s, s->interval());

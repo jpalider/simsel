@@ -198,7 +198,7 @@ union Generation
 	struct Interval interval;
 } generation;
 
-Simulation::Simulation()
+Simulation::Simulation(std::string config)
 {
 	ssim_scale = 1e-9;
 
@@ -209,7 +209,7 @@ Simulation::Simulation()
 
 	smolecules = new MStore();
 
-	cfg.readFile("cfg/Simulation.cfg");
+	cfg.readFile(config.c_str());
 	string description = cfg.lookup("description");
 	TRI_LOG_STR("Simulation: " << description);
 

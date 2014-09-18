@@ -54,7 +54,7 @@ private:
 	void print_progress();
 		
 public:
-	Simulation();
+	Simulation(std::string config = "cfg/Simulation.cfg");
 	~Simulation();
 	void run();
 	bool running();
