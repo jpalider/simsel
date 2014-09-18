@@ -10,6 +10,9 @@
 
 class Molecule;
 
+/**
+ * State of a source, UNKNOWN is not really used at the moment
+ */
 enum class State
 {
 	UNKNOWN,
@@ -17,6 +20,10 @@ enum class State
 	CLOSED
 };
 
+/**
+ * Repesents source of Ca2+
+ *
+ */
 class Source : public Boundary
 {
 private:
