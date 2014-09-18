@@ -25,8 +25,6 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 
 	if (time % sinterval == 0)
 	{
-		const double units_um = 0.001;
-
 		if (first_run)
 		{
 			for (vector<Receptor>::const_iterator cit = rcells->begin(); cit != rcells->end(); ++cit)
@@ -45,10 +43,10 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 
 		for (vector<Receptor>::const_iterator cit = rcells->begin(); cit != rcells->end(); ++cit)
 		{
-			const Coordinate diameter   = cit->radius();
-			const Coordinate vol        = sphere_volume(diameter / sscale * units_um); // back to nm and then to um
+			const Coordinate units_um = 1e-3;
+			const Coordinate diameter = cit->radius();
+			const Coordinate vol_um3  = sphere_volume(diameter / sscale * units_um); // back to nm and then to um
 			int m_count = 0;
-
 			for (auto it = molecules->begin(); it != molecules->end(); ++it)
 			{
 				auto m = *it;
@@ -63,9 +61,9 @@ void StatisticsDensity::run(long time, const MStore* const molecules, const std:
 			ss << "_rcell_" << cit->id();
 			stat_stream.open(filename(ss.str()).c_str(), ios::app);
 			stat_stream << time * sscale
-				    << " " << ( m_count / vol                                 )
-				    << " " << ( m_count                                       )
-				    << " " << ( Conversion::molecules_um3_to_uM(m_count, vol) )
+				    << " " << ( m_count / vol_um3                                 )
+				    << " " << ( m_count                                           )
+				    << " " << ( Conversion::molecules_um3_to_uM(m_count, vol_um3) )
 				    << endl;
 			stat_stream.close();
 		}
