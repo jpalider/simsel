@@ -49,7 +49,7 @@ private:
 	libconfig::Config cfg;
 
 	template<typename BoundaryType>
-	std::vector<BoundaryType>* load_configuration(std::string boundary);
+	std::vector<BoundaryType>* load_configuration(const libconfig::Setting &receptors);
 
 	void print_progress();
 		

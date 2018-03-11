@@ -24,6 +24,7 @@
 #include "tri_logger/tri_logger.hpp"
 
 using namespace std;
+using namespace libconfig;
 
 struct PthData
 {
@@ -101,6 +102,7 @@ bool move_molecule_in_space(Molecule *molecule, BrownianMotion *bm, Obstacle *sp
 
 void move_molecule(Molecule* molecule, vector<Boundary*>& boundaries, BrownianMotion *bm, Obstacle *space)
 {
+	// undefined main space (nullptr) is owner to all molecules
 	if (!molecule->is_owner(space))
 	{
 		return;
@@ -209,67 +211,113 @@ Simulation::Simulation(std::string config)
 
 	smolecules = new MStore();
 
+
 	cfg.readFile(config.c_str());
 	string description = cfg.lookup("description");
 	TRI_LOG_STR("Simulation: " << description);
 
-	sthreads = cfg.lookup("simulation.threads");
-	TRI_LOG_STR("Worker threads: " << sthreads);
+	const Setting& root = cfg.getRoot();
+	const Setting &simulation = root["simulation"];
 
-	bool repetitive = cfg.lookup("simulation.repetitive");
-	int seed = repetitive ? cfg.lookup("simulation.seed") : std::time(NULL);
-
-	TRI_LOG_STR("Repetitivity (not validated): " << (repetitive ? "true" : "false") << " with seed: " << seed);
-
-	sdimensions = cfg.lookup("simulation.dimensions");
-	TRI_LOG_STR("Brownian motion dimensions: " << sdimensions);
-
-	stime_step = cfg.lookup("simulation.time_step_ns");
-	stau = stime_step * 1e-9;
-	TRI_LOG_STR("Brownian motion time step: " << stau << " seconds");
-
-	// currently cannot mix generation types
-	string type = cfg.lookup("simulation.molecules.type");
-	TRI_LOG_STR("Molecule generation type: " << type);
-
-	TRI_LOG_STR("Load receptor configuration...");
-	sreceivers = load_configuration<Receptor>("receptors");
-
-	TRI_LOG_STR("Loading obstacle configuration...");
-	sobstacles = load_configuration<Obstacle>("obstacles");
-
-	TRI_LOG_STR("Loading sources configuration...");
-	stransmitters = load_configuration<Source>("sources");
-
-	TRI_LOG_STR("Loading enclosure configuration...");
-	try {
-		sspace = &load_configuration<Obstacle>("volume")->at(0);
-	} catch(...)
+	try
 	{
-		TRI_LOG_STR("No enclosure.");
-		sspace = nullptr;
-	}
+		string subinfo;
+		string name = simulation.lookup("subinfo");
+		cout << "Subinfo: " << subinfo << " " << name << endl << endl;
 
-	if ( type.compare("interval") == 0 )
-	{
-		generation.interval.interval = cfg.lookup("simulation.molecules.interval");
+		int threadsv;
+		simulation.lookupValue("threads", threadsv);
+		sthreads = threadsv;
+		TRI_LOG_STR("Worker threads: " << sthreads);
 
-		generation.interval.series = cfg.lookup("simulation.molecules.series");
+		bool repetitive;
+		simulation.lookupValue("repetitive", repetitive);
 
-		generation.interval.number = cfg.lookup("simulation.molecules.number");
-		Vector p(0, 0, 0);
-		for (int i = 0; i < generation.interval.number; i++)
+		int seed;
+		if (repetitive)
+			simulation.lookupValue("seed", seed);
+		else
+			seed = std::time(NULL);
+
+		TRI_LOG_STR("Repetitivity (not validated): " << (repetitive ? "true" : "false") <<
+			    " with seed: " << seed);
+
+		simulation.lookupValue("dimensions", sdimensions);
+		TRI_LOG_STR("Brownian motion dimensions: " << sdimensions);
+
+		int time_step_ns;
+		simulation.lookupValue("time_step_ns", time_step_ns);
+		stime_step = time_step_ns;
+		stau = stime_step * 1e-9;
+		TRI_LOG_STR("Brownian motion time step: " << stau << " seconds");
+
+		// currently cannot mix generation types
+		TRI_LOG_STR("Load receptor configuration...");
+
+		const Setting &receptors = root["simulation"]["receptors"];
+		sreceivers = load_configuration<Receptor>(receptors);
+
+		TRI_LOG_STR("Loading obstacle configuration...");
+		const Setting &obstacles = root["simulation"]["obstacles"];
+		sobstacles = load_configuration<Obstacle>(obstacles);
+
+		TRI_LOG_STR("Loading sources configuration...");
+		const Setting &sources = root["simulation"]["sources"];
+		stransmitters = load_configuration<Source>(sources);
+
+		TRI_LOG_STR("Loading enclosure configuration...");
+
+		try {
+			// For now we have one volume
+			const Setting &volume = root["simulation"]["volume"];
+			sspace = &load_configuration<Obstacle>(volume)->at(0);
+		} catch(...)
 		{
-			smolecules->push_back(Molecule(i, p, sspace));
+			TRI_LOG_STR("No enclosure!");
+			sspace = nullptr;
 		}
 
-		generation.interval.transmitter = cfg.lookup("simulation.molecules.transmitter");
-		
-		TRI_LOG_STR("Number of molecules added to the environment: " << generation.interval.number);
-	}
+		const Setting &molecules = simulation["molecules"];
+		string type = molecules.lookup("type");
+		TRI_LOG_STR("Molecule generation type: " << type);
+		if ( type.compare("interval") == 0 )
+		{
+			// learn how to use long long
+			// unsigned long long ll;
+			int ll;
 
-	duration = cfg.lookup("simulation.duration");
-	TRI_LOG_STR("Duration: " << Conversion::ns_to_ms(duration) << " milliseconds");
+			molecules.lookupValue("interval", ll);
+			generation.interval.interval = ll;
+
+			molecules.lookupValue("series", ll);
+			generation.interval.series = ll;
+
+			molecules.lookupValue("number", ll);
+			generation.interval.number = ll;
+
+			Vector p(0, 0, 0);
+			for (int i = 0; i < generation.interval.number; i++)
+			{
+				smolecules->push_back(Molecule(i, p, sspace));
+			}
+
+			// how this is used?
+			molecules.lookupValue("transmitter", ll);
+			generation.interval.transmitter = ll;
+		
+			TRI_LOG_STR("Number of molecules added to the environment: "
+				    << generation.interval.number);
+		}
+		int durationv;
+		simulation.lookupValue("duration", durationv);
+		duration = durationv;
+		TRI_LOG_STR("Duration: " << Conversion::ns_to_ms(duration) << " milliseconds");
+
+	}
+	catch(const SettingNotFoundException &nfex)
+	{
+		cerr << "Something is missing in configuration file." << endl;
+	}
 }
 
 Simulation::~Simulation()
@@ -292,43 +340,51 @@ Simulation::~Simulation()
 }
 
 template<typename BoundaryType>
-std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
+std::vector<BoundaryType>* Simulation::load_configuration(const Setting &boundaries)
 {
 	auto v = new std::vector<BoundaryType>();
-	int item_no = cfg.lookup("simulation." + boundary).getLength();
+	int item_no = boundaries.getLength();
 
 	for (int i = 0; i < item_no; i++)
 	{
-		stringstream ss;
-		ss << i;
-		string prefix = string("simulation." + boundary + ".[") + ss.str() + string("].");
+		const Setting &boundary = boundaries[i];
 
-		if (static_cast<bool>(cfg.lookup(prefix + string("disabled"))))
+		string tname = boundary.lookup("name");
+
+		bool disabled;
+		boundary.lookupValue("disabled", disabled);
+		if (disabled)
 		{
 			continue;
 		}
 
-		string param_x = prefix + string("pos.x");
-		string param_y = prefix + string("pos.y");
-		string param_z = prefix + string("pos.z");
-		double x = cfg.lookup(param_x);
-		double y = cfg.lookup(param_y);
-		double z = cfg.lookup(param_z);
+		const Setting &loc = boundary["pos"];
+		double x;
+		double y;
+		double z;
+		loc.lookupValue("x", x);
+		loc.lookupValue("y", y);
+		loc.lookupValue("z", z);
+
 		x *= ssim_scale;
 		y *= ssim_scale;
 		z *= ssim_scale;
 		Vector cp(x, y, z);
-		Id id = cfg.lookup(prefix + string("id"));
-		string shape = cfg.lookup(prefix + string("shape"));
+
+		int idv;
+		boundary.lookupValue("id", idv);
+		Id id(idv);
+
+		string shape = boundary.lookup("shape");
+
 		BoundaryType* new_boundary = nullptr;
 		if ( shape.find("cube") != string::npos)
 		{
-			string param_x = prefix + string("size.x");
-			string param_y = prefix + string("size.y");
-			string param_z = prefix + string("size.z");
-			double x = cfg.lookup(param_x);
-			double y = cfg.lookup(param_y);
-			double z = cfg.lookup(param_z);
+			// clarify if x/2 or x/1
+			const Setting &size = boundary["size"];
+			size.lookupValue("x", x);
+			size.lookupValue("y", y);
+			size.lookupValue("z", z);
 			x *= ssim_scale;
 			y *= ssim_scale;
 			z *= ssim_scale;
@@ -336,7 +392,9 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		}
 		else if ( shape.find("sphere") != string::npos)
 		{
-			Coordinate radius = cfg.lookup(prefix + string("radius"));
+			float radv;
+			boundary.lookupValue("radius", radv);
+			Coordinate radius(radv);
 			radius *= ssim_scale;
 			new_boundary = new BoundaryType(id, cp, radius);
 		}
@@ -350,10 +408,9 @@ std::vector<BoundaryType>* Simulation::load_configuration(string boundary)
 		//---
 		if (new_boundary != nullptr)
 		{
+			TRI_LOG_STR("Adding boundary " << tname);
 			v->push_back(*new_boundary);
 		}
-
-		TRI_LOG_STR(boundary << " pos" << cp);
 	}
 	return v;
 }
